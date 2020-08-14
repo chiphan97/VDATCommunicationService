@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  grafana:
+    image: grafana/grafana:7.1.1
+    network_mode: "host"
+    volumes:
+      - ./config/grafana.ini:/etc/grafana/grafana.ini
+      - ./config/grafana.datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ./config/grafana.dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - ./config:/etc/dashboards:rw
+
+  prometheus:
+    image: prom/prometheus:latest
+    network_mode: "host"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
