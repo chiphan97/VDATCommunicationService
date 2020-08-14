@@ -1,0 +1,17 @@
+@startgantt
+project starts 2020-08-08
+
+
+-- Design Phase --
+[Prototyping] as [D] starts at 2020-08-08 and ends at 2020-08-14
+[Design completed] happens at [D]'s end
+
+-- Implementation Phase --
+[Backend Impl] as [I] starts at [D]'s end and ends at 2020-08-21
+[iframe] starts at [D]'s end and ends at 2020-08-16
+[Docker Containerize] starts at 2020-08-15 and ends at 2020-08-21
+[CI/CD] starts at 2020-08-15 and ends at 2020-08-21
+
+[Implement completed] happens 2020-08-31
+
+@endgantt
