@@ -1,4 +1,4 @@
-module golangproject
+module gitlab.com/vdat/mcsvc/chat
 
 go 1.13
 
