@@ -2,24 +2,24 @@ package main
 
 import (
 	"fmt"
-	"golangproject/database"
-	"golangproject/repository/impl"
+	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/repository/impl"
 	"log"
 )
 
-func main(){
+func main() {
 	database.Connect()
 	//r := mux.NewRouter()
 
 	//textDB
-	chatboxs,err := impl.NewChatBoxRepoImpl(database.DB).GetChatBoxs()
-	if err!= nil{
+	chatboxs, err := impl.NewChatBoxRepoImpl(database.DB).GetChatBoxs()
+	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(chatboxs)
 
-	messages,err1 := impl.NewMessageRepoImpl(database.DB).GetMessages()
-	if err1!= nil{
+	messages, err1 := impl.NewMessageRepoImpl(database.DB).GetMessages()
+	if err1 != nil {
 		log.Fatal(err1)
 	}
 	fmt.Println(messages)

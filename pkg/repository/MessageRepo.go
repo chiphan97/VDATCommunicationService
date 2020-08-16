@@ -1,6 +1,6 @@
 package repository
 
-import "golangproject/model"
+import "gitlab.com/vdat/mcsvc/chat/pkg/model"
 
 type MessageRepo interface {
 	GetMessages() ([]model.MessageModel, error)
