@@ -31,3 +31,14 @@ func (mess *MessageRepoImpl) GetMessagesByChatBox(idChatBox int) ([]model.Messag
 
 	return messages, nil
 }
+func (mess *MessageRepoImpl) InsertMessages(messageModel model.MessageModel) error{
+	statement := `INSERT INTO messages (id_chat,content,seen_at,create_at,update_at,delete_at) VALUES ($1,$2,$3,$4,$5,$6)`
+	_, err := mess.Db.Exec(statement,
+							messageModel.IdChat,
+							messageModel.Content,
+							messageModel.SeenAt,
+							messageModel.CreatedAt,
+							messageModel.UpdatedAt,
+							messageModel.DeletedAt)
+	return err
+}
