@@ -31,7 +31,7 @@ func (mess *MessageRepoImpl) GetMessagesByChatBox(idChatBox int) ([]model.Messag
 
 	return messages, nil
 }
-func (mess *MessageRepoImpl) InsertMessages(messageModel model.MessageModel) error{
+func (mess *MessageRepoImpl) InsertMessage(messageModel model.MessageModel) error{
 	statement := `INSERT INTO messages (id_chat,content,seen_at,create_at,update_at,delete_at) VALUES ($1,$2,$3,$4,$5,$6)`
 	_, err := mess.Db.Exec(statement,
 							messageModel.IdChat,
@@ -40,5 +40,15 @@ func (mess *MessageRepoImpl) InsertMessages(messageModel model.MessageModel) err
 							messageModel.CreatedAt,
 							messageModel.UpdatedAt,
 							messageModel.DeletedAt)
+	return err
+}
+func (mess *MessageRepoImpl) UpdateMessageById(messageModel model.MessageModel) error{
+	statement := `UPDATE messages SET content = $1, update_at = $2 WHERE id_mess = $3`
+	_,err := mess.Db.Exec(statement,messageModel.Content,messageModel.UpdatedAt,messageModel.ID)
+	return err
+}
+func (mess *MessageRepoImpl) DeleteMessageById(idMesssage int) error{
+	statement := `DELETE FROM messages WHERE id_mess = $1`
+	_,err := mess.Db.Exec(statement,idMesssage)
 	return err
 }
