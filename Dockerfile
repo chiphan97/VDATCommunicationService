@@ -4,6 +4,6 @@ WORKDIR /go/src/app
 
 ENV ENV_MODE prod
 
-COPY ./service .
+COPY ./chat-service .
 
-CMD ["./service"]
+CMD ["./chat-service"]
