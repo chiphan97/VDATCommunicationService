@@ -1,0 +1,13 @@
+@startuml
+node "Chat Service" as chat #green
+node "Identity Provider" as idm #red
+node "Authz Server" as as #red
+node "User1" as u1 #blue
+node "User2" as u2 #blue
+
+chat --> as
+chat --> idm
+
+u1 <-r-> chat : websocket
+u2 <--> chat : websocket
+@enduml

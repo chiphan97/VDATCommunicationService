@@ -13,6 +13,13 @@ Basic functionality, including:
 
 ###### to update schedule modify `./docs/schedule.puml` and save the result in `./docs/schedule.png`
 
+## Architecture
+![](docs/architecture.png)
+
+`Chat Service` will dependent on some other services:
+1. `Identity Provider` for search feature
+2. `Authz Server` for `access token` verification
+
 ## Development
 
 ### Monitoring tools
