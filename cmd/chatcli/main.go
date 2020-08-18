@@ -3,6 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"gitlab.com/vdat/mcsvc/chat/pkg/model"
+	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"golang.org/x/net/websocket"
 	"log"
 	"os"
@@ -19,9 +21,14 @@ func main() {
 		fmt.Print("message:")
 		messageReader := bufio.NewReader(os.Stdin)
 		messageInput, _ := messageReader.ReadString('\n')
-
 		messageInput = messageInput[:len(messageInput)-1]
-		if _, err := ws.Write([]byte(messageInput + "\n")); err != nil {
+
+		messagePayload := model.MessagePayload{
+			IdChat:  1,
+			Message: messageInput,
+		}
+
+		if _, err := ws.Write(utils.ResponseWithByte(messagePayload)); err != nil {
 			log.Fatal(err)
 		}
 	}

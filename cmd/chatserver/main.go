@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"golang.org/x/net/websocket"
 	"net/http"
+	"strings"
 )
 
 func echoHandler(ws *websocket.Conn) {
@@ -16,8 +19,15 @@ func echoHandler(ws *websocket.Conn) {
 	}
 
 	s := string(receivedtext[:n])
+
+	decoder := json.NewDecoder(strings.NewReader(s))
+
+	messagePayload := model.MessagePayload{}
+
+	_ = decoder.Decode(&messagePayload)
+
 	if len(s) > 0 {
-		fmt.Printf("Received: %d bytes: %s", n, s)
+		fmt.Printf("Received: %d bytes: %s", n, messagePayload)
 	}
 }
 
