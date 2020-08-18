@@ -13,7 +13,7 @@ import (
 func main() {
 	for {
 		origin := "http://localhost/"
-		url := "ws://localhost:8080/echo"
+		url := "ws://localhost:5000/echo"
 		ws, err := websocket.Dial(url, "", origin)
 		if err != nil {
 			log.Fatal(err)
