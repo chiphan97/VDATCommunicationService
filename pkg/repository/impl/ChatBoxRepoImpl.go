@@ -30,6 +30,10 @@ func (cbx *ChatBoxRepoImpl) CreateChatBox(receiverId string, senderId string) (m
 	} else if rows.Next() {
 		//panic("Chat box is existed")
 		err = rows.Scan(&chatBox.ID, &chatBox.Sender, &chatBox.Receiver, &chatBox.CreatedAt, &chatBox.UpdatedAt, &chatBox.DeletedAt)
+		if err != nil {
+			return chatBox, err
+		}
+		return chatBox, nil
 	}
 
 	// lưu hội thoại vào db
