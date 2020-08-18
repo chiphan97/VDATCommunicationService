@@ -24,7 +24,7 @@ func (cbx *ChatBoxRepoImpl) CreateChatBox(receiverId string) (model.ChatBoxModel
 	senderId := "anonymousUser"
 
 	// kiểm tra chatBox đã tồn tại chưa
-	statement := `SELECT * FROM chatboxs WHERE sender = $1 AND receiver = $2`
+	statement := `SELECT * FROM chatboxs WHERE sender_id = $1 AND receiver_id = $2`
 	rows, err := cbx.Db.Query(statement, senderId, receiverId)
 	if err != nil {
 		panic(err)
@@ -33,7 +33,7 @@ func (cbx *ChatBoxRepoImpl) CreateChatBox(receiverId string) (model.ChatBoxModel
 	}
 
 	// lưu hội thoại vào db
-	statement = `INSERT INTO chatboxs(sender, receiver) VALUE($1, $2)`
+	statement = `INSERT INTO chatboxs(sender_id, receiver_id) VALUES($1, $2)`
 	result, err := cbx.Db.Exec(statement, senderId, receiverId)
 	if err != nil {
 		panic(err)
@@ -82,7 +82,7 @@ func (cbx *ChatBoxRepoImpl) FindChatBoxById(id uint) (model.ChatBoxModel, error)
 func (cbx *ChatBoxRepoImpl) FindChatBoxBySender(senderId string) ([]model.ChatBoxModel, error) {
 	listChatBox := make([]model.ChatBoxModel, 0)
 
-	statement := `SELECT * FROM chatboxs WHERE sender = $1`
+	statement := `SELECT * FROM chatboxs WHERE sender_id = $1`
 	rows, err := cbx.Db.Query(statement, senderId)
 	if err != nil {
 		return listChatBox, nil
