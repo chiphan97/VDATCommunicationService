@@ -10,8 +10,8 @@ import (
 
 func TestGetMessageByChatBoxService(t *testing.T) {
 	database.Connect()
-	messages,err := GetMessageByChatBoxService(2)
-	if err!= nil || len(messages) <0{
+	messages, err := GetMessageByChatBoxService(2)
+	if err != nil || len(messages) < 0 {
 		t.Error(err)
 		return
 	}
@@ -20,8 +20,8 @@ func TestGetMessageByChatBoxService(t *testing.T) {
 func BenchmarkGetMessageByChatBoxService(b *testing.B) {
 	database.Connect()
 
-	messages,err := GetMessageByChatBoxService(2)
-	if err!= nil || len(messages) <0{
+	messages, err := GetMessageByChatBoxService(2)
+	if err != nil || len(messages) < 0 {
 		b.Error(err)
 	}
 
@@ -41,7 +41,7 @@ func TestInsertMessagesService(t *testing.T) {
 		5,
 	}
 	err := InsertMessagesService(messageModel)
-	if err!= nil{
+	if err != nil {
 		t.Error(err)
 		return
 	}
@@ -62,7 +62,7 @@ func BenchmarkInsertMessagesService(b *testing.B) {
 		5,
 	}
 	err := InsertMessagesService(messageModel)
-	if err!= nil{
+	if err != nil {
 		b.Error(err)
 	}
 	//fmt.Println("insert success")
@@ -71,15 +71,15 @@ func TestUpdateMessageService(t *testing.T) {
 	database.Connect()
 	time := time.Now()
 	abstract := model.AbstractModel{
-		ID: 6,
+		ID:        6,
 		UpdatedAt: &time,
 	}
 	messageModel := model.MessageModel{
 		AbstractModel: abstract,
-		Content: "moi up date",
+		Content:       "moi up date",
 	}
 	err := UpdateMessageService(messageModel)
-	if err!= nil{
+	if err != nil {
 		t.Error(err)
 	}
 }
@@ -87,15 +87,15 @@ func BenchmarkUpdateMessageService(b *testing.B) {
 	database.Connect()
 	time := time.Now()
 	abstract := model.AbstractModel{
-		ID: 7,
+		ID:        7,
 		UpdatedAt: &time,
 	}
 	messageModel := model.MessageModel{
 		AbstractModel: abstract,
-		Content: "moi up date",
+		Content:       "moi up date",
 	}
 	err := UpdateMessageService(messageModel)
-	if err!= nil{
+	if err != nil {
 		b.Error(err)
 	}
 
@@ -103,14 +103,14 @@ func BenchmarkUpdateMessageService(b *testing.B) {
 func TestDeleteMessageService(t *testing.T) {
 	database.Connect()
 	err := DeleteMessageService(10)
-	if err!= nil{
+	if err != nil {
 		t.Error(err)
 	}
 }
 func BenchmarkDeleteMessageService(b *testing.B) {
 	database.Connect()
 	err := DeleteMessageService(15)
-	if err!= nil{
+	if err != nil {
 		b.Error(err)
 	}
 }
