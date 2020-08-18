@@ -1,6 +1,7 @@
 package model
 
 type MessagePayload struct {
-	IdChat  int    `json:"id_chat"`
-	Message string `json:"message"`
+	ReceiverID string `json:"receiver_id"`
+	SenderID   string `json:"sender_id"`
+	Message    string `json:"message"`
 }

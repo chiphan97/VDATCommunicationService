@@ -14,8 +14,8 @@ func FindChatBoxById(id uint) (model.ChatBoxModel, error) {
 	return impl.NewChatBoxRepoImpl(database.DB).FindChatBoxById(id)
 }
 
-func CreateChatBox(receiverId string) (model.ChatBoxModel, error) {
-	return impl.NewChatBoxRepoImpl(database.DB).CreateChatBox(receiverId)
+func CreateChatBox(receiverId string, senderId string) (model.ChatBoxModel, error) {
+	return impl.NewChatBoxRepoImpl(database.DB).CreateChatBox(receiverId, senderId)
 }
 
 func DeleteChatBox(id uint) (bool, error) {

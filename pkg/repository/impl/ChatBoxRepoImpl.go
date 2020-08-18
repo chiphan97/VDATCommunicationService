@@ -15,14 +15,12 @@ func NewChatBoxRepoImpl(db *sql.DB) repository.ChatBoxRepo {
 	return &ChatBoxRepoImpl{Db: db}
 }
 
-func (cbx *ChatBoxRepoImpl) CreateChatBox(receiverId string) (model.ChatBoxModel, error) {
+func (cbx *ChatBoxRepoImpl) CreateChatBox(receiverId string, senderId string) (model.ChatBoxModel, error) {
 	chatBox := model.ChatBoxModel{}
 
 	// TODO kiểm tra receiverId có tồn tại không
-	receiverId = "receiver"
 
 	// TODO lấy user hiện tại
-	senderId := "anonymousUser"
 
 	// kiểm tra chatBox đã tồn tại chưa
 	statement := `SELECT * FROM chatboxs WHERE sender_id = $1 AND receiver_id = $2`
@@ -30,7 +28,8 @@ func (cbx *ChatBoxRepoImpl) CreateChatBox(receiverId string) (model.ChatBoxModel
 	if err != nil {
 		panic(err)
 	} else if rows.Next() {
-		panic("Chat box is existed")
+		//panic("Chat box is existed")
+		err = rows.Scan(&chatBox.ID, &chatBox.Sender, &chatBox.Receiver, &chatBox.CreatedAt, &chatBox.UpdatedAt, &chatBox.DeletedAt)
 	}
 
 	// lưu hội thoại vào db

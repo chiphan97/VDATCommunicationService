@@ -8,9 +8,9 @@ import (
 
 func TestCreateChatBox(t *testing.T) {
 	database.Connect()
-
+	sender := "anonymousUser"
 	receiverId := "anonymousUser"
-	chatBox, err := CreateChatBox(receiverId)
+	chatBox, err := CreateChatBox(receiverId, sender)
 	if err != nil {
 		t.Error(err)
 	} else {

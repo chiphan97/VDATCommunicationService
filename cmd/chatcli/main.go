@@ -24,8 +24,10 @@ func main() {
 		messageInput = messageInput[:len(messageInput)-1]
 
 		messagePayload := model.MessagePayload{
-			IdChat:  1,
-			Message: messageInput,
+
+			Message:    messageInput,
+			SenderID:   "cuong",
+			ReceiverID: "thien",
 		}
 
 		if _, err := ws.Write(utils.ResponseWithByte(messagePayload)); err != nil {
