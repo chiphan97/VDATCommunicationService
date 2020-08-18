@@ -38,13 +38,14 @@ func (mess *MessageRepoImpl) InsertMessage(messageModel model.MessageModel) erro
 		messageModel.Content)
 	return err
 }
-func (mess *MessageRepoImpl) UpdateMessageById(messageModel model.MessageModel) error {
-	statement := `UPDATE messages SET content = $1, update_at = $2 WHERE id_mess = $3`
-	_, err := mess.Db.Exec(statement, messageModel.Content, messageModel.UpdatedAt, messageModel.ID)
-	return err
-}
-func (mess *MessageRepoImpl) DeleteMessageById(idMesssage int) error {
-	statement := `DELETE FROM messages WHERE id_mess = $1`
-	_, err := mess.Db.Exec(statement, idMesssage)
-	return err
-}
+
+//func (mess *MessageRepoImpl) UpdateMessageById(messageModel model.MessageModel) error {
+//	statement := `UPDATE messages SET content = $1, update_at = $2 WHERE id_mess = $3`
+//	_, err := mess.Db.Exec(statement, messageModel.Content, messageModel.UpdatedAt, messageModel.ID)
+//	return err
+//}
+//func (mess *MessageRepoImpl) DeleteMessageById(idMesssage int) error {
+//	statement := `DELETE FROM messages WHERE id_mess = $1`
+//	_, err := mess.Db.Exec(statement, idMesssage)
+//	return err
+//}
