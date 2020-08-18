@@ -32,11 +32,10 @@ func (mess *MessageRepoImpl) GetMessagesByChatBox(idChatBox int) ([]model.Messag
 	return messages, nil
 }
 func (mess *MessageRepoImpl) InsertMessage(messageModel model.MessageModel) error {
-	statement := `INSERT INTO messages (id_chat,content,seen_at,create_at,update_at,delete_at) VALUES ($1,$2,$3,$4,$5,$6)`
+	statement := `INSERT INTO messages (id_chat,content) VALUES ($1,$2)`
 	_, err := mess.Db.Exec(statement,
 		messageModel.IdChat,
-		messageModel.Content,
-		messageModel.SeenAt)
+		messageModel.Content)
 	return err
 }
 func (mess *MessageRepoImpl) UpdateMessageById(messageModel model.MessageModel) error {

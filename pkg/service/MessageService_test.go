@@ -28,17 +28,10 @@ func BenchmarkGetMessageByChatBoxService(b *testing.B) {
 }
 func TestInsertMessagesService(t *testing.T) {
 	database.Connect()
-	time := time.Now()
-	abstract := model.AbstractModel{
-		CreatedAt: &time,
-		UpdatedAt: &time,
-		DeletedAt: &time,
-	}
+
 	messageModel := model.MessageModel{
-		abstract,
-		"asndasjdasd",
-		&time,
-		5,
+		Content: "ethsohasod",
+		IdChat:  5,
 	}
 	err := InsertMessagesService(messageModel)
 	if err != nil {

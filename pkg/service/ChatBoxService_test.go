@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestCreateChatBox(t * testing.T)  {
+func TestCreateChatBox(t *testing.T) {
 	database.Connect()
 
 	receiverId := "anonymousUser"
@@ -17,8 +17,7 @@ func TestCreateChatBox(t * testing.T)  {
 		fmt.Println(chatBox)
 	}
 }
-
-func TestFindChatBoxBySender(t * testing.T)  {
+func TestFindChatBoxBySender(t *testing.T) {
 	database.Connect()
 
 	senderId := "anonymousUser"
@@ -30,7 +29,7 @@ func TestFindChatBoxBySender(t * testing.T)  {
 	}
 }
 
-func TestFindChatBoxById(t * testing.T)  {
+func TestFindChatBoxById(t *testing.T) {
 	database.Connect()
 
 	senderId := 1
@@ -42,7 +41,7 @@ func TestFindChatBoxById(t * testing.T)  {
 	}
 }
 
-func TestDeleteChatBoxById(t * testing.T)  {
+func TestDeleteChatBoxById(t *testing.T) {
 	database.Connect()
 
 	senderId := 1
@@ -53,4 +52,3 @@ func TestDeleteChatBoxById(t * testing.T)  {
 		fmt.Println(chatBox)
 	}
 }
-
