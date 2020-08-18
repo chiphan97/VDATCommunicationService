@@ -2,8 +2,8 @@ CREATE DATABASE dchat;
 
 CREATE TABLE chatboxs(
     id serial,
-    sender_id varchar(100),
-    receiver_id varchar(100),
+    sender_id varchar(100) unique,
+    receiver_id varchar(100) unique,
     created_at timestamp not null default now(),
     updated_at timestamp not null default now(),
     deleted_at timestamp,

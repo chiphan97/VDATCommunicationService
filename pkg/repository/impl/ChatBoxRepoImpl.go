@@ -2,6 +2,7 @@ package impl
 
 import (
 	"database/sql"
+	"fmt"
 	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"gitlab.com/vdat/mcsvc/chat/pkg/repository"
 )
@@ -74,6 +75,8 @@ func (cbx *ChatBoxRepoImpl) FindChatBoxById(id uint) (model.ChatBoxModel, error)
 		if err != nil {
 			panic(err)
 		}
+
+		fmt.Println(chatBox.ID)
 	}
 
 	return chatBox, nil

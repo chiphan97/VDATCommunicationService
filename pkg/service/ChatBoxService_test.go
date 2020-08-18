@@ -44,8 +44,8 @@ func TestFindChatBoxById(t *testing.T) {
 func TestDeleteChatBoxById(t *testing.T) {
 	database.Connect()
 
-	senderId := 1
-	chatBox, err := DeleteChatBox(uint(senderId))
+	id := 2
+	chatBox, err := DeleteChatBox(uint(id))
 	if err != nil {
 		t.Error(err)
 	} else {
