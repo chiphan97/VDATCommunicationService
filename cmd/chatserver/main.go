@@ -44,7 +44,9 @@ func echoHandler(ws *websocket.Conn) {
 		log.Fatal(err)
 	}
 }
+func chatHandler() {
 
+}
 func main() {
 	database.Connect()
 	http.Handle("/echo", websocket.Handler(echoHandler))
