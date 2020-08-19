@@ -2,9 +2,9 @@ package model
 
 import "time"
 
-type AbstractModel struct{
-	ID        uint `json:"id"`
-	CreatedAt *time.Time
-	UpdatedAt *time.Time
-	DeletedAt *time.Time
+type AbstractModel struct {
+	ID        uint       `json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }

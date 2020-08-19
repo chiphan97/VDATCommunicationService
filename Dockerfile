@@ -1,9 +1,7 @@
-FROM golang:1.14-alpine
-
-WORKDIR /go/src/app
+FROM alpine
 
 ENV ENV_MODE prod
 
-COPY ./service .
+COPY ./chat-service .
 
-CMD ["./service"]
+CMD ["./chat-service"]

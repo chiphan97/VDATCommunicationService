@@ -1,19 +1,22 @@
 package database
+
 import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
-)
-const (
-	port     = "5432"
-	user     = "postgres"
-	password = "123456"
-	dbname   = "dchat"
+	"os"
 )
 
 var DB *sql.DB
-func Connect() *sql.DB{
-	conn := fmt.Sprintf("port=%s user=%s password=%s dbname=%s sslmode=disable", port, user, password, dbname)
+
+func Connect() *sql.DB {
+	conn := "postgres://postgres:postgres@localhost:5432/dchat?sslmode=disable"
+
+	connectionStr := os.Getenv("DB_ADDRESS")
+	if len(connectionStr) > 0 {
+		conn = connectionStr
+	}
+
 	db, err := sql.Open("postgres", conn)
 
 	if err != nil {
