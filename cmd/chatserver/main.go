@@ -50,6 +50,7 @@ func chatHandler() {
 func main() {
 	database.Connect()
 	http.Handle("/echo", websocket.Handler(echoHandler))
+	http.HandleFunc("/test", service.TestHandler)
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 	err := http.ListenAndServe(":5000", nil)
 	if err != nil {
