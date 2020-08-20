@@ -74,6 +74,9 @@ func newbroker() *TestBroker {
 }
 
 func (b *TestBroker) run() {
+	// polling "new" message from repository
+	// and send to outbound channel to send to clients
+	// finally, marked message that sent to outbound channel as "done"
 	go func() {
 		for {
 			for idx, m := range b.messageRepository {
@@ -83,8 +86,8 @@ func (b *TestBroker) run() {
 					default:
 						close(b.outbound)
 					}
-					m.status = "done"
-					b.messageRepository[idx] = m
+
+					b.messageRepository[idx].status = "done"
 				}
 			}
 
@@ -128,7 +131,7 @@ func (b *TestBroker) run() {
 type Client struct {
 	broker *TestBroker
 
-	// Client
+	// user ID, this will be parse from Access Token in production
 	userID string
 
 	// The websocket connection.
