@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/handler"
 	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service"
 	"golang.org/x/net/websocket"
@@ -49,9 +50,11 @@ func chatHandler() {
 }
 func main() {
 	database.Connect()
-	http.Handle("/echo", websocket.Handler(echoHandler))
-	http.HandleFunc("/test", service.TestHandler)
+	//http.Handle("/echo", websocket.Handler(echoHandler))
+	//http.HandleFunc("/test", service.TestHandler)
 	//http.Handle("/", http.FileServer(http.Dir(".")))
+	http.HandleFunc("/ws", handler.HandleConnections)
+	go handler.HandleMessages()
 	err := http.ListenAndServe(":5000", nil)
 	if err != nil {
 		panic("Error: " + err.Error())
