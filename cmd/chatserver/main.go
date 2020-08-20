@@ -48,10 +48,26 @@ func echoHandler(ws *websocket.Conn) {
 func chatHandler() {
 
 }
+
+// https://github.com/gorilla/websocket/blob/master/examples/chat/main.go
+func serveHome(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL)
+	if r.URL.Path != "/" {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	http.ServeFile(w, r, "cmd/chatserver/index.html")
+}
+
 func main() {
 	database.Connect()
-	//http.Handle("/echo", websocket.Handler(echoHandler))
-	//http.HandleFunc("/test", service.TestHandler)
+	http.HandleFunc("/", serveHome)
+	http.Handle("/echo", websocket.Handler(echoHandler))
+	http.HandleFunc("/test", service.TestHandler)
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 	http.HandleFunc("/ws", handler.HandleConnections)
 	go handler.HandleMessages()

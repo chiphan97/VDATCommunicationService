@@ -2,6 +2,8 @@ package service
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -35,23 +37,36 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+type Message struct {
+	To string	`json:"to"`
+	From string `json:"from"`
+	Body string	`json:"body"`
+	status string
+}
+
 type TestBroker struct {
 	// Registered clients.
 	clients map[*Client]bool
 
 	// Inbound messages from the clients.
-	broadcast chan []byte
+	inbound chan Message
+
+	// Outbound messages that need to send to clients.
+	outbound chan Message
 
 	// Register requests from the clients.
 	register chan *Client
 
 	// Unregister requests from clients.
 	unregister chan *Client
+
+	messageRepository []*Message
 }
 
 func newbroker() *TestBroker {
 	return &TestBroker{
-		broadcast:  make(chan []byte),
+		inbound:  	make(chan Message),
+		outbound:  	make(chan Message),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
@@ -59,6 +74,27 @@ func newbroker() *TestBroker {
 }
 
 func (b *TestBroker) run() {
+	// polling "new" message from repository
+	// and send to outbound channel to send to clients
+	// finally, marked message that sent to outbound channel as "done"
+	go func() {
+		for {
+			for idx, m := range b.messageRepository {
+				if m.status != "done" {
+					select {
+					case b.outbound <- *m:
+					default:
+						close(b.outbound)
+					}
+
+					b.messageRepository[idx].status = "done"
+				}
+			}
+
+			time.Sleep(200 * time.Millisecond)
+		}
+	}()
+
 	for {
 		select {
 		case client := <-b.register:
@@ -68,21 +104,35 @@ func (b *TestBroker) run() {
 				delete(b.clients, client)
 				close(client.send)
 			}
-		case message := <-b.broadcast:
+		case message := <-b.inbound:
+
+			b.messageRepository = append(b.messageRepository, &message)
+			fmt.Printf("%+v, %d\n", message, len(b.messageRepository))
+
+
+		case message := <-b.outbound:
+			fmt.Println("send")
 			for client := range b.clients {
-				select {
-				case client.send <- message:
-				default:
-					close(client.send)
-					delete(b.clients, client)
+				if client.userID == message.To {
+					msg, _ := json.Marshal(message)
+					select {
+					case client.send <- msg:
+					default:
+						close(client.send)
+						delete(b.clients, client)
+					}
 				}
 			}
 		}
+
 	}
 }
 
 type Client struct {
 	broker *TestBroker
+
+	// user ID, this will be parse from Access Token in production
+	userID string
 
 	// The websocket connection.
 	conn *websocket.Conn
@@ -108,7 +158,12 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		c.broker.broadcast <- message
+
+		var messageJSON Message
+		_ = json.Unmarshal(message, &messageJSON)
+		messageJSON.From = c.userID
+
+		c.broker.inbound <- messageJSON
 	}
 }
 
@@ -161,7 +216,8 @@ func (c *Client) writePump() {
 func TestHandler(w http.ResponseWriter, r *http.Request) {
 	if broker == nil {
 		broker = &TestBroker{
-			broadcast:  make(chan []byte),
+			inbound:  	make(chan Message),
+			outbound:  	make(chan Message),
 			register:   make(chan *Client),
 			unregister: make(chan *Client),
 			clients:    make(map[*Client]bool),
@@ -175,7 +231,10 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{broker: broker, conn: conn, send: make(chan []byte, 256)}
+
+	fmt.Println(r.URL.Query()["userID"][0])
+
+	client := &Client{userID: r.URL.Query()["userID"][0], broker: broker, conn: conn, send: make(chan []byte, 256)}
 	client.broker.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
