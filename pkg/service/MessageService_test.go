@@ -51,6 +51,21 @@ func BenchmarkInsertMessagesService(b *testing.B) {
 	}
 	//fmt.Println("insert success")
 }
+func TestGetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10Service(t *testing.T) {
+	database.Connect()
+	messages, err := GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10Service(9)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(messages)
+}
+func TestUpdateMessageByChatBox(t *testing.T) {
+	database.Connect()
+	err := UpdateMessageByChatBox(9)
+	if err != nil {
+		t.Error(err)
+	}
+}
 
 //func TestUpdateMessageService(t *testing.T) {
 //	database.Connect()
