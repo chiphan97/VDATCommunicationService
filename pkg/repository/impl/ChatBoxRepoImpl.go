@@ -23,34 +23,36 @@ func (cbx *ChatBoxRepoImpl) CreateChatBox(receiverId string, senderId string) (m
 	// TODO lấy user hiện tại
 
 	// kiểm tra chatBox đã tồn tại chưa
-	statement := `SELECT * FROM chatboxs WHERE sender_id = $1 AND receiver_id = $2`
+	statement := `SELECT * FROM chatboxs WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1)`
 	rows, err := cbx.Db.Query(statement, senderId, receiverId)
 	if err != nil {
 		panic(err)
-	} else if rows.Next() {
+	}
+	if rows.Next() {
 		//panic("Chat box is existed")
 		err = rows.Scan(&chatBox.ID, &chatBox.Sender, &chatBox.Receiver, &chatBox.CreatedAt, &chatBox.UpdatedAt, &chatBox.DeletedAt)
 		if err != nil {
 			return chatBox, err
 		}
 		return chatBox, nil
-	}
-
-	// lưu hội thoại vào db
-	statement = `INSERT INTO chatboxs(sender_id, receiver_id) VALUES($1, $2)`
-	result, err := cbx.Db.Exec(statement, senderId, receiverId)
-	if err != nil {
-		panic(err)
-	} else if rows.Next() {
-		lastId, err := result.LastInsertId()
+	} else {
+		// lưu hội thoại vào db
+		statement = `INSERT INTO chatboxs(sender_id, receiver_id) VALUES($1, $2)`
+		result, err := cbx.Db.Exec(statement, senderId, receiverId)
 		if err != nil {
 			panic(err)
+		} else if rows.Next() {
+			lastId, err := result.LastInsertId()
+			if err != nil {
+				panic(err)
+			}
+
+			return cbx.FindChatBoxById(uint(lastId))
 		}
 
-		return cbx.FindChatBoxById(uint(lastId))
+		return chatBox, nil
 	}
 
-	return chatBox, nil
 }
 
 func (cbx *ChatBoxRepoImpl) DeleteChatBox(id uint) (bool, error) {
