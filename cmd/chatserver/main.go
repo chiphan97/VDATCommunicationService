@@ -51,7 +51,6 @@ func chatHandler() {
 
 // https://github.com/gorilla/websocket/blob/master/examples/chat/main.go
 func serveHome(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL)
 	if r.URL.Path != "/" {
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
@@ -60,7 +59,7 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "cmd/chatserver/index.html")
+	http.ServeFile(w, r, "index.html")
 }
 
 func main() {
