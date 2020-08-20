@@ -14,6 +14,14 @@ func InsertMessagesService(messageModel model.MessageModel) error {
 	err := impl.NewMessageRepoImpl(database.DB).InsertMessage(messageModel)
 	return err
 }
+func GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10Service(idChatBox int) ([]model.MessageModel, error) {
+	messages, err := impl.NewMessageRepoImpl(database.DB).GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox)
+	return messages, err
+}
+func UpdateMessageByChatBox(idChatBox int) error {
+	err := impl.NewMessageRepoImpl(database.DB).UpdateMessageByChatBox(idChatBox)
+	return err
+}
 
 //func UpdateMessageService(messageModel model.MessageModel) error {
 //	err := impl.NewMessageRepoImpl(database.DB).UpdateMessageById(messageModel)

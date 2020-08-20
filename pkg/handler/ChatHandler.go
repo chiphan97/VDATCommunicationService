@@ -26,7 +26,6 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 
 	// Register our new client
 	clients[ws] = true
-	clients[ws] = true
 
 	for {
 		var messagePayload model.MessagePayload

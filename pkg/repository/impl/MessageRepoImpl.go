@@ -38,12 +38,29 @@ func (mess *MessageRepoImpl) InsertMessage(messageModel model.MessageModel) erro
 		messageModel.Content)
 	return err
 }
+func (mess *MessageRepoImpl) GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error) {
+	messages := make([]model.MessageModel, 0)
+	statement := `SELECT * FROM messages WHERE id_chat = $1 AND seen_at IS NULL ORDER BY created_at LIMIT 10`
+	rows, err := mess.Db.Query(statement, idChatBox)
+	if err != nil {
+		return messages, err
+	}
+	for rows.Next() {
+		message := model.MessageModel{}
+		err := rows.Scan(&message.ID, &message.IdChat, &message.Content, &message.SeenAt, &message.CreatedAt, &message.UpdatedAt, &message.DeletedAt)
+		if err != nil {
+			return messages, err
+		}
+		messages = append(messages, message)
+	}
+	return messages, nil
+}
+func (mess *MessageRepoImpl) UpdateMessageByChatBox(idChatBox int) error {
+	statement := `UPDATE messages SET seen_at=now() WHERE id_chat = $1`
+	_, err := mess.Db.Exec(statement, idChatBox)
+	return err
+}
 
-//func (mess *MessageRepoImpl) UpdateMessageById(messageModel model.MessageModel) error {
-//	statement := `UPDATE messages SET content = $1, update_at = $2 WHERE id_mess = $3`
-//	_, err := mess.Db.Exec(statement, messageModel.Content, messageModel.UpdatedAt, messageModel.ID)
-//	return err
-//}
 //func (mess *MessageRepoImpl) DeleteMessageById(idMesssage int) error {
 //	statement := `DELETE FROM messages WHERE id_mess = $1`
 //	_, err := mess.Db.Exec(statement, idMesssage)
