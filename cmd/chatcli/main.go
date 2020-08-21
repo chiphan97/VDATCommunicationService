@@ -1,13 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"log"
 	"os"
-	"time"
 )
 
 func main() {
@@ -64,15 +61,15 @@ func main() {
 
 	fmt.Println(token.AccessToken)
 
-	fmt.Println("Nhap nguoi gui : ")
-	senderReader := bufio.NewReader(os.Stdin)
-	senderInput, _ := senderReader.ReadString('\n')
-	senderInput = senderInput[:len(senderInput)-1]
-
-	fmt.Println("Nhap nguoi nhan : ")
-	receivererReader := bufio.NewReader(os.Stdin)
-	receivererInput, _ := receivererReader.ReadString('\n')
-	receivererInput = receivererInput[:len(receivererInput)-1]
+	//fmt.Println("Nhap nguoi gui : ")
+	//senderReader := bufio.NewReader(os.Stdin)
+	//senderInput, _ := senderReader.ReadString('\n')
+	//senderInput = senderInput[:len(senderInput)-1]
+	//
+	//fmt.Println("Nhap nguoi nhan : ")
+	//receivererReader := bufio.NewReader(os.Stdin)
+	//receivererInput, _ := receivererReader.ReadString('\n')
+	//receivererInput = receivererInput[:len(receivererInput)-1]
 
 	//var serverURL = "ws://d13d49e1b660.ngrok.io/test"
 	var serverURL = "ws://localhost:5000/test"
@@ -87,31 +84,31 @@ func main() {
 	}
 	defer c.Close()
 
-	go func() {
-		for {
-			_, message, err := c.ReadMessage()
-			if err != nil {
-				log.Println("read:", err)
-				return
-			}
-			log.Printf("recv: %s", message)
-			time.Sleep(2 * time.Microsecond)
-		}
-	}()
-	for {
-		fmt.Println("message:")
-		messageReader := bufio.NewReader(os.Stdin)
-		messageInput, _ := messageReader.ReadString('\n')
-		messageInput = messageInput[:len(messageInput)-1]
-		messagePayload := model.MessagePayload{
-
-			Message:    messageInput,
-			SenderID:   senderInput,
-			ReceiverID: receivererInput,
-		}
-		if err = c.WriteJSON(messagePayload); err != nil {
-			log.Fatal(err)
-		}
-	}
+	//go func() {
+	//	for {
+	//		_, message, err := c.ReadMessage()
+	//		if err != nil {
+	//			log.Println("read:", err)
+	//			return
+	//		}
+	//		log.Printf("recv: %s", message)
+	//		time.Sleep(2 * time.Microsecond)
+	//	}
+	//}()
+	//for {
+	//	fmt.Println("message:")
+	//	messageReader := bufio.NewReader(os.Stdin)
+	//	messageInput, _ := messageReader.ReadString('\n')
+	//	messageInput = messageInput[:len(messageInput)-1]
+	//	messagePayload := model.MessagePayload{
+	//
+	//		Message:    messageInput,
+	//		SenderID:   senderInput,
+	//		ReceiverID: receivererInput,
+	//	}
+	//	if err = c.WriteJSON(messagePayload); err != nil {
+	//		log.Fatal(err)
+	//	}
+	//}
 
 }
