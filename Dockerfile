@@ -8,7 +8,7 @@ RUN go build ./cmd/chatserver
 
 
 # Target image
-FROM golang:1.14-buster
+FROM scratch
 WORKDIR /go/src/app
 COPY --from=build /go/src/app/chatserver ./
 COPY index.html ./
