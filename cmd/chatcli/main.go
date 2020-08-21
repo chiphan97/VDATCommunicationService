@@ -62,13 +62,8 @@ func main() {
 		panic(err)
 	}
 
-	var serverURL = "ws://localhost:5000/test"
-	if u := os.Getenv("SERVER_URL"); u != "" {
-		serverURL = u
-	}
+	fmt.Println(token.AccessToken)
 
-	header := map[string][]string{"Authorization": {token.AccessToken}}
-	c, _, err := websocket.DefaultDialer.Dial(serverURL, header)
 	fmt.Println("Nhap nguoi gui : ")
 	senderReader := bufio.NewReader(os.Stdin)
 	senderInput, _ := senderReader.ReadString('\n')
@@ -78,6 +73,15 @@ func main() {
 	receivererReader := bufio.NewReader(os.Stdin)
 	receivererInput, _ := receivererReader.ReadString('\n')
 	receivererInput = receivererInput[:len(receivererInput)-1]
+
+	//var serverURL = "ws://d13d49e1b660.ngrok.io/test"
+	var serverURL = "ws://localhost:5000/test"
+	if u := os.Getenv("SERVER_URL"); u != "" {
+		serverURL = u
+	}
+
+	header := map[string][]string{"Authorization": {"Bearer " + token.AccessToken}}
+	c, _, err := websocket.DefaultDialer.Dial(serverURL, header)
 	if err != nil {
 		log.Fatal("dial:", err)
 	}
