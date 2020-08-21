@@ -56,7 +56,19 @@ func main() {
 	//		log.Fatal(err)
 	//	}
 	//}
-	c, _, err := websocket.DefaultDialer.Dial("ws://localhost:5000/test", nil)
+
+	token, err := login()
+	if err != nil {
+		panic(err)
+	}
+
+	var serverURL = "ws://localhost:5000/test"
+	if u := os.Getenv("SERVER_URL"); u != "" {
+		serverURL = u
+	}
+
+	header := map[string][]string{"Authorization": {token.AccessToken}}
+	c, _, err := websocket.DefaultDialer.Dial(serverURL, header)
 	fmt.Println("Nhap nguoi gui : ")
 	senderReader := bufio.NewReader(os.Stdin)
 	senderInput, _ := senderReader.ReadString('\n')
