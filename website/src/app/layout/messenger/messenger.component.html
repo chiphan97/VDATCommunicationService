@@ -1,70 +1,12 @@
 <nz-layout class="layout">
-  <nz-sider>
-    <div class="logo"></div>
-    <ul nz-menu nzTheme="dark" nzMode="inline">
-      <li nz-menu-item>
-        <i nz-icon nzType="file"></i>
-        <span>nav 1</span>
-      </li>
-      <li nz-menu-item>
-        <i nz-icon nzType="video-camera"></i>
-        <span>nav 2</span>
-      </li>
-      <li nz-menu-item>
-        <i nz-icon nzType="upload"></i>
-        <span>nav 3</span>
-      </li>
-      <li nz-menu-item>
-        <i nz-icon nzType="bar-chart"></i>
-        <span>nav 4</span>
-      </li>
-      <li nz-menu-item>
-        <i nz-icon nzType="cloud-o"></i>
-        <span>nav 5</span>
-      </li>
-      <li nz-menu-item>
-        <i nz-icon nzType="appstore-o"></i>
-        <span>nav 6</span>
-      </li>
-      <li nz-menu-item>
-        <i nz-icon nzType="team"></i>
-        <span>nav 7</span>
-      </li>
-      <li nz-menu-item>
-        <i nz-icon nzType="shop"></i>
-        <span>nav 8</span>
-      </li>
-    </ul>
-  </nz-sider>
-  <nz-layout class="right-layout">
-    <nz-affix>
-      <nz-header style="border-bottom: 1px solid gray"></nz-header>
-    </nz-affix>
+  <nz-affix>
+    <nz-header style="border-bottom: 1px solid gray">
+      <h3 style="color: white">Chat Example</h3>
+    </nz-header>
+  </nz-affix>
+  <nz-layout>
     <nz-content>
-      <div id="wrapper-chat">
-        <div class="inner-content">
-          ...
-          <br />
-          Really
-          <br />...<br />...<br />...<br />
-          long
-          <br />...<br />...<br />...<br />...<br />...<br />... <br />...<br />...<br />...<br />...<br />...<br />...
-          <br />...<br />...<br />...<br />...<br />...<br />... <br />...<br />...<br />...<br />...<br />...<br />...
-          <br />...<br />...<br />...<br />...<br />...<br />... <br />...<br />...<br />...<br />...<br />...<br />...
-          <br />...<br />...<br />...<br />...<br />...<br />
-          content
-        </div>
-      </div>
-
-      <form nz-form [nzLayout]="'inline'">
-        <nz-form-item>
-          <nz-form-control nzErrorTip="Please input message">
-            <nz-input-group>
-              <input nz-input placeholder="Message ..." nzSize="large" />
-            </nz-input-group>
-          </nz-form-control>
-        </nz-form-item>
-      </form>
+      <app-chat></app-chat>
     </nz-content>
   </nz-layout>
 </nz-layout>

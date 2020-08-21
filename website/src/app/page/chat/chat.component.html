@@ -1,1 +1,32 @@
-<p>chat works!</p>
+<nz-row>
+  <nz-col nzSpan="5">
+    <app-list-user-chat></app-list-user-chat>
+  </nz-col>
+  <nz-col nzSpan="19" style="height: 90vh">
+    <nz-card>
+      <div id="content-chat">
+        <nz-list nzItemLayout="horizontal">
+          <nz-list-item *ngFor="let message of messages">
+            <nz-list-item-meta
+              nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+              [nzTitle]="message.from"
+              [nzDescription]="message.body">
+            </nz-list-item-meta>
+          </nz-list-item>
+          <nz-list-empty *ngIf="messages.length === 0" [nzNoResult]="'Không có tin nhắn mới'"></nz-list-empty>
+        </nz-list>
+      </div>
+      <div id="message-input">
+        <form nz-form>
+          <nz-input-group nzSearch nzSize="default" [nzAddOnAfter]="suffixButton">
+            <input type="text" nz-input placeholder="input message text" [(ngModel)]="messageContent"
+                   [ngModelOptions]="{standalone: true}"/>
+          </nz-input-group>
+          <ng-template #suffixButton>
+            <button nz-button nzType="primary" nzSize="default" nzSearch (click)="send()">Send</button>
+          </ng-template>
+        </form>
+      </div>
+    </nz-card>
+  </nz-col>
+</nz-row>

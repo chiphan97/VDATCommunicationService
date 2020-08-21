@@ -10,7 +10,7 @@ import {
   NzFormModule,
   NzIconModule,
   NzInputModule,
-  NzLayoutModule,
+  NzLayoutModule, NzListModule,
   NzMenuModule
 } from 'ng-zorro-antd';
 import {SharedModule} from '../../shared/shared.module';
@@ -31,7 +31,8 @@ import {UserModule} from '../../component/user/user.module';
     NzAffixModule,
     NzFormModule,
     NzInputModule,
-    NzButtonModule
+    NzButtonModule,
+    NzListModule
   ]
 })
 export class MessengerModule {

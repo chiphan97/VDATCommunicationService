@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ListUserChatComponent } from './list-user-chat/list-user-chat.component';
-import {NzIconModule, NzMenuModule} from 'ng-zorro-antd';
+import {NzDividerModule, NzGridModule, NzIconModule, NzListModule, NzMenuModule} from 'ng-zorro-antd';
 import {NzTransitionPatchModule} from 'ng-zorro-antd/core/transition-patch/transition-patch.module';
 
 
@@ -14,7 +14,10 @@ import {NzTransitionPatchModule} from 'ng-zorro-antd/core/transition-patch/trans
   imports: [
     CommonModule,
     NzMenuModule,
-    NzIconModule
+    NzIconModule,
+    NzListModule,
+    NzGridModule,
+    NzDividerModule
   ]
 })
 export class UserModule { }

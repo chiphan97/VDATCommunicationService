@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import {NzGridModule, NzIconModule} from 'ng-zorro-antd';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
+import {SocketService} from './service/socket.service';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,7 @@ import {HttpClientModule} from '@angular/common/http';
     AppRouting,
     NzGridModule
   ],
-  providers: [],
+  providers: [SocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

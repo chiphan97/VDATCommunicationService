@@ -60,11 +60,13 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.ServeFile(w, r, "index.html")
+
 }
 
 func main() {
 	database.Connect()
-	http.HandleFunc("/", serveHome)
+	http.Handle("/", http.FileServer(http.Dir("./website/dist/website")))
+	//http.HandleFunc("/", serveHome)
 	http.Handle("/echo", websocket.Handler(echoHandler))
 	http.HandleFunc("/test", service.TestHandler)
 	//http.Handle("/", http.FileServer(http.Dir(".")))
