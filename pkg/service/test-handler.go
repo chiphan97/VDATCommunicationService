@@ -38,9 +38,9 @@ var upgrader = websocket.Upgrader{
 }
 
 type Message struct {
-	To string	`json:"to"`
-	From string `json:"from"`
-	Body string	`json:"body"`
+	To     string `json:"to"`
+	From   string `json:"from"`
+	Body   string `json:"body"`
 	status string
 }
 
@@ -65,8 +65,8 @@ type TestBroker struct {
 
 func newbroker() *TestBroker {
 	return &TestBroker{
-		inbound:  	make(chan Message),
-		outbound:  	make(chan Message),
+		inbound:    make(chan Message),
+		outbound:   make(chan Message),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
@@ -108,7 +108,6 @@ func (b *TestBroker) run() {
 
 			b.messageRepository = append(b.messageRepository, &message)
 			fmt.Printf("%+v, %d\n", message, len(b.messageRepository))
-
 
 		case message := <-b.outbound:
 			fmt.Println("send")
@@ -216,8 +215,8 @@ func (c *Client) writePump() {
 func TestHandler(w http.ResponseWriter, r *http.Request) {
 	if broker == nil {
 		broker = &TestBroker{
-			inbound:  	make(chan Message),
-			outbound:  	make(chan Message),
+			inbound:    make(chan Message),
+			outbound:   make(chan Message),
 			register:   make(chan *Client),
 			unregister: make(chan *Client),
 			clients:    make(map[*Client]bool),

@@ -56,7 +56,7 @@ func main() {
 	//		log.Fatal(err)
 	//	}
 	//}
-	c, _, err := websocket.DefaultDialer.Dial("ws://localhost:5000/ws", nil)
+	c, _, err := websocket.DefaultDialer.Dial("ws://localhost:5000/test", nil)
 	fmt.Println("Nhap nguoi gui : ")
 	senderReader := bufio.NewReader(os.Stdin)
 	senderInput, _ := senderReader.ReadString('\n')
