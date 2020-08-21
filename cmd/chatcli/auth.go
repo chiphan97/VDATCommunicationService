@@ -61,7 +61,7 @@ func login() (*oauth2.Token, error) {
 	var (
 		authServerUrl		= "https://accounts.vdatlab.com/auth/realms/vdatlab.com"
 		clientID			= "chat.services.vdatlab.com"
-		redirectURL			= "http://127.0.0.1:8080/auth/callback"
+		redirectURL			= "http://127.0.0.1:12345/auth/callback"
 		token				*oauth2.Token
 	)
 
