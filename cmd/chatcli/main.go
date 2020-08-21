@@ -71,7 +71,7 @@ func main() {
 	//receivererInput, _ := receivererReader.ReadString('\n')
 	//receivererInput = receivererInput[:len(receivererInput)-1]
 
-	//var serverURL = "ws://d13d49e1b660.ngrok.io/test"
+	//var serverURL = "ws://f8b423a4e609.ngrok.io/test"
 	var serverURL = "ws://localhost:5000/test"
 	if u := os.Getenv("SERVER_URL"); u != "" {
 		serverURL = u
