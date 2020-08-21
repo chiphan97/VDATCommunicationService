@@ -57,7 +57,7 @@
 <div id="log"></div>
 
 <form id="form">
-    <input type="text" id="msg" size="64" autofocus/></br>
+    <input type="text" id="msg" size="64"/>
     <input type="text" id="msg" size="64" autofocus/>
     <input type="submit" value="Send"/>
 </form>
@@ -92,7 +92,7 @@
         };
 
         if (window["WebSocket"]) {
-            conn = new WebSocket("ws://" + document.location.host + "/test?userID=web", ["Authorization", "Bearer" + token]);
+            conn = new WebSocket("wss://" + "vdat-mcsvc-chat.vdatlab.com" + "/test?token=" + token);
             conn.onclose = function (evt) {
                 var item = document.createElement("div");
                 item.innerHTML = "<b>Connection closed.</b>";
