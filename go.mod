@@ -1,6 +1,6 @@
 module gitlab.com/vdat/mcsvc/chat
 
-go 1.13
+go 1.14
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -11,6 +11,13 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/openzipkin/zipkin-go v0.2.3
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
-	golang.org/x/net v0.0.0-20200813134508-3edf25e44fcc
+	gitlab.com/vdat/mcsvc/sidm v0.3.1-0.20200823171658-3eccbf1e6e4f
+	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
+	golang.org/x/net v0.0.0-20200822124328-c89045814202
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
+	golang.org/x/sys v0.0.0-20200821140526-fda516888d29 // indirect
+	golang.org/x/text v0.3.3 // indirect
+	google.golang.org/appengine v1.6.6 // indirect
+	google.golang.org/genproto v0.0.0-20200815001618-f69a88009b70 // indirect
+	google.golang.org/grpc v1.31.0 // indirect
 )
