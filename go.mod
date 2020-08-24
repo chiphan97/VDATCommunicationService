@@ -12,7 +12,6 @@ require (
 	github.com/openzipkin/zipkin-go v0.2.3
 	github.com/prometheus/client_golang v1.3.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
-	gitlab.com/vdat/mcsvc/sidm v0.3.1-0.20200823171658-3eccbf1e6e4f
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
 	golang.org/x/net v0.0.0-20200822124328-c89045814202
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
