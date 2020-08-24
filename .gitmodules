@@ -1,3 +1,0 @@
-[submodule "vendor/gitlab.com/vdat/mcsvc/sidm"]
-	path = vendor/gitlab.com/vdat/mcsvc/sidm
-	url = ../sidm
