@@ -68,6 +68,8 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 func main() {
 	go metrics()
 
+	fmt.Println("starting")
+
 	database.Connect()
 	http.HandleFunc("/", serveHome)
 	http.Handle("/echo", websocket.Handler(echoHandler))
