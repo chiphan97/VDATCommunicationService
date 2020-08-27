@@ -1,20 +1,20 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 
-import { AppRouting } from './app.routing';
-import { AppComponent } from './app.component';
+import {AppRouting} from './app.routing';
+import {AppComponent} from './app.component';
 import {NzGridModule, NzIconModule} from 'ng-zorro-antd';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http';
 import {SocketService} from './service/socket.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
-    NoopAnimationsModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     NzIconModule,
     AppRouting,
@@ -23,4 +23,5 @@ import {SocketService} from './service/socket.service';
   providers: [SocketService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

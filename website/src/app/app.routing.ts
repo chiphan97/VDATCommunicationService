@@ -5,7 +5,7 @@ import {Routes, RouterModule} from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./layout/messenger/messenger.module').then(m => m.MessengerModule),
+    loadChildren: () => import('./layout/auth/auth.module').then(m => m.AuthModule),
     pathMatch: 'full'
   }
 ];

@@ -1,17 +1,16 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {ChatComponent} from '../../page/chat/chat.component';
-import {MessengerComponent} from './messenger.component';
-
+import {AuthComponent} from './auth.component';
+import {MessengerComponent} from '../../page/messenger/messenger.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: MessengerComponent,
+    component: AuthComponent,
     children: [
       {
         path: '',
-        component: ChatComponent
+        component: MessengerComponent
       }
     ]
   }
@@ -21,5 +20,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class MessengerRouting {
+export class AuthRouting {
 }

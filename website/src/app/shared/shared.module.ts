@@ -8,9 +8,10 @@ import {NzLayoutModule} from 'ng-zorro-antd';
 
 @NgModule({
   declarations: [NavBarComponent, FooterComponent],
-  exports: [
-    FooterComponent
-  ],
+    exports: [
+        FooterComponent,
+        NavBarComponent
+    ],
   imports: [
     CommonModule,
     NzLayoutModule

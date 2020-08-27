@@ -1,0 +1,14 @@
+<div nz-row>
+  <div nz-col nz-resizable
+       (nzResize)="onResize($event)"
+       [nzMinColumn]="5"
+       [nzMaxColumn]="8"
+       [nzGridColumnCount]="24"
+       [nzSpan]="col">
+    <nz-resize-handles [nzDirections]="['right']"></nz-resize-handles>
+    <app-messenger-sidebar></app-messenger-sidebar>
+  </div>
+  <div class="col right" nz-col [nzSpan]="24 - col">
+    <app-messenger-content></app-messenger-content>
+  </div>
+</div>

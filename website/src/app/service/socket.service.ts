@@ -1,7 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 
 import * as socketIo from 'socket.io-client';
-import {MessageModel} from '../model/message.model';
 import {Observable} from 'rxjs';
 import {Event} from '../const/event';
 import {environment} from '../../environments/environment';
@@ -25,7 +24,7 @@ export class SocketService {
       this.listener.emit({type: 'close', data: event});
     };
     this.socket.onmessage = event => {
-      const message: MessageModel = JSON.parse(event.data);
+      const message = JSON.parse(event.data);
       this.listener.emit({type: 'message', data: message});
     };
   }
