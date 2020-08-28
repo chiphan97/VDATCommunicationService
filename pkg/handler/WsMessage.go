@@ -1,8 +1,8 @@
 package handler
 
 type WsMessage struct {
-	From   string
-	To     []string
-	Body   interface{}
+	From   string      `json:"from"`
+	To     []string    `json:"to"`
+	Body   interface{} `json:"body"`
 	Status string
 }

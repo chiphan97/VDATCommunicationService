@@ -73,7 +73,7 @@ func main() {
 
 	//var serverURL = "ws://f8b423a4e609.ngrok.io/test"
 	//var serverURL = "ws://localhost:5000/test"
-	var serverURL = "ws://localhost:5000/test"
+	var serverURL = "ws://localhost:5000/user-online"
 	if u := os.Getenv("SERVER_URL"); u != "" {
 		serverURL = u
 	}

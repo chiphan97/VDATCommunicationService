@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	_ "bytes"
 	"encoding/json"
 	"fmt"
@@ -75,7 +76,31 @@ func (broker *WsBroker) run() {
 
 	}
 }
+func (client *WsClient) readPump() {
+	defer func() {
+		client.Broker.Unregister <- client
+		client.Conn.Close()
+	}()
+	client.Conn.SetReadLimit(MaxMessageSize)
+	client.Conn.SetReadDeadline(time.Now().Add(PongWait))
+	client.Conn.SetPongHandler(func(string) error { client.Conn.SetReadDeadline(time.Now().Add(PongWait)); return nil })
+	for {
+		_, message, err := client.Conn.ReadMessage()
+		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("error: %v", err)
+			}
+			break
+		}
+		message = bytes.TrimSpace(bytes.Replace(message, Newline, Space, -1))
 
+		var messageJSON WsMessage
+		_ = json.Unmarshal(message, &messageJSON)
+		messageJSON.From = client.User.UserID
+
+		client.Broker.Inbound <- messageJSON
+	}
+}
 func (client *WsClient) checkUserOnlinePump() {
 	defer func() {
 		client.Broker.Unregister <- client
@@ -98,7 +123,7 @@ func (client *WsClient) checkUserOnlinePump() {
 }
 
 func (client *WsClient) writePump() {
-	ticker := time.NewTicker(pingPeriod)
+	ticker := time.NewTicker(PingPeriod)
 
 	defer func() {
 		ticker.Stop()
@@ -108,7 +133,7 @@ func (client *WsClient) writePump() {
 	for {
 		select {
 		case message, ok := <-client.Send:
-			_ = client.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+			_ = client.Conn.SetWriteDeadline(time.Now().Add(WriteWait))
 			if !ok {
 				// The broker closed the channel.
 				_ = client.Conn.WriteMessage(websocket.CloseMessage, []byte{})
@@ -124,7 +149,7 @@ func (client *WsClient) writePump() {
 			// Add queued chat messages to the current websocket message.
 			n := len(client.Send)
 			for i := 0; i < n; i++ {
-				_, _ = w.Write(newline)
+				_, _ = w.Write(Newline)
 				_, _ = w.Write(<-client.Send)
 			}
 
@@ -132,7 +157,7 @@ func (client *WsClient) writePump() {
 				return
 			}
 		case <-ticker.C:
-			_ = client.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+			_ = client.Conn.SetWriteDeadline(time.Now().Add(WriteWait))
 			if err := client.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}
@@ -205,14 +230,14 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 		go userOnlineBroker.run()
 	}
 
-	conn, err := upgrader.Upgrade(w, r, nil)
+	conn, err := WsUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	user := model.UserOnline{
-		HostName: r.URL.Host,
+		HostName: r.URL.Path,
 		SocketID: claims.Subject,
 		UserID:   claims.Subject,
 		Username: claims.UserName,
@@ -226,5 +251,6 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()
+	go client.readPump()
 	go client.checkUserOnlinePump()
 }

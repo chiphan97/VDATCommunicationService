@@ -14,7 +14,7 @@ const (
 	PongWait = 60 * time.Second
 
 	// Send pings to peer with this period. Must be less than pongWait.
-	PingPeriod = (pongWait * 9) / 10
+	PingPeriod = (PongWait * 9) / 10
 
 	// Maximum message size allowed from peer.
 	MaxMessageSize = 512
