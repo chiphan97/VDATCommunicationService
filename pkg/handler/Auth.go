@@ -1,0 +1,55 @@
+package handler
+
+import (
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"github.com/dgrijalva/jwt-go"
+	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
+	"net/http"
+	"strings"
+)
+
+var Jwtkey = (`-----BEGIN CERTIFICATE-----
+MIICpTCCAY0CBgFrPLdvYjANBgkqhkiG9w0BAQsFADAWMRQwEgYDVQQDDAt2ZGF0bGFiLmNvbTAeFw0xOTA2MDkxNDQ4MDNaFw0yOTA2MDkxNDQ5NDNaMBYxFDASBgNVBAMMC3ZkYXRsYWIuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAleIkHoO6Q0GRQ4POIAKmN5Ev3zfAm8raTJQ1e/CbTXW4FQ0kDS9YPhLXPwcdnbxiL3rSGgz7+iWcq/Ix7yExuNbSyqDUjLUJSU6I9JvB1YP8GSaO8d996+TVCDC8E/VSID6wmfWbMNb5Ns6Y7YY/HAhj9zc73ObErvi0NV0BjeYAVOBqJKKgl9cHfyBshr+kpC/7nrbTRnAP7JQhKrQF6wBTKQiuJlEyYqvi1ugCRBYg2BZLPtTry+Kineb1DT8ynmxJjKMtr9hU0dsLPJpqW/4DWwNOarLOBP/K9WkfR2LUxbrm41goSTjJbz6s7f/Mvn/gDLjGjIsdlFP3Y7I2lwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBXU5Awwhv/cYJKCdSUzmtXpXty8KrdrHaDNa8potDXlEc2JrK3wHyFRwwfpBhkaicP0LllxRHUGUNsWFnggae1fudc75fysZ16NPH7VJlUuyV96K06K4v1aM5VCSWl5djky7rtyfi2W9iH2ddWZvCeSyFsSgCD4P5GjgYpsLy27g/cvdJJAdp/b7bweVDI1grlBtnInxLUPhJ4cnoNw3crh7twqKgG6F3GmZc2Hjl45LdlxBFfftDUYH66D1X0mdoipQCbg4JWlIxUZHVjJDIrSIlwnRMwjzCm7MUYv0ySmvsxgoNVI2NuFU6A/F7zlyVkDkmO4ilp4BueRtBKb7yR
+-----END CERTIFICATE-----`)
+
+func AuthenMiddleJWT(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		tokenHeader := r.Header.Get("Authorization")
+
+		if tokenHeader == "" {
+			utils.ResponseErr(w, http.StatusUnauthorized)
+
+		}
+		if ValiToken(tokenHeader) {
+			next.ServeHTTP(w, r)
+		}
+	}
+
+}
+func ValiToken(tokenHeader string) bool {
+	splitted := strings.Split(tokenHeader, " ") // Bearer jwt_token
+	if len(splitted) != 2 {
+		return false
+	}
+	tokenPart := splitted[1]
+
+	block, _ := pem.Decode([]byte(Jwtkey))
+	var cert *x509.Certificate
+	cert, _ = x509.ParseCertificate(block.Bytes)
+	rsaPublicKey := cert.PublicKey.(*rsa.PublicKey)
+	tk := &jwt.StandardClaims{}
+	token, err1 := jwt.ParseWithClaims(tokenPart, tk, func(token *jwt.Token) (interface{}, error) {
+		return rsaPublicKey, nil
+	})
+	if err1 != nil {
+		return false
+	}
+	if token.Valid {
+		return true
+	} else {
+		return false
+	}
+}

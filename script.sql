@@ -2,9 +2,9 @@ CREATE DATABASE dchat;
 
 CREATE TABLE Groups(
     id_group serial ,
-    sub_user_create varchar(100) NOT NULL,
-    name_group varchar(100),
-    type_group varchar(10) NOT NULL,
+    owner_id varchar(100) NOT NULL,
+    name varchar(100),
+    type varchar(10) NOT NULL,
     created_at timestamp not null default now(),
     updated_at timestamp not null default now(),
     deleted_at timestamp,
@@ -12,19 +12,16 @@ CREATE TABLE Groups(
 );
 
 CREATE TABLE Groups_Users(
-    id_group serial ,
-    sub_user_join varchar(100),
-    last_deleted_messages timestamp not null default now(),
+    id_group serial,
+    user_id varchar(100),
     join_at timestamp not null default now(),
-    out_at timestamp,
-    PRIMARY KEY (id_group,sub_user_join),
+    PRIMARY KEY (id_group,user_id),
     CONSTRAINT FK_Groups_Groups_Users FOREIGN KEY (id_group) REFERENCES Groups (id_group)
-
 );
 
 CREATE TABLE Messages(
     id_mess serial,
-    subject_sender varchar(100) ,
+    user_sender varchar(100) ,
     content text,
     id_group serial NOT NULL ,
     created_at timestamp not null default now(),
@@ -36,8 +33,18 @@ CREATE TABLE Messages(
 
 CREATE TABLE Messages_Delete(
     id_mess serial,
-    sub_user_deleted varchar(100),
-    created_at timestamp not null default now(),
-    PRIMARY KEY (id_mess,sub_user_deleted),
+    user_deleted varchar(100),
+    PRIMARY KEY (id_mess,user_deleted),
     CONSTRAINT FK_Messages_Messages_Delete FOREIGN KEY (id_mess) REFERENCES Messages (id_mess)
+);
+
+CREATE TABLE ONLINE(
+    hostname varchar(100),
+    socket_id varchar(100),
+    user_id varchar(100),
+    username varchar(100),
+    first varchar(100),
+    last varchar(100),
+    log_at timestamp not null default now(),
+    PRIMARY KEY (hostname,socket_id)
 );

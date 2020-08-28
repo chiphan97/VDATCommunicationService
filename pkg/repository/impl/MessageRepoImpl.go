@@ -61,7 +61,7 @@ func (mess *MessageRepoImpl) UpdateMessageByChatBox(idChatBox int) error {
 	return err
 }
 func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]model.Messages, error) {
-	var messages []model.Messages
+	messages := make([]model.Messages, 0)
 	statement := `SELECT m.id_mess,m.subject_sender,m.content,m.created_at,m.updated_at,m.deleted_at,m.id_group
 					FROM (SELECT * FROM dchat.public.messages WHERE id_group = $1) AS m
 					LEFT JOIN Messages_Delete AS md
