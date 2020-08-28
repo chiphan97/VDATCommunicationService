@@ -8,4 +8,5 @@ type MessageRepo interface {
 	GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error)
 	UpdateMessageByChatBox(idChatBox int) error
 	//DeleteMessageById(idMesssage int) error
+	GetMessagesByGroupAndUser(idGroup int, subUser string) ([]model.Messages, error)
 }

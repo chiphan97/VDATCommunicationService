@@ -99,8 +99,11 @@ fabric.properties
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-
 .idea/chat.iml
 .idea/inspectionProfiles/
 .idea/modules.xml
 .idea/vcs.xml
+
+.idea/dataSources.xml
+.idea/sqldialects.xml
+test.sql
