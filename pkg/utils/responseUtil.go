@@ -17,6 +17,13 @@ func ResponseWithByte(v interface{}) []byte {
 	return reqBodyBytes.Bytes()
 }
 
+func ResponseWithJSON(response http.ResponseWriter, statusCode int, data interface{}) {
+	result, _ := json.Marshal(data)
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(statusCode)
+	_, _ = response.Write(result)
+}
+
 func ResponseErr(w http.ResponseWriter, statusCode int) {
 	jData, err := json.Marshal(Error{
 		Status:  statusCode,

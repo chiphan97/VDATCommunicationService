@@ -1,5 +1,12 @@
-<nz-row>
-  <nz-col>
-    <h3 style="color: white">VDAT Messenger</h3>
+<nz-row class="container">
+  <nz-col nzSpan="8">
+    <h3>VDAT Messenger</h3>
+  </nz-col>
+
+  <nz-col style="text-align: right" nzSpan="8" nzOffset="8">
+    <button nz-button nzType="dashed" [nzGhost]="true" (click)="onOpenMessengerDrawer()">
+      <i nz-icon nzType="user" nzTheme="outline"></i>
+      Người dùng online
+    </button>
   </nz-col>
 </nz-row>

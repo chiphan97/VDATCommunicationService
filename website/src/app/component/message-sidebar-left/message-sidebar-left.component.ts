@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import {Group} from '../../model/group.model';
 
 @Component({
-  selector: 'app-messenger-sidebar',
-  templateUrl: './messenger-sidebar.component.html',
-  styleUrls: ['./messenger-sidebar.component.sass']
+  selector: 'app-message-sidebar-left',
+  templateUrl: './message-sidebar-left.component.html',
+  styleUrls: ['./message-sidebar-left.component.sass']
 })
-export class MessengerSidebarComponent implements OnInit {
+export class MessageSidebarLeftComponent implements OnInit {
   loading = false;
 
   public groups: Array<Group>;

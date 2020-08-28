@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MessengerSidebarComponent } from './messenger-sidebar.component';
+import { MessageSidebarLeftComponent } from './message-sidebar-left.component';
 
-describe('MessengerSidebarComponent', () => {
-  let component: MessengerSidebarComponent;
-  let fixture: ComponentFixture<MessengerSidebarComponent>;
+describe('MessageSidebarLeftComponent', () => {
+  let component: MessageSidebarLeftComponent;
+  let fixture: ComponentFixture<MessageSidebarLeftComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MessengerSidebarComponent ]
+      declarations: [ MessageSidebarLeftComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MessengerSidebarComponent);
+    fixture = TestBed.createComponent(MessageSidebarLeftComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

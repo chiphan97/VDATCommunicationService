@@ -1,14 +1,10 @@
 import {EventEmitter, Injectable} from '@angular/core';
-
-import * as socketIo from 'socket.io-client';
-import {Observable} from 'rxjs';
-import {Event} from '../const/event';
 import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService {
+export class UserOnlineService {
   private socket: WebSocket;
   private listener: EventEmitter<any> = new EventEmitter();
 
@@ -16,7 +12,7 @@ export class SocketService {
   }
 
   public initWebSocket(accessToken: string) {
-    this.socket = new WebSocket(`${environment.WEBSOCKET_URL}/test?token=${accessToken}`);
+    this.socket = new WebSocket(`${environment.WEBSOCKET_URL}/user-online?token=${accessToken}`);
     this.socket.onopen = event => {
       this.listener.emit({type: 'open', data: event});
     };
@@ -25,6 +21,7 @@ export class SocketService {
     };
     this.socket.onmessage = event => {
       const message = JSON.parse(event.data);
+      console.log(message);
       this.listener.emit({type: 'message', data: message});
     };
   }

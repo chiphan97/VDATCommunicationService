@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  WEBSOCKET_URL: 'ws://localhost:5000/test'
+  WEBSOCKET_URL: 'ws://localhost:5000'
 };
 
 /*

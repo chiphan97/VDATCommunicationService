@@ -1,31 +1,31 @@
 <nz-row>
+  <nz-col nzSpan="24" class="message-sidebar-header">
+    <nz-row>
+      <nz-col nzSpan="24">
+        <form nz-form>
+          <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="default">
+            <input type="text" nz-input placeholder="Tìm kiếm người dùng ..."/>
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </form>
+      </nz-col>
+    </nz-row>
+  </nz-col>
+
   <nz-col nzSpan="24">
-    <nz-collapse [nzBordered]="false">
-      <nz-collapse-panel nzHeader="Thành viên"
-                         style="background-color: white; padding-left: 0"
-                         [nzActive]="memberCollapse">
-        <nz-list nzItemLayout="horizontal" [nzLoading]="loading">
-          <nz-list-item *ngFor="let item of data">
-            <nz-list-item-meta nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                               [nzTitle]="item.title">
-            </nz-list-item-meta>
-
-            <ul nz-list-item-actions>
-              <nz-list-item-action>
-                <a nz-button nzType="link" nzDanger>
-                  <i nz-icon nzType="user-delete" nzTheme="outline"></i>
-                </a>
-              </nz-list-item-action>
-            </ul>
-          </nz-list-item>
-
-          <nz-list-empty *ngIf="data.length === 0"></nz-list-empty>
-        </nz-list>
-      </nz-collapse-panel>
-    </nz-collapse>
-
-    <button nz-button nzType="dashed" nzBlock nzDanger (click)="onConfirmDelete()">
-      Xóa cuộc hội thoại
-    </button>
+    <div class="group-container">
+      <nz-list nzItemLayout="horizontal"
+               [nzLoading]="loading">
+        <nz-list-item *ngFor="let group of groups">
+          <nz-list-item-meta [nzAvatar]="group.thumbnail"
+                             [nzTitle]="group.title"
+                             [nzDescription]="group.lastMessage.content">
+          </nz-list-item-meta>
+        </nz-list-item>
+        <nz-list-empty *ngIf="groups.length === 0"></nz-list-empty>
+      </nz-list>
+    </div>
   </nz-col>
 </nz-row>

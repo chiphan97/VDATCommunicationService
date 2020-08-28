@@ -9,24 +9,10 @@ import {NzDrawerService} from 'ng-zorro-antd';
 })
 export class MessengerHeaderComponent implements OnInit {
 
-  constructor(private drawerService: NzDrawerService) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
 
-  onOpenMessengerDrawer() {
-    const drawerRef = this.drawerService.create<MessengerDrawerComponent>({
-      nzTitle: 'Tùy chọn',
-      nzContent: MessengerDrawerComponent,
-      nzWidth: '25vw'
-    });
 
-    drawerRef.afterOpen.subscribe(() => {
-      console.log('Drawer(Component) open');
-    });
-
-    drawerRef.afterClose.subscribe(data => {
-      console.log(data);
-    });
-  }
 }

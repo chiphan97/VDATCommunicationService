@@ -32,11 +32,12 @@ func main() {
 
 	http.HandleFunc("/", serveHome)
 	//http.HandleFunc("/test", service.TestHandler)
-	http.HandleFunc("/test", handler.TestHandler)
+	//http.HandleFunc("/test", handler.TestHandler)
+	http.HandleFunc("/user-online", handler.UserOnlineHandler)
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 
 	//useronline
-	http.HandleFunc("/users-online", handler.AuthenMiddleJWT(handler.UsersOnlineHandler))
+	//http.HandleFunc("/users-online", handler.AuthenMiddleJWT(handler.UsersOnlineHandler))
 
 	err := http.ListenAndServe(":5000", nil)
 	if err != nil {

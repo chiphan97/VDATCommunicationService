@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { FooterComponent } from './footer/footer.component';
-import {NzGridModule, NzLayoutModule} from 'ng-zorro-antd';
+import {NzButtonModule, NzGridModule, NzIconModule, NzLayoutModule} from 'ng-zorro-antd';
 
 
 
@@ -12,10 +12,12 @@ import {NzGridModule, NzLayoutModule} from 'ng-zorro-antd';
         FooterComponent,
         NavBarComponent
     ],
-    imports: [
-        CommonModule,
-        NzLayoutModule,
-        NzGridModule
-    ]
+  imports: [
+    CommonModule,
+    NzLayoutModule,
+    NzGridModule,
+    NzButtonModule,
+    NzIconModule
+  ]
 })
 export class SharedModule { }
