@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"github.com/dgrijalva/jwt-go"
+	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"net/http"
 	"strings"
@@ -52,4 +53,25 @@ func ValiToken(tokenHeader string) bool {
 	} else {
 		return false
 	}
+}
+func JWTparseOwner(tokenHeader string) string {
+	splitted := strings.Split(tokenHeader, " ") // Bearer jwt_token
+	if len(splitted) != 2 {
+		return ""
+	}
+
+	block, _ := pem.Decode([]byte(Jwtkey))
+	var cert *x509.Certificate
+	cert, _ = x509.ParseCertificate(block.Bytes)
+
+	rsaPublicKey := cert.PublicKey.(*rsa.PublicKey)
+	tokenPart := splitted[1]
+	tk := &model.UserClaims{}
+	_, err := jwt.ParseWithClaims(tokenPart, tk, func(token *jwt.Token) (interface{}, error) {
+		return rsaPublicKey, nil
+	})
+	if err != nil {
+		return ""
+	}
+	return tk.UserName
 }
