@@ -1,5 +1,6 @@
 package repository
 
 type GroupUserRepo interface {
-	GetListSubUserByGroup(idGourp int) ([]string, error)
+	GetListUserByGroup(idGourp int) ([]string, error)
+	AddGroupUser(users []string, idgroup int) error
 }

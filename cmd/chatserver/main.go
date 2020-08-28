@@ -39,6 +39,9 @@ func main() {
 	//useronline
 	//http.HandleFunc("/users-online", handler.AuthenMiddleJWT(handler.UsersOnlineHandler))
 
+	//api
+	handler.RegisterGroupApi()
+
 	err := http.ListenAndServe(":5000", nil)
 	if err != nil {
 		panic("Error: " + err.Error())
