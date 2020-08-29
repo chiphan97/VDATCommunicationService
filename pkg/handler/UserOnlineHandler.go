@@ -53,37 +53,32 @@ func (broker *WsBroker) run() {
 				close(client.Send)
 			}
 		case message := <-broker.Inbound:
-
 			broker.MessageRepository = append(broker.MessageRepository, &message)
 			fmt.Printf("%+v, %d\n", message, len(broker.MessageRepository))
-
 		case message := <-broker.Outbound:
 			fmt.Println("send")
 			for client := range broker.Clients {
-				for _, receiver := range message.To {
-					if client.User.UserID == receiver {
-						msg, _ := json.Marshal(message)
-						select {
-						case client.Send <- msg:
-						default:
-							close(client.Send)
-							delete(broker.Clients, client)
-						}
-					}
+				msg, _ := json.Marshal(message)
+				select {
+				case client.Send <- msg:
+				default:
+					close(client.Send)
+					delete(broker.Clients, client)
 				}
 			}
 		}
 
 	}
 }
+
 func (client *WsClient) readPump() {
 	defer func() {
 		client.Broker.Unregister <- client
-		client.Conn.Close()
+		_ = client.Conn.Close()
 	}()
 	client.Conn.SetReadLimit(MaxMessageSize)
-	client.Conn.SetReadDeadline(time.Now().Add(PongWait))
-	client.Conn.SetPongHandler(func(string) error { client.Conn.SetReadDeadline(time.Now().Add(PongWait)); return nil })
+	_ = client.Conn.SetReadDeadline(time.Now().Add(PongWait))
+	client.Conn.SetPongHandler(func(string) error { _ = client.Conn.SetReadDeadline(time.Now().Add(PongWait)); return nil })
 	for {
 		_, message, err := client.Conn.ReadMessage()
 		if err != nil {
@@ -101,6 +96,7 @@ func (client *WsClient) readPump() {
 		client.Broker.Inbound <- messageJSON
 	}
 }
+
 func (client *WsClient) checkUserOnlinePump() {
 	defer func() {
 		client.Broker.Unregister <- client
@@ -118,7 +114,7 @@ func (client *WsClient) checkUserOnlinePump() {
 		}
 
 		client.Broker.Inbound <- message
-		time.Sleep(5000 * time.Millisecond)
+		time.Sleep(10000 * time.Millisecond)
 	}
 }
 

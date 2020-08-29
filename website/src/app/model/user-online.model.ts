@@ -14,8 +14,10 @@ export class UserOnline {
   }
 
   public static fromJson(data: any): UserOnline {
-    const obj = JSON.parse(data);
-    console.log(obj);
-    return new UserOnline('', '', '', '');
+    return new UserOnline(
+      _.get(data, 'host_name', ''),
+      _.get(data, 'socket_id', ''),
+      _.get(data, 'id', ''),
+      _.get(data, 'username', ''));
   }
 }

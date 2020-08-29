@@ -18,7 +18,7 @@ export class NavBarComponent implements OnInit {
     const drawerRef = this.drawerService.create<MessengerDrawerComponent>({
       nzTitle: 'Danh sách người dùng online',
       nzContent: MessengerDrawerComponent,
-      nzWidth: '25vw'
+      nzWidth: '300px'
     });
 
     drawerRef.afterOpen.subscribe(() => {

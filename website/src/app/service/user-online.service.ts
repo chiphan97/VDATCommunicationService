@@ -1,5 +1,7 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
+import * as _ from 'lodash';
+import {UserOnline} from '../model/user-online.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +23,10 @@ export class UserOnlineService {
     };
     this.socket.onmessage = event => {
       const message = JSON.parse(event.data);
-      console.log(message);
-      this.listener.emit({type: 'message', data: message});
+      const body = _.get(message, 'body', {});
+
+      const users = _.map(body, item => UserOnline.fromJson(item));
+      this.listener.emit({type: 'online', data: users});
     };
   }
 
