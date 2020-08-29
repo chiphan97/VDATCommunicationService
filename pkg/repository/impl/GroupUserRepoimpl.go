@@ -12,7 +12,7 @@ type GroupUserRepoImpl struct {
 func NewGroupUserRepoImpl(db *sql.DB) repository.GroupUserRepo {
 	return &GroupUserRepoImpl{Db: db}
 }
-func (groupuser *GroupUserRepoImpl) GetListSubUserByGroup(idGourp int) ([]string, error) {
+func (groupuser *GroupUserRepoImpl) GetListUserByGroup(idGourp int) ([]string, error) {
 	var subUsers []string
 	statement := `SELECT sub_user_join FROM Groups_Users 
 					WHERE id_group =$1`
@@ -29,4 +29,14 @@ func (groupuser *GroupUserRepoImpl) GetListSubUserByGroup(idGourp int) ([]string
 		subUsers = append(subUsers, subject)
 	}
 	return subUsers, nil
+}
+func (groupuser *GroupUserRepoImpl) AddGroupUser(users []string, idgroup int) error {
+	statement := `INSERT INTO Groups_Users (id_group, user_id)  VALUES ($1,$2)`
+	for _, user := range users {
+		_, err := groupuser.Db.Exec(statement, idgroup, user)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
