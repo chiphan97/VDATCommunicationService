@@ -13,6 +13,7 @@ export class MessageSidebarRightComponent implements OnInit {
   width = 256;
   id = -1;
   memberCollapse = true;
+  optionsCollapse = true;
 
   loading = false;
   data = [

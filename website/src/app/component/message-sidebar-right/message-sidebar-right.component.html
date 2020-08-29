@@ -1,34 +1,58 @@
-<nz-row class="container">
-  <nz-col nzSpan="24">
-    <nz-collapse [nzBordered]="false">
-      <nz-collapse-panel nzHeader="Thành viên"
-                         style="background-color: white; padding-left: 0"
-                         [nzActive]="memberCollapse">
-        <nz-list nzItemLayout="horizontal" [nzLoading]="loading">
-          <nz-list-item *ngFor="let item of data">
-            <nz-list-item-meta nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                               [nzTitle]="item.title">
-            </nz-list-item-meta>
+<div class="container">
+  <nz-row class="wrapper">
+    <nz-col nzSpan="24" class="text-center user-info">
+      <nz-avatar nzIcon="user" [nzSize]="128"
+                 style="background-color:#87d068;"></nz-avatar>
+      <h2 style="margin: 5px 0 0 0">Nhóm viêm gan B</h2>
+    </nz-col>
 
-            <ul nz-list-item-actions>
-              <nz-list-item-action>
-                <a nz-button nzType="link" nzDanger>
-                  <i nz-icon nzType="user-delete" nzTheme="outline"></i>
-                </a>
-              </nz-list-item-action>
-            </ul>
-          </nz-list-item>
+    <nz-col nzSpan="24">
+      <nz-collapse [nzBordered]="false" nzExpandIconPosition="right">
+        <nz-collapse-panel nzHeader="Thành viên"
+                           style="background-color: white; padding-left: 0"
+                           [nzActive]="memberCollapse">
+          <nz-list nzItemLayout="horizontal" [nzLoading]="loading">
+            <nz-list-item *ngFor="let item of data">
+              <nz-list-item-meta nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                                 [nzTitle]="item.title">
+              </nz-list-item-meta>
 
-          <nz-list-empty *ngIf="data.length === 0"></nz-list-empty>
-        </nz-list>
-      </nz-collapse-panel>
-    </nz-collapse>
-  </nz-col>
+              <ul nz-list-item-actions>
+                <nz-list-item-action>
+                  <a nz-button nzType="link" nzDanger>
+                    <i nz-icon nzType="user-delete" nzTheme="outline"></i>
+                  </a>
+                </nz-list-item-action>
+              </ul>
+            </nz-list-item>
 
-  <nz-col nzSpan="24" style="padding: 10px;">
-    <button nz-button nzType="dashed"
-            nzBlock nzDanger (click)="onConfirmDelete()">
-      Xóa cuộc hội thoại
-    </button>
-  </nz-col>
-</nz-row>
+            <nz-list-empty *ngIf="data.length === 0"></nz-list-empty>
+          </nz-list>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </nz-col>
+
+    <nz-col nzSpan="24">
+      <nz-collapse [nzBordered]="false" nzExpandIconPosition="right">
+        <nz-collapse-panel nzHeader="Tùy chọn"
+                           style="background-color: white; padding-left: 0"
+                           [nzActive]="optionsCollapse">
+          <nz-list nzItemLayout="vertical">
+            <a nz-button nzType="link" style="width: 100%">
+              <nz-list-item>
+                <span>Thêm thành viên</span>
+              </nz-list-item>
+            </a>
+
+            <a nz-button nzType="link" style="width: 100%"
+               (click)="onConfirmDelete()">
+              <nz-list-item>
+                <span nz-typography nzType="danger">Xóa hội thoại/ Rời khỏi nhóm</span>
+              </nz-list-item>
+            </a>
+          </nz-list>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </nz-col>
+  </nz-row>
+</div>

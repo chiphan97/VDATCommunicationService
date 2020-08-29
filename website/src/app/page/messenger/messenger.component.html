@@ -2,10 +2,18 @@
   <nz-col nzSpan="5">
     <app-message-sidebar-left></app-message-sidebar-left>
   </nz-col>
-  <nz-col nzSpan="14">
-    <app-messenger-content></app-messenger-content>
+  <nz-col [nzSpan]="collapseSidebar ? 14 : 19">
+    <nz-row>
+      <nz-col nzSpan="24">
+        <app-messenger-header [(collapseSidebar)]="collapseSidebar"></app-messenger-header>
+      </nz-col>
+      <nz-col nzSpan="24">
+        <app-messenger-content></app-messenger-content>
+      </nz-col>
+    </nz-row>
+
   </nz-col>
-  <nz-col nzSpan="5">
+  <nz-col [nzSpan]="collapseSidebar ? 5 : 0">
     <app-message-sidebar-right></app-message-sidebar-right>
   </nz-col>
 </nz-row>

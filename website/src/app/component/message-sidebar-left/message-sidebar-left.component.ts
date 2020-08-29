@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Group} from '../../model/group.model';
+import {NzModalService} from 'ng-zorro-antd';
+import {CreateNewGroupComponent} from '../create-new-group/create-new-group.component';
 
 @Component({
   selector: 'app-message-sidebar-left',
@@ -11,11 +13,20 @@ export class MessageSidebarLeftComponent implements OnInit {
 
   public groups: Array<Group>;
 
-  constructor() {
+  constructor(private modalService: NzModalService) {
     this.groups = this.fakeData();
   }
 
   ngOnInit(): void {
+  }
+
+  showModalCreateGroup(): void {
+    this.modalService.create({
+      nzTitle: 'Tạo nhóm mới',
+      nzContent: CreateNewGroupComponent,
+      nzOkText: 'Tạo nhóm',
+      nzCancelText: 'Hủy'
+    });
   }
 
   fakeData(): Array<Group> {

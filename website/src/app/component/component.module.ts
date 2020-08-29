@@ -4,14 +4,14 @@ import {MessengerContentComponent} from './messenger-content/messenger-content.c
 import {MessengerOptionComponent} from './messenger-option/messenger-option.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {
-  NzAffixModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzCollapseModule,
+  NzAffixModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzCheckboxModule, NzCollapseModule,
   NzCommentModule, NzDrawerModule, NzDropDownModule,
   NzFormModule,
   NzGridModule,
   NzIconModule,
   NzInputModule,
-  NzListModule, NzModalModule, NzPageHeaderModule, NzPopconfirmModule,
-  NzSkeletonModule, NzSwitchModule, NzToolTipModule
+  NzListModule, NzMentionModule, NzModalModule, NzPageHeaderModule, NzPopconfirmModule,
+  NzSkeletonModule, NzSwitchModule, NzToolTipModule, NzTypographyModule
 } from 'ng-zorro-antd';
 import { MessengerHeaderComponent } from './messenger-header/messenger-header.component';
 import { MessengerDrawerComponent } from './messenger-drawer/messenger-drawer.component';
@@ -20,14 +20,16 @@ import {FormsModule} from '@angular/forms';
 import {NzSpaceModule} from 'ng-zorro-antd/space';
 import { MessageSidebarLeftComponent } from './message-sidebar-left/message-sidebar-left.component';
 import { MessageSidebarRightComponent } from './message-sidebar-right/message-sidebar-right.component';
+import { CreateNewGroupComponent } from './create-new-group/create-new-group.component';
 
 
 @NgModule({
-  declarations: [MessengerContentComponent, MessengerOptionComponent, MessengerHeaderComponent, MessengerDrawerComponent, MessageSidebarLeftComponent, MessageSidebarRightComponent],
+  declarations: [MessengerContentComponent, MessengerOptionComponent, MessengerHeaderComponent, MessengerDrawerComponent, MessageSidebarLeftComponent, MessageSidebarRightComponent, CreateNewGroupComponent],
   exports: [
     MessengerContentComponent,
     MessageSidebarLeftComponent,
     MessageSidebarRightComponent,
+    MessengerHeaderComponent,
   ],
   imports: [
     CommonModule,
@@ -53,7 +55,11 @@ import { MessageSidebarRightComponent } from './message-sidebar-right/message-si
     NzSwitchModule,
     FormsModule,
     NzSpaceModule,
-    NzCollapseModule
+    NzCollapseModule,
+    NzTypographyModule,
+    NzModalModule,
+    NzMentionModule,
+    NzCheckboxModule
   ]
 })
 export class ComponentModule {

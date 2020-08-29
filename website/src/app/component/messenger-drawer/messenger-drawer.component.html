@@ -19,9 +19,9 @@
       <nz-list nzItemLayout="horizontal"
                [nzLoading]="loading">
         <nz-list-item *ngFor="let user of users">
-          <nz-list-item-meta [nzAvatar]="'U'"
+          <nz-list-item-meta [nzAvatar]="avatar"
                              [nzTitle]="user.fullName"
-                             [nzDescription]="'Hello !!!'">
+                             [nzDescription]="distanceDate(user.logAt)">
           </nz-list-item-meta>
         </nz-list-item>
         <nz-list-empty *ngIf="users.length === 0" [nzNoResult]="'Không có người dùng nào đang online'"></nz-list-empty>
@@ -29,3 +29,7 @@
     </div>
   </nz-col>
 </nz-row>
+
+<ng-template #avatar>
+  <nz-avatar nzIcon="user" style="background-color:#87d068;"></nz-avatar>
+</ng-template>

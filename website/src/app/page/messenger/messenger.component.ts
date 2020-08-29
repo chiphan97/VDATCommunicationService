@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NzResizeEvent} from 'ng-zorro-antd/resizable';
+import {UserOnlineService} from '../../service/user-online.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-messenger',
@@ -8,10 +10,18 @@ import {NzResizeEvent} from 'ng-zorro-antd/resizable';
 })
 export class MessengerComponent implements OnInit {
 
+  public collapseSidebar = true;
+
   public col = 5;
   id = -1;
 
-  constructor() {
+  constructor(private userOnlineService: UserOnlineService,
+              private route: ActivatedRoute) {
+    this.route.queryParams
+      .subscribe(params => {
+        const token  = params.token;
+        this.userOnlineService.initWebSocket(token);
+      });
   }
 
   ngOnInit(): void {
