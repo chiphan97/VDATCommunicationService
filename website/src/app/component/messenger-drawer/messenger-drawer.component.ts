@@ -18,10 +18,10 @@ import {ActivatedRoute} from '@angular/router';
 export class MessengerDrawerComponent implements OnInit {
   loading = false;
 
+  public keyword: string;
   public users: Array<UserOnline> = new Array<UserOnline>();
 
-  constructor(private userOnlineService: UserOnlineService,
-              private route: ActivatedRoute) {
+  constructor(private userOnlineService: UserOnlineService) {
     this.users = this.userOnlineService.getUsersOnline();
   }
 
@@ -30,5 +30,17 @@ export class MessengerDrawerComponent implements OnInit {
 
   distanceDate(date: Date): string {
     return formatDistanceToNow(date, {locale: vi});
+  }
+
+  public onSearchChange() {
+    if (this.keyword) {
+      const listUser = this.userOnlineService.getUsersOnline();
+      const listUserFilter = listUser.filter(user => {
+        return user.fullName.search(this.keyword);
+      });
+      this.users = listUserFilter;
+    } else {
+      this.users = this.userOnlineService.getUsersOnline();
+    }
   }
 }
