@@ -1,0 +1,40 @@
+<nz-row>
+  <nz-col nzSpan="24">
+    <form nz-form nzLayout="horizontal">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzFor="groupName">Tên nhóm</nz-form-label>
+        <nz-form-control [nzSpan]="19">
+          <input nz-input name="groupName" type="text" id="groupName">
+        </nz-form-control>
+      </nz-form-item >
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="5" nzFor="mention">Thành viên</nz-form-label>
+        <nz-form-control [nzSm]="19" nzErrorTip="More than one must be selected!">
+          <nz-mention #mentions [nzSuggestions]="suggestions"
+                      [nzLoading]="loading"
+                      (nzOnSearchChange)="onSearchChange($event)"
+                      [nzValueWith]="valueWith">
+            <textarea nz-input [nzAutosize]="{ minRows: 4, maxRows: 8 }"
+                      [ngModelOptions]="{standalone: true}"
+                      [(ngModel)]="inputValue" nzMentionTrigger></textarea>
+
+            <ng-container *nzMentionSuggestion="let user">
+              <nz-avatar nzSize="small" [nzText]="user.fullName" [nzSrc]="user.avatar"></nz-avatar>
+              <span nz-typography style="margin-left: 10px">{{ user.fullName }}</span>
+            </ng-container>
+          </nz-mention>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item nz-row>
+        <nz-form-control [nzSpan]="19" [nzOffset]="5"
+                         [(ngModel)]="isGroupPrivate" [ngModelOptions]="{standalone: true}">
+          <label nz-checkbox>
+            <span>Nhóm bí mật</span>
+          </label>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-col>
+</nz-row>

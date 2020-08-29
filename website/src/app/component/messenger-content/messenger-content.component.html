@@ -23,10 +23,6 @@
 </ng-template>
 
 <nz-row>
-  <nz-col nzSpan="24">
-    <app-messenger-header></app-messenger-header>
-  </nz-col>
-
   <nz-col class="message-container" nzSpan="24">
     <div class="message-content" *ngFor="let message of messages">
       <ng-template [ngTemplateOutlet]="messageTemplateRef"
