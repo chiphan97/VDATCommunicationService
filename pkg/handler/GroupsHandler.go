@@ -12,8 +12,8 @@ func RegisterGroupApi() {
 }
 func CreateGroupTypeOneApi(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		owner := r.URL.Query()["owner"][0]
 		user := r.URL.Query()["user"][0]
+		owner := JWTparseOwner(r.Header.Get("Authorization"))
 		groups, err := service.GetGroupByOwnerAndUserService(owner, user)
 		if err != nil {
 			utils.ResponseErr(w, http.StatusNotFound)

@@ -97,14 +97,15 @@ func (client *WsClient) readPump() {
 	}
 }
 
-func (client *WsClient) checkUserOnlinePump() {
+func (client *WsClient) checkUserOnlinePump(r *http.Request) {
 	defer func() {
 		client.Broker.Unregister <- client
 		_ = client.Conn.Close()
 	}()
-
+	userHide := r.Header.Get("Authorization")
 	for {
-		usersOnline, _ := service.GetListUSerOnlineService()
+
+		usersOnline, _ := service.GetListUSerOnlineService(userHide)
 
 		message := WsMessage{
 			From:   "VDAT-SERVICE",
@@ -248,5 +249,5 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 	// new goroutines.
 	go client.writePump()
 	go client.readPump()
-	go client.checkUserOnlinePump()
+	go client.checkUserOnlinePump(r)
 }

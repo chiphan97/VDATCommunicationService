@@ -13,9 +13,9 @@ type UserOnlineRepoImpl struct {
 func NewUserOnlineRepoImpl(db *sql.DB) repository.UserOnlineRepo {
 	return &UserOnlineRepoImpl{Db: db}
 }
-func (u *UserOnlineRepoImpl) GetListUSerOnline() ([]model.UserOnline, error) {
+func (u *UserOnlineRepoImpl) GetListUSerOnline(userHide string) ([]model.UserOnline, error) {
 	userOnlines := make([]model.UserOnline, 0)
-	statement := `SELECT * FROM ONLINE`
+	statement := `SELECT * FROM ONLINE WHERE user_id!=userHide`
 	rows, err := u.Db.Query(statement)
 	if err != nil {
 		return userOnlines, err
