@@ -2,9 +2,11 @@ package model
 
 type Groups struct {
 	AbstractModel
-	SubUserCreat string `json:"sub_user_create""`
-	NameGroup    string `json:"name_group"`
-	TypeGroup    string `json:"type_group"`
+	UserCreate string   `json:"user_create""`
+	NameGroup  string   `json:"name_group"`
+	TypeGroup  string   `json:"type_group"`
+	Private    bool     `json:"private"`
+	ListUser   []string `json:"list_user"`
 }
 
 const (

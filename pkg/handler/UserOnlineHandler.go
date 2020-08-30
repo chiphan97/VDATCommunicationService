@@ -2,9 +2,12 @@ package handler
 
 import (
 	_ "bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/model"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service"
+	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"log"
 	"net/http"
 	"strings"
@@ -101,4 +104,29 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 	go client.WritePump()
 	go client.ReadPump()
 
+}
+
+func RegisterUserOnline() {
+	http.HandleFunc("/useronlines", UserOnlineApi)
+}
+
+//API tìm kiếm người dùng filtter
+func UserOnlineApi(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		//fil := r.FormValue("name")
+		filter := model.Filter{}
+		err := json.NewDecoder(r.Body).Decode(&filter)
+		if err != nil {
+			utils.ResponseErr(w, http.StatusBadRequest)
+			return
+		}
+		userOns, err := service.GetListUSerOnlineService(filter.Name)
+		if err != nil {
+			utils.ResponseErr(w, http.StatusNotFound)
+		}
+		w.Write(utils.ResponseWithByte(userOns))
+	default:
+		utils.ResponseErr(w, http.StatusBadRequest)
+	}
 }

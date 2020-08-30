@@ -55,7 +55,7 @@ func (client *WsClient) CheckUserOnlinePump(userHide string) {
 	}()
 
 	for {
-		usersOnline, _ := service.GetListUSerOnlineService()
+		usersOnline, _ := service.GetListUSerOnlineService("")
 		message := WsMessage{
 			From:   "VDAT-SERVICE",
 			To:     nil,

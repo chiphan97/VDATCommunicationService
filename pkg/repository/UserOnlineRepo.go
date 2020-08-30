@@ -3,7 +3,8 @@ package repository
 import "gitlab.com/vdat/mcsvc/chat/pkg/model"
 
 type UserOnlineRepo interface {
-	GetListUSerOnline() ([]model.UserOnline, error)
+	GetListUSerOnline(filter string) ([]model.UserOnline, error)
 	AddUserOnline(online model.UserOnline) error
 	DeleteUserOnline(socketid string) error
+	GetUserOnline(userId string) (model.UserOnline, error)
 }

@@ -41,6 +41,7 @@ func main() {
 
 	//api
 	handler.RegisterGroupApi()
+	handler.RegisterUserOnline()
 
 	err := http.ListenAndServe(":5000", nil)
 	if err != nil {
