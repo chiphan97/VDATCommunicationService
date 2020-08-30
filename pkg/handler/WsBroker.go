@@ -1,5 +1,12 @@
 package handler
 
+import (
+	"encoding/json"
+	"fmt"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service"
+	"time"
+)
+
 type WsBroker struct {
 	// Registered clients.
 	Clients map[*WsClient]bool
@@ -17,4 +24,58 @@ type WsBroker struct {
 	Unregister chan *WsClient
 
 	MessageRepository []*WsMessage
+}
+
+func (broker *WsBroker) run() {
+	// polling "new" message from repository
+	// and send to outbound channel to send to clients
+	// finally, marked message that sent to outbound channel as "done"
+	go func() {
+		for {
+			for idx, message := range broker.MessageRepository {
+				if message.Status != "done" {
+					select {
+					case broker.Outbound <- *message:
+					default:
+						close(broker.Outbound)
+					}
+
+					broker.MessageRepository[idx].Status = "done"
+				}
+			}
+
+			time.Sleep(200 * time.Millisecond)
+		}
+	}()
+
+	for {
+		select {
+		case client := <-broker.Register:
+			broker.Clients[client] = true
+			//add in database when client on
+			_ = service.AddUserOnlineService(client.User)
+		case client := <-broker.Unregister:
+			if _, ok := broker.Clients[client]; ok {
+				//delete in database when client off
+				_ = service.DeleteUserOnlineService(client.User.SocketID)
+				delete(broker.Clients, client)
+				close(client.Send)
+			}
+		case message := <-broker.Inbound:
+			broker.MessageRepository = append(broker.MessageRepository, &message)
+			fmt.Printf("%+v, %d\n", message, len(broker.MessageRepository))
+		case message := <-broker.Outbound:
+			fmt.Println("send")
+			for client := range broker.Clients {
+				msg, _ := json.Marshal(message)
+				select {
+				case client.Send <- msg:
+				default:
+					close(client.Send)
+					delete(broker.Clients, client)
+				}
+			}
+		}
+
+	}
 }
