@@ -72,3 +72,6 @@ func UpdateGroupService(group model.Groups) (model.Groups, error) {
 func DeleteGroupService(idgroup int) error {
 	return impl.NewGroupRepoImpl(database.DB).DeleteGroup(idgroup)
 }
+func CheckRoleOwnerInGroupService(owner string, idgroup int) (bool, error) {
+	return impl.NewGroupRepoImpl(database.DB).GetOwnerByGroupAndOwner(owner, idgroup)
+}

@@ -10,4 +10,5 @@ type GroupRepo interface {
 	AddGroupType(owner string, name string, typ string, private bool) (model.Groups, error)
 	UpdateGroup(group model.Groups) (model.Groups, error)
 	DeleteGroup(idGourp int) error
+	GetOwnerByGroupAndOwner(owner string, groupId int) (bool, error)
 }

@@ -2,7 +2,6 @@ package handler
 
 import (
 	_ "bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/model"
@@ -114,14 +113,8 @@ func RegisterUserOnline() {
 func UserOnlineApi(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		//fil := r.FormValue("name")
-		filter := model.Filter{}
-		err := json.NewDecoder(r.Body).Decode(&filter)
-		if err != nil {
-			utils.ResponseErr(w, http.StatusBadRequest)
-			return
-		}
-		userOns, err := service.GetListUSerOnlineService(filter.Name)
+		fil := r.URL.Query()["keyword"]
+		userOns, err := service.GetListUSerOnlineService(fil[0])
 		if err != nil {
 			utils.ResponseErr(w, http.StatusNotFound)
 		}

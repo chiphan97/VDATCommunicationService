@@ -11,6 +11,7 @@ import (
 
 func RegisterGroupUsersApi() {
 	http.HandleFunc("/group-user", AuthenMiddleJWT(GroupUserApi))
+	http.HandleFunc("/user-out-group", AuthenMiddleJWT(UserOutGroupApi))
 }
 
 func GroupUserApi(w http.ResponseWriter, r *http.Request) {
@@ -28,35 +29,64 @@ func GroupUserApi(w http.ResponseWriter, r *http.Request) {
 			utils.ResponseErr(w, http.StatusRequestTimeout)
 		}
 		utils.ResponseOk(w, "Success")
-	case http.MethodDelete: //API thành viên rời khỏi nhóm
+	case http.MethodDelete:
 		userid := r.URL.Query()["user_id"]
 		groupstr := r.URL.Query()["group_id"]
-		if len(userid) > 0 && len(groupstr) > 0 {
-			//API thành viên rời khỏi nhóm
-			users := []string{userid[0]}
-			groupid, _ := strconv.Atoi(groupstr[0])
-			err := service.DeleteUserInGroup(users, groupid)
-			if err != nil {
-				utils.ResponseErr(w, http.StatusRequestTimeout)
-				return
-			}
-			utils.ResponseOk(w, "Success")
-		} else {
-			//API xóa 1 hoac nhieu thành viên trogn nhóm
-			var group model.Groups
-			err := json.NewDecoder(r.Body).Decode(&group)
-			if err != nil {
-				utils.ResponseErr(w, http.StatusForbidden)
-				return
-			}
-			err = service.DeleteUserInGroup(group.ListUser, int(group.ID))
-			if err != nil {
-				utils.ResponseErr(w, http.StatusRequestTimeout)
-				return
-			}
-			utils.ResponseOk(w, "Success")
+		groupID, _ := strconv.Atoi(groupstr[0])
+		owner := JWTparseOwner(r.Header.Get("Authorization"))
+		check, err := service.CheckRoleOwnerInGroupService(owner, groupID)
+		if err != nil {
+			utils.ResponseErr(w, http.StatusForbidden)
+			return
 		}
+		if len(userid) > 0 {
+			if !check {
+				utils.ResponseErr(w, http.StatusUnauthorized)
+				return
+			} else {
+				//xoa thanh vien trong nhom
+				err := service.DeleteUserInGroup(userid, groupID)
+				if err != nil {
+					utils.ResponseErr(w, http.StatusRequestTimeout)
+					return
+				}
+				utils.ResponseOk(w, "Success")
+			}
+		} else { //API thành viên rời khỏi nhóm
+			if check {
+				utils.ResponseErr(w, http.StatusNotAcceptable)
+				return
+			} else {
+				users := []string{owner}
+				err := service.DeleteUserInGroup(users, groupID)
+				if err != nil {
+					utils.ResponseErr(w, http.StatusRequestTimeout)
+					return
+				}
+				utils.ResponseOk(w, "Success")
+			}
+		}
+
 	default:
 		utils.ResponseErr(w, http.StatusBadRequest)
 	}
+}
+
+func UserOutGroupApi(w http.ResponseWriter, r *http.Request) {
+
+	//groupstr := r.URL.Query()["group_id"][0]
+	//
+	//groupid, _ := strconv.Atoi(groupstr)
+	//check,err := service.CheckRoleOwnerInGroupService(userid[0],groupid)
+	//if err!=nil{
+	//	utils.ResponseErr(w, http.StatusForbidden)
+	//	return
+	//}
+	//if check{
+	//	utils.ResponseErr(w, http.StatusNotAcceptable)
+	//	return
+	//}else{
+	//
+	//}
+
 }

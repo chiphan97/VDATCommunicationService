@@ -163,3 +163,14 @@ func (g *GroupRepoImpl) DeleteGroup(idGourp int) error {
 	}
 	return nil
 }
+func (g *GroupRepoImpl) GetOwnerByGroupAndOwner(owner string, groupId int) (bool, error) {
+	statement := `SELECT owner_id FROM Groups WHERE owner_id=$1 AND id_group=$2`
+	rows, err := g.Db.Query(statement, owner, groupId)
+	if err != nil {
+		return false, err
+	}
+	if rows.Next() {
+		return true, nil
+	}
+	return false, nil
+}
