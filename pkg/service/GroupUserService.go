@@ -8,3 +8,6 @@ import (
 func AddUserInGroup(userIds []string, groupId int) error {
 	return impl.NewGroupUserRepoImpl(database.DB).AddGroupUser(userIds, groupId)
 }
+func DeleteUserInGroup(userIds []string, groupId int) error {
+	return impl.NewGroupUserRepoImpl(database.DB).DeleteGroupUser(userIds, groupId)
+}

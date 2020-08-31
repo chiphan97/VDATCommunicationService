@@ -6,6 +6,7 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service"
 	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"net/http"
+	"strconv"
 )
 
 func RegisterGroupApi() {
@@ -28,22 +29,20 @@ func CreateGroupTypeOneApi(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Tạo hội thoại n- n
-//API load danh sách group (public, private)
 func GroupApi(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case http.MethodGet:
+	case http.MethodGet: //API load danh sách group (public, private)
 		user := JWTparseOwner(r.Header.Get("Authorization"))
 		groups, err := service.GetGroupByUserService(user)
 		if err != nil {
 			utils.ResponseErr(w, http.StatusNotFound)
 		}
 		w.Write(utils.ResponseWithByte(groups))
-	case http.MethodPost:
+	case http.MethodPost: //Tạo hội thoại n- n
 		var group model.Groups
 		err := json.NewDecoder(r.Body).Decode(&group)
 		if err != nil {
-			utils.ResponseErr(w, http.StatusBadRequest)
+			utils.ResponseErr(w, http.StatusForbidden)
 			return
 		}
 		owner := JWTparseOwner(r.Header.Get("Authorization"))
@@ -54,6 +53,28 @@ func GroupApi(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Write(utils.ResponseWithByte(group))
+	case http.MethodPut: //API update group info
+		var group model.Groups
+		err := json.NewDecoder(r.Body).Decode(&group)
+		if err != nil {
+			utils.ResponseErr(w, http.StatusForbidden)
+			return
+		}
+		newgroup, err := service.UpdateGroupService(group)
+		if err != nil {
+			utils.ResponseErr(w, http.StatusRequestTimeout)
+			return
+		}
+		w.Write(utils.ResponseWithByte(newgroup))
+	case http.MethodDelete: //API xóa hội thoại
+		idgroupstr := r.URL.Query()["group_id"][0]
+		idgroup, _ := strconv.Atoi(idgroupstr)
+		err := service.DeleteGroupService(idgroup)
+		if err != nil {
+			utils.ResponseErr(w, http.StatusRequestTimeout)
+			return
+		}
+		utils.ResponseOk(w, "delete success")
 	default:
 		utils.ResponseErr(w, http.StatusBadRequest)
 	}

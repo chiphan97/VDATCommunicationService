@@ -65,3 +65,10 @@ func AddGroupManyService(owner string, nameGroup string, private bool, listUser 
 	}
 	return group, nil
 }
+
+func UpdateGroupService(group model.Groups) (model.Groups, error) {
+	return impl.NewGroupRepoImpl(database.DB).UpdateGroup(group)
+}
+func DeleteGroupService(idgroup int) error {
+	return impl.NewGroupRepoImpl(database.DB).DeleteGroup(idgroup)
+}

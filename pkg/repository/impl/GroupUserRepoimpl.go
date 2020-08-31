@@ -40,3 +40,13 @@ func (groupuser *GroupUserRepoImpl) AddGroupUser(users []string, idgroup int) er
 	}
 	return nil
 }
+func (groupuser *GroupUserRepoImpl) DeleteGroupUser(users []string, idgroup int) error {
+	statement := `DELETE FROM Groups_Users WHERE id_group=$1 AND user_id = $2`
+	for _, user := range users {
+		_, err := groupuser.Db.Exec(statement, idgroup, user)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

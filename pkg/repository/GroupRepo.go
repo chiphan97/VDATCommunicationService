@@ -8,4 +8,6 @@ type GroupRepo interface {
 	GetGroupByUser(user string) ([]model.Groups, error)
 	GetGroupByPrivate(private bool) ([]model.Groups, error)
 	AddGroupType(owner string, name string, typ string, private bool) (model.Groups, error)
+	UpdateGroup(group model.Groups) (model.Groups, error)
+	DeleteGroup(idGourp int) error
 }

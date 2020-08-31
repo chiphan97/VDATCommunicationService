@@ -131,3 +131,35 @@ func (g *GroupRepoImpl) AddGroupType(owner string, name string, typ string, priv
 	}
 	return group, nil
 }
+func (g *GroupRepoImpl) UpdateGroup(group model.Groups) (model.Groups, error) {
+	var newgroup model.Groups
+	statement := `UPDATE groups SET owner_id=$1,name=$2,private=$3 WHERE id_group=$4`
+	_, err := g.Db.Exec(statement, group.UserCreate, group.NameGroup, group.Private, group.ID)
+	if err != nil {
+		return newgroup, err
+	}
+	statement = `SELECT id_group, owner_id, name, type,private, created_at, updated_at, deleted_at 
+ 					FROM groups
+ 					WHERE  id_group= $1`
+	rows, err := g.Db.Query(statement, group.ID)
+	if rows.Next() {
+		err = rows.Scan(&newgroup.ID, &newgroup.UserCreate, &newgroup.NameGroup, &newgroup.TypeGroup, &newgroup.Private, &newgroup.CreatedAt, &newgroup.UpdatedAt, &newgroup.DeletedAt)
+		if err != nil {
+			return newgroup, err
+		}
+	}
+	return newgroup, nil
+}
+func (g *GroupRepoImpl) DeleteGroup(idGourp int) error {
+	statement := `DELETE FROM Groups_Users WHERE id_group = $1 `
+	_, err := g.Db.Exec(statement, idGourp)
+	if err != nil {
+		return err
+	}
+	statement = `DELETE FROM Groups WHERE id_group = $1`
+	_, err = g.Db.Exec(statement, idGourp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
