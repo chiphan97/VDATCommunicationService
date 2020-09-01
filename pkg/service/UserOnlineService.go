@@ -6,8 +6,8 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/repository/impl"
 )
 
-func GetListUSerOnlineService() ([]model.UserOnline, error) {
-	return impl.NewUserOnlineRepoImpl(database.DB).GetListUSerOnline()
+func GetListUSerOnlineService(fil string) ([]model.UserOnline, error) {
+	return impl.NewUserOnlineRepoImpl(database.DB).GetListUSerOnline(fil)
 }
 func AddUserOnlineService(online model.UserOnline) error {
 	return impl.NewUserOnlineRepoImpl(database.DB).AddUserOnline(online)

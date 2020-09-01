@@ -6,13 +6,18 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/repository/impl"
 )
 
+// tao chat 1 1 neu chua co, neu co r tra lai
 func GetGroupByOwnerAndUserService(owner string, user string) ([]model.Groups, error) {
 	groups, err := impl.NewGroupRepoImpl(database.DB).GetGroupByOwnerAndUserAndTypeOne(owner, user)
 	if err != nil {
 		return nil, err
 	} else {
 		if len(groups) <= 0 {
-			group, err := impl.NewGroupRepoImpl(database.DB).AddGroupTypeONE(owner)
+			userOnline, err := impl.NewUserOnlineRepoImpl(database.DB).GetUserOnline(user)
+			if err != nil {
+				return nil, err
+			}
+			group, err := impl.NewGroupRepoImpl(database.DB).AddGroupType(owner, userOnline.Username, model.ONE, true)
 			if err != nil {
 				return nil, err
 			}
@@ -31,10 +36,42 @@ func GetGroupByOwnerAndUserService(owner string, user string) ([]model.Groups, e
 		}
 	}
 }
+
 func GetGroupByUserService(user string) ([]model.Groups, error) {
 	groups, err := impl.NewGroupRepoImpl(database.DB).GetGroupByUser(user)
-	if err != nil && len(groups) <= 0 {
+	if err != nil {
 		return nil, err
 	}
+	pubGroups, err := impl.NewGroupRepoImpl(database.DB).GetGroupByPrivate(false)
+	if err != nil {
+		return nil, err
+	}
+	if len(pubGroups) > 0 {
+		for _, g := range pubGroups {
+			groups = append(groups, g)
+		}
+	}
 	return groups, nil
+}
+
+func AddGroupManyService(owner string, nameGroup string, private bool, listUser []string) (model.Groups, error) {
+	group, err := impl.NewGroupRepoImpl(database.DB).AddGroupType(owner, nameGroup, model.MANY, private)
+	if err != nil {
+		return group, err
+	}
+	err = impl.NewGroupUserRepoImpl(database.DB).AddGroupUser(listUser, int(group.ID))
+	if err != nil {
+		return group, err
+	}
+	return group, nil
+}
+
+func UpdateGroupService(group model.Groups) (model.Groups, error) {
+	return impl.NewGroupRepoImpl(database.DB).UpdateGroup(group)
+}
+func DeleteGroupService(idgroup int) error {
+	return impl.NewGroupRepoImpl(database.DB).DeleteGroup(idgroup)
+}
+func CheckRoleOwnerInGroupService(owner string, idgroup int) (bool, error) {
+	return impl.NewGroupRepoImpl(database.DB).GetOwnerByGroupAndOwner(owner, idgroup)
 }

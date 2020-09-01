@@ -2,5 +2,5 @@ package model
 
 type MessageDelete struct {
 	AbstractModel
-	SubUserDeleted string
+	UserDeleted string
 }

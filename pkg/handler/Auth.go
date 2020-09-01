@@ -22,10 +22,11 @@ func AuthenMiddleJWT(next http.HandlerFunc) http.HandlerFunc {
 
 		if tokenHeader == "" {
 			utils.ResponseErr(w, http.StatusUnauthorized)
-
 		}
 		if ValiToken(tokenHeader) {
 			next.ServeHTTP(w, r)
+		} else {
+			utils.ResponseErr(w, http.StatusUnauthorized)
 		}
 	}
 
@@ -73,5 +74,5 @@ func JWTparseOwner(tokenHeader string) string {
 	if err != nil {
 		return ""
 	}
-	return tk.UserName
+	return tk.Subject
 }

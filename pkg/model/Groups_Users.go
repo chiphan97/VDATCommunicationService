@@ -4,6 +4,6 @@ import "time"
 
 type GroupsUsers struct {
 	AbstractModel
-	SubUserJoin        string     `json:"sub_user_join"`
+	UserIDJoin         string     `json:"user_join"`
 	LastDeletedMessage *time.Time `json:"last_deleted_messages"`
 }

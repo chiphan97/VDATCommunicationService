@@ -24,3 +24,11 @@ func TestAddUserOnlineService(t *testing.T) {
 		fmt.Println("success")
 	}
 }
+func TestGetListUSerOnlineService(t *testing.T) {
+	database.Connect()
+	users, err := GetListUSerOnlineService("1")
+	if err != nil {
+		t.Error(err)
+	}
+	println(users)
+}

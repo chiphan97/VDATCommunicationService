@@ -13,16 +13,20 @@ type UserOnlineRepoImpl struct {
 func NewUserOnlineRepoImpl(db *sql.DB) repository.UserOnlineRepo {
 	return &UserOnlineRepoImpl{Db: db}
 }
-func (u *UserOnlineRepoImpl) GetListUSerOnline() ([]model.UserOnline, error) {
+func (u *UserOnlineRepoImpl) GetListUSerOnline(filter string) ([]model.UserOnline, error) {
 	userOnlines := make([]model.UserOnline, 0)
-	statement := `SELECT * FROM ONLINE`
+	statement := `SELECT user_id,username,first,last,log_at FROM ONLINE `
+	if len(filter) > 0 {
+		statement = statement + `WHERE username LIKE '` + filter + `%'`
+	}
 	rows, err := u.Db.Query(statement)
+	println(err)
 	if err != nil {
 		return userOnlines, err
 	}
 	for rows.Next() {
 		var user model.UserOnline
-		err = rows.Scan(&user.HostName, &user.SocketID, &user.UserID, &user.Username, &user.First, &user.Last, &user.LogAt)
+		err = rows.Scan(&user.UserID, &user.Username, &user.First, &user.Last, &user.LogAt)
 		if err != nil {
 			return userOnlines, err
 		}
@@ -45,4 +49,20 @@ func (u *UserOnlineRepoImpl) DeleteUserOnline(socketid string) error {
 		return err
 	}
 	return nil
+}
+func (u *UserOnlineRepoImpl) GetUserOnline(userId string) (model.UserOnline, error) {
+	var user model.UserOnline
+	statement := `SELECT user_id,username,first,last,log_at FROM ONLINE WHERE user_id=$1`
+	rows, err := u.Db.Query(statement, userId)
+	//println(err)
+	if err != nil {
+		return user, err
+	}
+	if rows.Next() {
+		err = rows.Scan(&user.UserID, &user.Username, &user.First, &user.Last, &user.LogAt)
+		if err != nil {
+			return user, err
+		}
+	}
+	return user, nil
 }

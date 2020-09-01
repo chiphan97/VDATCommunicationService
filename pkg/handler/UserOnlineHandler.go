@@ -1,166 +1,18 @@
 package handler
 
 import (
-	"bytes"
 	_ "bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gorilla/websocket"
 	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service"
+	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"log"
 	"net/http"
 	"strings"
-	"time"
 )
 
 var userOnlineBroker *WsBroker
-
-func (broker *WsBroker) run() {
-	// polling "new" message from repository
-	// and send to outbound channel to send to clients
-	// finally, marked message that sent to outbound channel as "done"
-	go func() {
-		for {
-			for idx, message := range broker.MessageRepository {
-				if message.Status != "done" {
-					select {
-					case broker.Outbound <- *message:
-					default:
-						close(broker.Outbound)
-					}
-
-					broker.MessageRepository[idx].Status = "done"
-				}
-			}
-
-			time.Sleep(200 * time.Millisecond)
-		}
-	}()
-
-	for {
-		select {
-		case client := <-broker.Register:
-			broker.Clients[client] = true
-			//add in database when client on
-			_ = service.AddUserOnlineService(client.User)
-		case client := <-broker.Unregister:
-			if _, ok := broker.Clients[client]; ok {
-				//delete in database when client off
-				_ = service.DeleteUserOnlineService(client.User.SocketID)
-				delete(broker.Clients, client)
-				close(client.Send)
-			}
-		case message := <-broker.Inbound:
-			broker.MessageRepository = append(broker.MessageRepository, &message)
-			fmt.Printf("%+v, %d\n", message, len(broker.MessageRepository))
-		case message := <-broker.Outbound:
-			fmt.Println("send")
-			for client := range broker.Clients {
-				msg, _ := json.Marshal(message)
-				select {
-				case client.Send <- msg:
-				default:
-					close(client.Send)
-					delete(broker.Clients, client)
-				}
-			}
-		}
-
-	}
-}
-
-func (client *WsClient) readPump() {
-	defer func() {
-		client.Broker.Unregister <- client
-		_ = client.Conn.Close()
-	}()
-	client.Conn.SetReadLimit(MaxMessageSize)
-	_ = client.Conn.SetReadDeadline(time.Now().Add(PongWait))
-	client.Conn.SetPongHandler(func(string) error { _ = client.Conn.SetReadDeadline(time.Now().Add(PongWait)); return nil })
-	for {
-		_, message, err := client.Conn.ReadMessage()
-		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("error: %v", err)
-			}
-			break
-		}
-		message = bytes.TrimSpace(bytes.Replace(message, Newline, Space, -1))
-
-		var messageJSON WsMessage
-		_ = json.Unmarshal(message, &messageJSON)
-		messageJSON.From = client.User.UserID
-
-		client.Broker.Inbound <- messageJSON
-	}
-}
-
-func (client *WsClient) checkUserOnlinePump() {
-	defer func() {
-		client.Broker.Unregister <- client
-		_ = client.Conn.Close()
-	}()
-	//userHide := r.Header.Get("Authorization")
-	for {
-
-		usersOnline, _ := service.GetListUSerOnlineService()
-
-		message := WsMessage{
-			From:   "VDAT-SERVICE",
-			To:     nil,
-			Body:   usersOnline,
-			Status: "",
-		}
-
-		client.Broker.Inbound <- message
-		time.Sleep(10000 * time.Millisecond)
-	}
-}
-
-func (client *WsClient) writePump() {
-	ticker := time.NewTicker(PingPeriod)
-
-	defer func() {
-		ticker.Stop()
-		_ = client.Conn.Close()
-	}()
-
-	for {
-		select {
-		case message, ok := <-client.Send:
-			_ = client.Conn.SetWriteDeadline(time.Now().Add(WriteWait))
-			if !ok {
-				// The broker closed the channel.
-				_ = client.Conn.WriteMessage(websocket.CloseMessage, []byte{})
-				return
-			}
-
-			w, err := client.Conn.NextWriter(websocket.TextMessage)
-			if err != nil {
-				return
-			}
-			_, _ = w.Write(message)
-
-			// Add queued chat messages to the current websocket message.
-			n := len(client.Send)
-			for i := 0; i < n; i++ {
-				_, _ = w.Write(Newline)
-				_, _ = w.Write(<-client.Send)
-			}
-
-			if err := w.Close(); err != nil {
-				return
-			}
-		case <-ticker.C:
-			_ = client.Conn.SetWriteDeadline(time.Now().Add(WriteWait))
-			if err := client.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				return
-			}
-		}
-	}
-}
 
 func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 	// authenticate
@@ -247,7 +99,27 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
-	go client.writePump()
-	go client.readPump()
-	go client.checkUserOnlinePump()
+	go client.CheckUserOnlinePump(client.User.UserID)
+	go client.WritePump()
+	go client.ReadPump()
+
+}
+
+func RegisterUserOnline() {
+	http.HandleFunc("/useronlines", UserOnlineApi)
+}
+
+//API tìm kiếm người dùng filtter
+func UserOnlineApi(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		fil := r.URL.Query()["keyword"]
+		userOns, err := service.GetListUSerOnlineService(fil[0])
+		if err != nil {
+			utils.ResponseErr(w, http.StatusNotFound)
+		}
+		w.Write(utils.ResponseWithByte(userOns))
+	default:
+		utils.ResponseErr(w, http.StatusBadRequest)
+	}
 }
