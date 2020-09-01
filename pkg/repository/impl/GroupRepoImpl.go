@@ -85,14 +85,15 @@ func (g *GroupRepoImpl) GetGroupByUser(user string) ([]model.Groups, error) {
 	}
 	return groups, nil
 }
-func (g *GroupRepoImpl) GetGroupByPrivate(private bool) ([]model.Groups, error) {
+func (g *GroupRepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]model.Groups, error) {
 	groups := make([]model.Groups, 0)
 	statement := `SELECT g.id_group, owner_id, name, type,private, created_at, updated_at, deleted_at 
  					FROM groups AS g
  					WHERE g.private = $1
+ 					AND owner_id !=$2
 					ORDER BY created_at DESC 
 					LIMIT 20`
-	rows, err := g.Db.Query(statement, private)
+	rows, err := g.Db.Query(statement, private, user)
 	if err != nil {
 		return groups, err
 	}
@@ -106,11 +107,10 @@ func (g *GroupRepoImpl) GetGroupByPrivate(private bool) ([]model.Groups, error) 
 	}
 	return groups, nil
 }
-func (g *GroupRepoImpl) AddGroupType(owner string, name string, typ string, private bool) (model.Groups, error) {
-	var group model.Groups
+func (g *GroupRepoImpl) AddGroupType(group model.Groups) (model.Groups, error) {
 
 	statement := `INSERT INTO groups (owner_id,name ,type,private) VALUES ($1,$2,$3,$4)`
-	_, err := g.Db.Exec(statement, owner, name, typ, private)
+	_, err := g.Db.Exec(statement, group.UserCreate, group.NameGroup, group.TypeGroup, group.Private)
 	if err != nil {
 		return group, err
 	}
@@ -119,7 +119,7 @@ func (g *GroupRepoImpl) AddGroupType(owner string, name string, typ string, priv
  					FROM Groups AS g WHERE owner_id = $1
  					ORDER BY created_at DESC
  					LIMIT 1`
-	rows, err := g.Db.Query(statement, owner)
+	rows, err := g.Db.Query(statement, group.UserCreate)
 	if err != nil {
 		return group, err
 	}
@@ -133,8 +133,8 @@ func (g *GroupRepoImpl) AddGroupType(owner string, name string, typ string, priv
 }
 func (g *GroupRepoImpl) UpdateGroup(group model.Groups) (model.Groups, error) {
 	var newgroup model.Groups
-	statement := `UPDATE groups SET owner_id=$1,name=$2,private=$3 WHERE id_group=$4`
-	_, err := g.Db.Exec(statement, group.UserCreate, group.NameGroup, group.Private, group.ID)
+	statement := `UPDATE groups SET name=$1 WHERE id_group=$2`
+	_, err := g.Db.Exec(statement, group.NameGroup, group.ID)
 	if err != nil {
 		return newgroup, err
 	}

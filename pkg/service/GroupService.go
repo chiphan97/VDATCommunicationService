@@ -7,26 +7,23 @@ import (
 )
 
 // tao chat 1 1 neu chua co, neu co r tra lai
-func GetGroupByOwnerAndUserService(owner string, user string) ([]model.Groups, error) {
-	groups, err := impl.NewGroupRepoImpl(database.DB).GetGroupByOwnerAndUserAndTypeOne(owner, user)
+func GetGroupByOwnerAndUserService(group model.Groups) ([]model.Groups, error) {
+	groups, err := impl.NewGroupRepoImpl(database.DB).GetGroupByOwnerAndUserAndTypeOne(group.UserCreate, group.ListUser[0])
 	if err != nil {
 		return nil, err
 	} else {
 		if len(groups) <= 0 {
-			userOnline, err := impl.NewUserOnlineRepoImpl(database.DB).GetUserOnline(user)
+
+			group, err := impl.NewGroupRepoImpl(database.DB).AddGroupType(group)
 			if err != nil {
 				return nil, err
 			}
-			group, err := impl.NewGroupRepoImpl(database.DB).AddGroupType(owner, userOnline.Username, model.ONE, true)
+			group.ListUser = append(group.ListUser, group.UserCreate)
+			err = impl.NewGroupUserRepoImpl(database.DB).AddGroupUser(group.ListUser, int(group.ID))
 			if err != nil {
 				return nil, err
 			}
-			users := []string{owner, user}
-			err = impl.NewGroupUserRepoImpl(database.DB).AddGroupUser(users, int(group.ID))
-			if err != nil {
-				return nil, err
-			}
-			groups, err = impl.NewGroupRepoImpl(database.DB).GetGroupByOwnerAndUserAndTypeOne(owner, user)
+			groups, err = impl.NewGroupRepoImpl(database.DB).GetGroupByOwnerAndUserAndTypeOne(group.UserCreate, group.ListUser[0])
 			if err != nil {
 				return nil, err
 			}
@@ -42,7 +39,7 @@ func GetGroupByUserService(user string) ([]model.Groups, error) {
 	if err != nil {
 		return nil, err
 	}
-	pubGroups, err := impl.NewGroupRepoImpl(database.DB).GetGroupByPrivate(false)
+	pubGroups, err := impl.NewGroupRepoImpl(database.DB).GetGroupByPrivateAndUser(false, user)
 	if err != nil {
 		return nil, err
 	}
@@ -54,12 +51,12 @@ func GetGroupByUserService(user string) ([]model.Groups, error) {
 	return groups, nil
 }
 
-func AddGroupManyService(owner string, nameGroup string, private bool, listUser []string) (model.Groups, error) {
-	group, err := impl.NewGroupRepoImpl(database.DB).AddGroupType(owner, nameGroup, model.MANY, private)
+func AddGroupManyService(group model.Groups) (model.Groups, error) {
+	group, err := impl.NewGroupRepoImpl(database.DB).AddGroupType(group)
 	if err != nil {
 		return group, err
 	}
-	err = impl.NewGroupUserRepoImpl(database.DB).AddGroupUser(listUser, int(group.ID))
+	err = impl.NewGroupUserRepoImpl(database.DB).AddGroupUser(group.ListUser, int(group.ID))
 	if err != nil {
 		return group, err
 	}

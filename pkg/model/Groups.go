@@ -2,14 +2,14 @@ package model
 
 type Groups struct {
 	AbstractModel
-	UserCreate string   `json:"user_create""`
-	NameGroup  string   `json:"name_group"`
-	TypeGroup  string   `json:"type_group"`
+	UserCreate string   `json:"user_id""`
+	NameGroup  string   `json:"nameGroup"`
+	TypeGroup  string   `json:"type"`
 	Private    bool     `json:"private"`
-	ListUser   []string `json:"list_user"`
+	ListUser   []string `json:"users"`
 }
 
 const (
-	ONE  = "ONE_ONE"
-	MANY = "MANY_MANY"
+	ONE  = "one-to-one"
+	MANY = "many-to-many"
 )

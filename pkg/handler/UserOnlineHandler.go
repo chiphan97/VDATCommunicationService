@@ -106,7 +106,7 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterUserOnline() {
-	http.HandleFunc("/users", UserOnlineApi)
+	http.HandleFunc("/api/v1/users", AuthenMiddleJWT(UserOnlineApi))
 }
 
 //API tìm kiếm người dùng filtter

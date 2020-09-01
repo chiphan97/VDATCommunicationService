@@ -4,7 +4,7 @@ CREATE TABLE Groups(
     id_group serial ,
     owner_id varchar(100) NOT NULL,
     name varchar(100),
-    type varchar(10) NOT NULL,
+    type varchar(15) NOT NULL,
     private boolean,
     created_at timestamp not null default now(),
     updated_at timestamp not null default now(),

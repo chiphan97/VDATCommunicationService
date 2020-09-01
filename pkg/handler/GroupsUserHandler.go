@@ -7,23 +7,27 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func RegisterGroupUsersApi() {
-	http.HandleFunc("/group-user", AuthenMiddleJWT(GroupUserApi))
-	http.HandleFunc("/user-out-group", AuthenMiddleJWT(UserOutGroupApi))
+	http.HandleFunc("/api/v1/groups/:groupId/members/:userid", AuthenMiddleJWT(GroupUserApi))
+
 }
 
 func GroupUserApi(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	//API thêm thành viên vào 1 nhóm
-	case http.MethodPost:
+	case http.MethodPatch:
+		idgroupstr := strings.TrimPrefix(r.URL.Path, "/api/v1/groups/")
+		id, _ := strconv.Atoi(strings.TrimRight(idgroupstr, "/members/"))
 		var group model.Groups
 		err := json.NewDecoder(r.Body).Decode(&group)
 		if err != nil {
-			utils.ResponseErr(w, http.StatusForbidden)
+			utils.ResponseErr(w, http.StatusBadRequest)
 			return
 		}
+		group.ID = uint(id)
 		err = service.AddUserInGroup(group.ListUser, int(group.ID))
 		if err != nil {
 			utils.ResponseErr(w, http.StatusRequestTimeout)
@@ -70,23 +74,4 @@ func GroupUserApi(w http.ResponseWriter, r *http.Request) {
 	default:
 		utils.ResponseErr(w, http.StatusBadRequest)
 	}
-}
-
-func UserOutGroupApi(w http.ResponseWriter, r *http.Request) {
-
-	//groupstr := r.URL.Query()["group_id"][0]
-	//
-	//groupid, _ := strconv.Atoi(groupstr)
-	//check,err := service.CheckRoleOwnerInGroupService(userid[0],groupid)
-	//if err!=nil{
-	//	utils.ResponseErr(w, http.StatusForbidden)
-	//	return
-	//}
-	//if check{
-	//	utils.ResponseErr(w, http.StatusNotAcceptable)
-	//	return
-	//}else{
-	//
-	//}
-
 }
