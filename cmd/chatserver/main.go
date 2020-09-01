@@ -24,7 +24,7 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	//go metrics()
+	go metrics()
 
 	fmt.Println("starting")
 
