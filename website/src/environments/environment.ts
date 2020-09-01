@@ -1,6 +1,9 @@
+const SERVER_URL = 'localhost:5000';
+
 export const environment = {
   production: false,
-  wsUrl: 'ws://localhost:5000',
+  apiUrl: `http://${SERVER_URL}`,
+  wsUrl: `ws://${SERVER_URL}`,
   keycloak: {
     url: 'https://accounts.vdatlab.com/auth',
     realm: 'vdatlab.com',

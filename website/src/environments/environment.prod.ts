@@ -1,6 +1,9 @@
+const SERVER_URL = 'vdat-mcsvc-chat.vdatlab.com';
+
 export const environment = {
   production: true,
-  wsUrl: 'wss://vdat-mcsvc-chat.vdatlab.com',
+  apiUrl: `http://${SERVER_URL}`,
+  wsUrl: `wss://${SERVER_URL}`,
   keycloak: {
     url: 'https://accounts.vdatlab.com/auth',
     realm: 'vdatlab.com',

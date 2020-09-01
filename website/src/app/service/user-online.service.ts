@@ -16,7 +16,7 @@ export class UserOnlineService {
   }
 
   public initWebSocket() {
-    this.socket = new WebSocket(`${environment.wsUrl}/user-online`);
+    this.socket = new WebSocket(`${environment.wsUrl}/user-online?token=${localStorage.getItem('TOKEN')}`);
     this.socket.onopen = event => {
       this.listener.emit({type: 'open', data: event});
     };

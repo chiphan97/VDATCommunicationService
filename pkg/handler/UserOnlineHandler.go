@@ -106,7 +106,7 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterUserOnline() {
-	http.HandleFunc("/useronlines", UserOnlineApi)
+	http.HandleFunc("/users", UserOnlineApi)
 }
 
 //API tìm kiếm người dùng filtter
