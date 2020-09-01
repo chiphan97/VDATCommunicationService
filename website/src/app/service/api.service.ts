@@ -90,7 +90,6 @@ export class ApiService {
    */
   private setDefaultRequestConfig(): void {
     axios.defaults.timeout = this.DEFAULT_TIMEOUT;
-    axios.defaults.baseURL = 'https://api.nguyenchicuong.dev';
     axios.defaults.responseType = 'json';
     axios.defaults.timeoutErrorMessage = 'Cannot connect to server';
     axios.defaults.headers.common.Authorization = `Bearer ${this.getToken()}`;

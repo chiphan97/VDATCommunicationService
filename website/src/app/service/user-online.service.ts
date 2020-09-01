@@ -9,14 +9,14 @@ import {UserOnline} from '../model/user-online.model';
 export class UserOnlineService {
   private socket: WebSocket;
   private listener: EventEmitter<any> = new EventEmitter();
-  private usersOnline: Array<UserOnline>;
+  private readonly usersOnline: Array<UserOnline>;
 
   public constructor() {
     this.usersOnline = new Array<UserOnline>();
   }
 
-  public initWebSocket(accessToken: string) {
-    this.socket = new WebSocket(`${environment.WEBSOCKET_URL}/user-online?token=${accessToken}`);
+  public initWebSocket() {
+    this.socket = new WebSocket(`${environment.wsUrl}/user-online`);
     this.socket.onopen = event => {
       this.listener.emit({type: 'open', data: event});
     };
