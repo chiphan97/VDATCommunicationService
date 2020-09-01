@@ -16,10 +16,15 @@ func RegisterGroupApi() {
 
 // api Tạo hội thoại 1 - 1 (nhóm bí mật)
 func CreateGroupTypeOneApi(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		user := r.URL.Query()["user"][0]
+	if r.Method == http.MethodPost {
+		var user model.UserOnline
+		err := json.NewDecoder(r.Body).Decode(&user)
+		if err != nil {
+			utils.ResponseErr(w, http.StatusForbidden)
+			return
+		}
 		owner := JWTparseOwner(r.Header.Get("Authorization"))
-		groups, err := service.GetGroupByOwnerAndUserService(owner, user)
+		groups, err := service.GetGroupByOwnerAndUserService(owner, user.UserID)
 		if err != nil {
 			utils.ResponseErr(w, http.StatusNotFound)
 		}
