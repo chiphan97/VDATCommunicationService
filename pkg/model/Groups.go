@@ -3,8 +3,8 @@ package model
 type Groups struct {
 	AbstractModel
 	UserCreate string   `json:"user_id""`
-	NameGroup  string   `json:"nameGroup"`
-	TypeGroup  string   `json:"type"`
+	Name       string   `json:"nameGroup"`
+	Type       string   `json:"type"`
 	Private    bool     `json:"private"`
 	ListUser   []string `json:"users"`
 }
