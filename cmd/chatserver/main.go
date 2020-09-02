@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"gitlab.com/vdat/mcsvc/chat/pkg/controller"
 	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/handler"
 	"net"
 	"net/http"
 	"os"
@@ -34,14 +36,14 @@ func main() {
 	r.HandleFunc("/", serveHome)
 	//http.HandleFunc("/test", service.TestHandler)
 	//http.HandleFunc("/test", handler.TestHandler)
-	//r.HandleFunc("/user-online", handler.UserOnlineHandler)
+	r.HandleFunc("/user-online", handler.UserOnlineHandler)
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 
 	//api
 	controller.RegisterGroupApi(r)
 	controller.RegisterUserOnlineApi(r)
 
-	err := http.ListenAndServe(":5000", r)
+	err := http.ListenAndServe(":5000", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(r))
 	if err != nil {
 		panic("Error: " + err.Error())
 	}

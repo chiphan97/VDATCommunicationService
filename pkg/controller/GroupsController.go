@@ -13,25 +13,13 @@ import (
 
 func RegisterGroupApi(r *mux.Router) {
 	r.HandleFunc("/api/v1/groups", AuthenMiddleJWT(GroupApi))
-	r.HandleFunc("/api/v1/groups", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-		writer.Header().Set("Access-Control-Max-Age", "86400")
-	})
+
 	r.HandleFunc("/api/v1/groups/{idGroup}", AuthenMiddleJWT(GroupApi))
-	r.HandleFunc("/api/v1/groups/{idGroup}", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-		writer.Header().Set("Access-Control-Max-Age", "86400")
-	})
+
 	r.HandleFunc("/api/v1/groups/{idGroup}/members", AuthenMiddleJWT(GroupUserApi))
-	r.HandleFunc("/api/v1/groups/{idGroup}/members", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-		writer.Header().Set("Access-Control-Max-Age", "86400")
-	})
+
 	r.HandleFunc("/api/v1/groups/{idGroup}/members/{userId}", AuthenMiddleJWT(GroupUserApi))
-	r.HandleFunc("/api/v1/groups/{idGroup}/members/{userId}", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-		writer.Header().Set("Access-Control-Max-Age", "86400")
-	})
+
 }
 func GroupApi(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
