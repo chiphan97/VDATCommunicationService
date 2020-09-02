@@ -43,7 +43,8 @@ func main() {
 	controller.RegisterGroupApi(r)
 	controller.RegisterUserOnlineApi(r)
 
-	err := http.ListenAndServe(":5000", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(r))
+	corsObj := handlers.AllowedOrigins([]string{"*"})
+	err := http.ListenAndServe(":5000", handlers.CORS(corsObj)(r))
 	if err != nil {
 		panic("Error: " + err.Error())
 	}
