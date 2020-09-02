@@ -2,7 +2,7 @@ package model
 
 type Groups struct {
 	AbstractModel
-	UserCreate string   `json:"user_id""`
+	UserCreate string   `json:"user_id"`
 	Name       string   `json:"nameGroup"`
 	Type       string   `json:"type"`
 	Private    bool     `json:"private"`

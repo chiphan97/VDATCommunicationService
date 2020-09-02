@@ -1,14 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {NzResizeEvent} from 'ng-zorro-antd/resizable';
-import {NzModalService} from 'ng-zorro-antd';
-import {Group} from '../../model/group.model';
+import {Component, OnInit} from '@angular/core';
 import {UserOnlineService} from '../../service/user-online.service';
 import {UserOnline} from '../../model/user-online.model';
-import {Subscription} from 'rxjs';
-import * as _ from 'lodash';
 import {formatDistanceToNow} from 'date-fns';
 import {vi} from 'date-fns/locale';
-import {ActivatedRoute} from '@angular/router';
+import {GroupPayload} from '../../model/payload/group.payload';
+import {GroupType} from '../../const/group-type.const';
+import {GroupService} from '../../service/group.service';
 
 @Component({
   selector: 'app-messenger-drawer',
@@ -21,7 +18,8 @@ export class MessengerDrawerComponent implements OnInit {
   public keyword: string;
   public users: Array<UserOnline> = new Array<UserOnline>();
 
-  constructor(private userOnlineService: UserOnlineService) {
+  constructor(private userOnlineService: UserOnlineService,
+              private groupService: GroupService) {
     this.users = this.userOnlineService.getUsersOnline();
   }
 
@@ -42,5 +40,17 @@ export class MessengerDrawerComponent implements OnInit {
     } else {
       this.users = this.userOnlineService.getUsersOnline();
     }
+  }
+
+  public onCreateMessage(userId: string) {
+    const groupPayload: GroupPayload = {
+      nameGroup: '',
+      private: true,
+      type: GroupType.ONE,
+      users: [userId]
+    };
+
+    this.groupService.createGroup(groupPayload)
+      .subscribe(res => {});
   }
 }

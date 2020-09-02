@@ -26,7 +26,8 @@
           <nz-list-item >
             <nz-list-item-meta [nzAvatar]="avatar"
                                [nzTitle]="user.fullName"
-                               [nzDescription]="'online ' + distanceDate(user.logAt)">
+                               [nzDescription]="'online ' + distanceDate(user.logAt)"
+                               (click)="onCreateMessage(user.userId)">
             </nz-list-item-meta>
           </nz-list-item>
         </a>

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Group} from '../../model/group.model';
 import {NzModalService} from 'ng-zorro-antd';
 import {CreateNewGroupComponent} from '../create-new-group/create-new-group.component';
+import {GroupType} from '../../const/group-type.const';
 
 @Component({
   selector: 'app-message-sidebar-left',
@@ -30,8 +31,11 @@ export class MessageSidebarLeftComponent implements OnInit {
   }
 
   fakeData(): Array<Group> {
-    const group = {
-      title: 'Hồ Quốc Vững',
+    const group: Group = {
+      nameGroup: 'Hồ Quốc Vững',
+      private: true,
+      type: GroupType.ONE,
+      users: [],
       thumbnail: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
       lastMessage: {
         id: 1,
