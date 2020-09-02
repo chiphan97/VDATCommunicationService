@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/model"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service"
-	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"log"
 	"net/http"
 	"strings"
@@ -103,23 +101,4 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 	go client.WritePump()
 	go client.ReadPump()
 
-}
-
-func RegisterUserOnline() {
-	http.HandleFunc("/api/v1/users", AuthenMiddleJWT(UserOnlineApi))
-}
-
-//API tìm kiếm người dùng filtter
-func UserOnlineApi(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		fil := r.URL.Query()["keyword"]
-		userOns, err := service.GetListUSerOnlineService(fil[0])
-		if err != nil {
-			utils.ResponseErr(w, http.StatusNotFound)
-		}
-		w.Write(utils.ResponseWithByte(userOns))
-	default:
-		utils.ResponseErr(w, http.StatusBadRequest)
-	}
 }

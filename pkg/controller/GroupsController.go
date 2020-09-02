@@ -1,41 +1,21 @@
-package handler
+package controller
 
 import (
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service"
 	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
-func RegisterGroupApi() {
-	//http.HandleFunc("/create-group-one", AuthenMiddleJWT(CreateGroupTypeOneApi))
-	http.HandleFunc("/api/v1/groups/", AuthenMiddleJWT(GroupApi))
-
+func RegisterGroupApi(r *mux.Router) {
+	r.HandleFunc("/api/v1/groups", AuthenMiddleJWT(GroupApi))
+	r.HandleFunc("/api/v1/groups/{idGroup}", AuthenMiddleJWT(GroupApi))
+	r.HandleFunc("/api/v1/groups/{idGroup}/members", AuthenMiddleJWT(GroupUserApi))
+	r.HandleFunc("/api/v1/groups/{idGroup}/members/{userId}", AuthenMiddleJWT(GroupUserApi))
 }
-
-// api Tạo hội thoại 1 - 1 (nhóm bí mật)
-//func CreateGroupTypeOneApi(w http.ResponseWriter, r *http.Request) {
-//	if r.Method == http.MethodPost {
-//		var user model.UserOnline
-//		err := json.NewDecoder(r.Body).Decode(&user)
-//		if err != nil {
-//			utils.ResponseErr(w, http.StatusForbidden)
-//			return
-//		}
-//		owner := JWTparseOwner(r.Header.Get("Authorization"))
-//		groups, err := service.GetGroupByOwnerAndUserService(owner, user.UserID)
-//		if err != nil {
-//			utils.ResponseErr(w, http.StatusNotFound)
-//		}
-//		w.Write(utils.ResponseWithByte(groups))
-//	} else {
-//		utils.ResponseErr(w, http.StatusBadRequest)
-//	}
-//}
-
 func GroupApi(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
@@ -55,7 +35,7 @@ func GroupApi(w http.ResponseWriter, r *http.Request) {
 		}
 		owner := JWTparseOwner(r.Header.Get("Authorization"))
 		group.UserCreate = owner
-		if group.TypeGroup == model.ONE { //api Tạo hội thoại 1 - 1 (nhóm bí mật) ||
+		if group.Type == model.ONE { //api Tạo hội thoại 1 - 1 (nhóm bí mật) ||
 			groups, err := service.GetGroupByOwnerAndUserService(group)
 			if err != nil {
 				utils.ResponseErr(w, http.StatusNotFound)
@@ -72,7 +52,8 @@ func GroupApi(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case http.MethodPut: //API update group info
-		id, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/api/v1/groups/"))
+		params := mux.Vars(r)
+		id, err := strconv.Atoi(params["idGroup"])
 		if err != nil {
 			utils.ResponseErr(w, http.StatusBadRequest)
 			return
@@ -91,7 +72,8 @@ func GroupApi(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Write(utils.ResponseWithByte(newgroup))
 	case http.MethodDelete: //API xóa hội thoại
-		id, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/api/v1/groups/"))
+		params := mux.Vars(r)
+		id, err := strconv.Atoi(params["idGroup"])
 		if err != nil {
 			utils.ResponseErr(w, http.StatusBadRequest)
 			return
@@ -113,4 +95,62 @@ func GroupApi(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErr(w, http.StatusBadRequest)
 	}
 
+}
+func GroupUserApi(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	//API thêm thành viên vào 1 nhóm
+	case http.MethodPatch:
+		params := mux.Vars(r)
+		id, err := strconv.Atoi(params["idGroup"])
+		if err != nil {
+			utils.ResponseErr(w, http.StatusBadRequest)
+			return
+		}
+		var group model.Groups
+		err = json.NewDecoder(r.Body).Decode(&group)
+		if err != nil {
+			utils.ResponseErr(w, http.StatusBadRequest)
+			return
+		}
+		group.ID = uint(id)
+		err = service.AddUserInGroup(group.ListUser, int(group.ID))
+		if err != nil {
+			utils.ResponseErr(w, http.StatusRequestTimeout)
+		}
+		utils.ResponseOk(w, "Success")
+	case http.MethodDelete:
+		params := mux.Vars(r)
+		groupID, err := strconv.Atoi(params["idGroup"])
+		if err != nil {
+			utils.ResponseErr(w, http.StatusBadRequest)
+			return
+		}
+		userid := params["userId"]
+		owner := JWTparseOwner(r.Header.Get("Authorization"))
+		check, err := service.CheckRoleOwnerInGroupService(owner, groupID)
+		if err != nil {
+			utils.ResponseErr(w, http.StatusForbidden)
+			return
+		}
+		if !check {
+			users := []string{owner}
+			err := service.DeleteUserInGroup(users, groupID)
+			if err != nil {
+				utils.ResponseErr(w, http.StatusRequestTimeout)
+				return
+			}
+			utils.ResponseOk(w, "Success")
+		} else {
+			//xoa thanh vien trong nhom
+			users := []string{userid}
+			err := service.DeleteUserInGroup(users, groupID)
+			if err != nil {
+				utils.ResponseErr(w, http.StatusRequestTimeout)
+				return
+			}
+			utils.ResponseOk(w, "Success")
+		}
+	default:
+		utils.ResponseErr(w, http.StatusBadRequest)
+	}
 }

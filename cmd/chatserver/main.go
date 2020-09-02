@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"gitlab.com/vdat/mcsvc/chat/pkg/controller"
 	"gitlab.com/vdat/mcsvc/chat/pkg/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/handler"
 	"net"
@@ -25,26 +27,22 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	go metrics()
-
+	r := mux.NewRouter()
 	fmt.Println("starting")
 
 	database.Connect()
 
-	http.HandleFunc("/", serveHome)
+	r.HandleFunc("/", serveHome)
 	//http.HandleFunc("/test", service.TestHandler)
 	//http.HandleFunc("/test", handler.TestHandler)
-	http.HandleFunc("/user-online", handler.UserOnlineHandler)
+	r.HandleFunc("/user-online", handler.UserOnlineHandler)
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 
-	//useronline
-	//http.HandleFunc("/users-online", handler.AuthenMiddleJWT(handler.UsersOnlineHandler))
-
 	//api
-	handler.RegisterGroupApi()
-	handler.RegisterUserOnline()
-	handler.RegisterGroupUsersApi()
+	controller.RegisterGroupApi(r)
+	controller.RegisterUserOnlineApi(r)
 
-	err := http.ListenAndServe(":5000", nil)
+	err := http.ListenAndServe(":5000", r)
 	if err != nil {
 		panic("Error: " + err.Error())
 	}

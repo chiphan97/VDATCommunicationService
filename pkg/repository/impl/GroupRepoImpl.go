@@ -28,8 +28,8 @@ func NewGroupRepoImpl(db *sql.DB) repository.GroupRepo {
 //	}
 //	for rows.Next() {
 //		group := model.Groups{}
-//		err = rows.Scan(&group.ID, &group.UserCreate, &group.NameGroup,
-//			&group.TypeGroup, &group.CreatedAt,
+//		err = rows.Scan(&group.ID, &group.UserCreate, &group.Name,
+//			&group.Type, &group.CreatedAt,
 //			&group.UpdatedAt, &group.DeletedAt)
 //		if err != nil {
 //			return groups, err
@@ -54,7 +54,7 @@ func (g *GroupRepoImpl) GetGroupByOwnerAndUserAndTypeOne(owner string, user stri
 	}
 	if rows.Next() {
 		var group model.Groups
-		err = rows.Scan(&group.ID, &group.UserCreate, &group.NameGroup, &group.TypeGroup, &group.Private, &group.CreatedAt, &group.UpdatedAt, &group.DeletedAt)
+		err = rows.Scan(&group.ID, &group.UserCreate, &group.Name, &group.Type, &group.Private, &group.CreatedAt, &group.UpdatedAt, &group.DeletedAt)
 		if err != nil {
 			return groups, err
 		}
@@ -77,7 +77,7 @@ func (g *GroupRepoImpl) GetGroupByUser(user string) ([]model.Groups, error) {
 	}
 	for rows.Next() {
 		var group model.Groups
-		err = rows.Scan(&group.ID, &group.UserCreate, &group.NameGroup, &group.TypeGroup, &group.Private, &group.CreatedAt, &group.UpdatedAt, &group.DeletedAt)
+		err = rows.Scan(&group.ID, &group.UserCreate, &group.Name, &group.Type, &group.Private, &group.CreatedAt, &group.UpdatedAt, &group.DeletedAt)
 		if err != nil {
 			return groups, err
 		}
@@ -99,7 +99,7 @@ func (g *GroupRepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]m
 	}
 	for rows.Next() {
 		var group model.Groups
-		err = rows.Scan(&group.ID, &group.UserCreate, &group.NameGroup, &group.TypeGroup, &group.Private, &group.CreatedAt, &group.UpdatedAt, &group.DeletedAt)
+		err = rows.Scan(&group.ID, &group.UserCreate, &group.Name, &group.Type, &group.Private, &group.CreatedAt, &group.UpdatedAt, &group.DeletedAt)
 		if err != nil {
 			return groups, err
 		}
@@ -110,7 +110,7 @@ func (g *GroupRepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]m
 func (g *GroupRepoImpl) AddGroupType(group model.Groups) (model.Groups, error) {
 
 	statement := `INSERT INTO groups (owner_id,name ,type,private) VALUES ($1,$2,$3,$4)`
-	_, err := g.Db.Exec(statement, group.UserCreate, group.NameGroup, group.TypeGroup, group.Private)
+	_, err := g.Db.Exec(statement, group.UserCreate, group.Name, group.Type, group.Private)
 	if err != nil {
 		return group, err
 	}
@@ -124,7 +124,7 @@ func (g *GroupRepoImpl) AddGroupType(group model.Groups) (model.Groups, error) {
 		return group, err
 	}
 	if rows.Next() {
-		err = rows.Scan(&group.ID, &group.UserCreate, &group.NameGroup, &group.TypeGroup, &group.Private, &group.CreatedAt, &group.UpdatedAt, &group.DeletedAt)
+		err = rows.Scan(&group.ID, &group.UserCreate, &group.Name, &group.Type, &group.Private, &group.CreatedAt, &group.UpdatedAt, &group.DeletedAt)
 		if err != nil {
 			return group, err
 		}
@@ -134,7 +134,7 @@ func (g *GroupRepoImpl) AddGroupType(group model.Groups) (model.Groups, error) {
 func (g *GroupRepoImpl) UpdateGroup(group model.Groups) (model.Groups, error) {
 	var newgroup model.Groups
 	statement := `UPDATE groups SET name=$1 WHERE id_group=$2`
-	_, err := g.Db.Exec(statement, group.NameGroup, group.ID)
+	_, err := g.Db.Exec(statement, group.Name, group.ID)
 	if err != nil {
 		return newgroup, err
 	}
@@ -143,7 +143,7 @@ func (g *GroupRepoImpl) UpdateGroup(group model.Groups) (model.Groups, error) {
  					WHERE  id_group= $1`
 	rows, err := g.Db.Query(statement, group.ID)
 	if rows.Next() {
-		err = rows.Scan(&newgroup.ID, &newgroup.UserCreate, &newgroup.NameGroup, &newgroup.TypeGroup, &newgroup.Private, &newgroup.CreatedAt, &newgroup.UpdatedAt, &newgroup.DeletedAt)
+		err = rows.Scan(&newgroup.ID, &newgroup.UserCreate, &newgroup.Name, &newgroup.Type, &newgroup.Private, &newgroup.CreatedAt, &newgroup.UpdatedAt, &newgroup.DeletedAt)
 		if err != nil {
 			return newgroup, err
 		}
