@@ -4,6 +4,7 @@ import {NzModalService} from 'ng-zorro-antd';
 import {CreateNewGroupComponent} from '../create-new-group/create-new-group.component';
 import {GroupType} from '../../const/group-type.const';
 import {GroupService} from '../../service/group.service';
+import {ApiService} from '../../service/api.service';
 
 @Component({
   selector: 'app-message-sidebar-left',
@@ -17,6 +18,7 @@ export class MessageSidebarLeftComponent implements OnInit {
 
   constructor(private modalService: NzModalService,
               private groupService: GroupService) {
+
     this.groupService.getAllGroup()
       .subscribe(groups => {
         console.log(groups);

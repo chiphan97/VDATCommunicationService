@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	_ "fmt"
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service"
