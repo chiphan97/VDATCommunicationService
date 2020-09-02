@@ -43,6 +43,7 @@ func main() {
 	controller.RegisterGroupApi(r)
 	controller.RegisterUserOnlineApi(r)
 
+	r.Use(mux.CORSMethodMiddleware(r))
 	corsObj := handlers.AllowedOrigins([]string{"*"})
 	err := http.ListenAndServe(":5000", handlers.CORS(corsObj)(r))
 	if err != nil {
