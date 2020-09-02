@@ -3,6 +3,7 @@ import {Group} from '../../model/group.model';
 import {NzModalService} from 'ng-zorro-antd';
 import {CreateNewGroupComponent} from '../create-new-group/create-new-group.component';
 import {GroupType} from '../../const/group-type.const';
+import {GroupService} from '../../service/group.service';
 
 @Component({
   selector: 'app-message-sidebar-left',
@@ -14,7 +15,12 @@ export class MessageSidebarLeftComponent implements OnInit {
 
   public groups: Array<Group>;
 
-  constructor(private modalService: NzModalService) {
+  constructor(private modalService: NzModalService,
+              private groupService: GroupService) {
+    this.groupService.getAllGroup()
+      .subscribe(groups => {
+        console.log(groups);
+      });
     this.groups = this.fakeData();
   }
 
@@ -42,7 +48,9 @@ export class MessageSidebarLeftComponent implements OnInit {
         groupId: 1,
         sender: {
           userId: '1',
-          fullName: 'Nguyễn Chí Cường'
+          fullName: 'Nguyễn Chí Cường',
+          firstName: '',
+          lastName: ''
         },
         createdAt: new Date(),
         content: 'Hello world !!!'

@@ -41,9 +41,10 @@ export class MessengerContentComponent implements OnInit, AfterViewChecked {
       id: 1,
       groupId: 1,
       sender: {
-        subject: '1',
+        userId: '1',
         fullName: 'Nguyễn Chí Cường',
-        avatarUrl: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
+        lastName: '',
+        firstName: ''
       },
       createdAt: new Date(),
       content: 'Hello world !!!'

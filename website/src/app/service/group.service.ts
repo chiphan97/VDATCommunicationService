@@ -13,6 +13,18 @@ export class GroupService {
 
   constructor(private apiService: ApiService) { }
 
+  public getAllGroup(): Observable<any> {
+    return new Observable<any>(observer => {
+      const url = `${environment.apiUrl}/api/v1/groups`;
+
+      this.apiService.get(url)
+        .then(res => {
+          console.log(res);
+          observer.next(res);
+        });
+    });
+  }
+
   public createGroup(groupPayload: GroupPayload): Observable<any> {
     return new Observable<any>(observer => {
       const url = `${environment.apiUrl}/api/v1/groups`;
