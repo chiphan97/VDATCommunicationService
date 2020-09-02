@@ -18,9 +18,8 @@ export class MessengerDrawerComponent implements OnInit {
   public keyword: string;
   public users: Array<UserOnline> = new Array<UserOnline>();
 
-  constructor(private userOnlineService: UserOnlineService,
-              private groupService: GroupService) {
-    this.users = this.userOnlineService.getUsersOnline();
+  constructor(private groupService: GroupService) {
+    // this.users = this.userOnlineService.getUsersOnline();
   }
 
   ngOnInit(): void {
@@ -31,15 +30,15 @@ export class MessengerDrawerComponent implements OnInit {
   }
 
   public onSearchChange() {
-    if (this.keyword) {
-      const listUser = this.userOnlineService.getUsersOnline();
-      const listUserFilter = listUser.filter(user => {
-        return user.fullName.search(this.keyword);
-      });
-      this.users = listUserFilter;
-    } else {
-      this.users = this.userOnlineService.getUsersOnline();
-    }
+    // if (this.keyword) {
+    //   const listUser = this.userOnlineService.getUsersOnline();
+    //   const listUserFilter = listUser.filter(user => {
+    //     return user.fullName.search(this.keyword);
+    //   });
+    //   this.users = listUserFilter;
+    // } else {
+    //   this.users = this.userOnlineService.getUsersOnline();
+    // }
   }
 
   public onCreateMessage(userId: string) {

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MentionOnSearchTypes} from 'ng-zorro-antd';
+import {UserService} from '../../service/user.service';
+import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-create-new-group',
@@ -8,7 +10,7 @@ import {MentionOnSearchTypes} from 'ng-zorro-antd';
 })
 export class CreateNewGroupComponent implements OnInit {
 
-  inputValue?: string;
+  keyword = '';
   isGroupPrivate: boolean;
   loading: boolean;
   suggestions = [
@@ -34,9 +36,13 @@ export class CreateNewGroupComponent implements OnInit {
     }
   ];
 
-  valueWith = (data: { fullName: string; avatar: string; }) => data.fullName;
+  public formGroup: FormGroup;
 
-  constructor() { }
+  constructor(private userService: UserService) {
+    this.formGroup = this.createFormGroup();
+  }
+
+  valueWith = (data: { fullName: string; avatar: string; }) => data.fullName;
 
   ngOnInit(): void {
   }
@@ -44,14 +50,17 @@ export class CreateNewGroupComponent implements OnInit {
   onSearchChange({ value }: MentionOnSearchTypes): void {
     if (value) {
       this.loading = true;
-      console.log(this.loading);
-      // this.fetchingData();
+      this.userService.findUserByKeyword(value)
+        .subscribe(users => {
+          console.log(users);
+        });
     }
   }
 
-  fetchingData() {
-    setTimeout(() => {
-      this.loading = false;
-    }, 10000);
+  private createFormGroup() {
+    return new FormGroup({
+      groupName: new FormControl(),
+      keyword: new FormControl()
+    });
   }
 }

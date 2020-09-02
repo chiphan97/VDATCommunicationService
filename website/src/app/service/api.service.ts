@@ -23,11 +23,9 @@ export class ApiService {
    */
   public get(url: string, params?: any): Promise<AxiosResponse<any>> {
     const requestConfig: AxiosRequestConfig = {
-      url,
-      method: 'GET',
       params
     };
-    return axios.request(requestConfig);
+    return axios.get(url, requestConfig);
   }
 
   /**
@@ -36,12 +34,7 @@ export class ApiService {
    * @param data any
    */
   public post(url: string, data: any): Promise<AxiosResponse<any>> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: 'POST',
-      data
-    };
-    return axios.request(requestConfig);
+    return axios.post(url, data);
   }
 
   /**
@@ -50,12 +43,7 @@ export class ApiService {
    * @param data any
    */
   public put(url: string, data: any): Promise<AxiosResponse<any>> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: 'PUT',
-      data
-    };
-    return axios.request(requestConfig);
+    return axios.put(url, data);
   }
 
   /**
@@ -64,12 +52,7 @@ export class ApiService {
    * @param data
    */
   public patch(url: string, data: any): Promise<AxiosResponse<any>> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: 'PATCH',
-      data
-    };
-    return axios.request(requestConfig);
+    return axios.patch(url, data);
   }
 
   /**
@@ -77,11 +60,7 @@ export class ApiService {
    * @param url
    */
   public delete(url: string): Promise<AxiosResponse<any>> {
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method: 'DELETE'
-    };
-    return axios.request(requestConfig);
+    return axios.delete(url);
   }
 
   /**
@@ -90,7 +69,7 @@ export class ApiService {
    */
   private setDefaultRequestConfig(): void {
     axios.defaults.timeout = this.DEFAULT_TIMEOUT;
-    axios.defaults.responseType = 'json';
+    axios.defaults.withCredentials = false;
     axios.defaults.timeoutErrorMessage = 'Cannot connect to server';
     axios.defaults.headers.common.Authorization = `Bearer ${this.getToken()}`;
   }

@@ -7,7 +7,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"gitlab.com/vdat/mcsvc/chat/pkg/controller"
 	"gitlab.com/vdat/mcsvc/chat/pkg/database"
-	"gitlab.com/vdat/mcsvc/chat/pkg/handler"
 	"net"
 	"net/http"
 	"os"
@@ -36,12 +35,14 @@ func main() {
 	r.HandleFunc("/", serveHome)
 	//http.HandleFunc("/test", service.TestHandler)
 	//http.HandleFunc("/test", handler.TestHandler)
-	r.HandleFunc("/user-online", handler.UserOnlineHandler)
+	//r.HandleFunc("/user-online", handler.UserOnlineHandler)
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 
 	//api
 	controller.RegisterGroupApi(r)
 	controller.RegisterUserOnlineApi(r)
+
+	r.Use(mux.CORSMethodMiddleware(r))
 
 	headersOk := handlers.AllowedHeaders([]string{"*"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})

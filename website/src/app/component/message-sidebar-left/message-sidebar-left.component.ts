@@ -41,9 +41,8 @@ export class MessageSidebarLeftComponent implements OnInit {
         id: 1,
         groupId: 1,
         sender: {
-          subject: '1',
-          fullName: 'Nguyễn Chí Cường',
-          avatarUrl: ''
+          userId: '1',
+          fullName: 'Nguyễn Chí Cường'
         },
         createdAt: new Date(),
         content: 'Hello world !!!'

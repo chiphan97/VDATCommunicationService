@@ -1,26 +1,21 @@
 import { Injectable } from '@angular/core';
 import {ApiService} from './api.service';
-import {GroupPayload} from '../model/payload/group.payload';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
-import axios from 'axios';
-import {group} from '@angular/animations';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GroupService {
+export class UserService {
 
   constructor(private apiService: ApiService) { }
 
-  public createGroup(groupPayload: GroupPayload): Observable<any> {
+  public findUserByKeyword(keyword: string): Observable<any> {
     return new Observable<any>(observer => {
-      const url = `${environment.apiUrl}/api/v1/groups`;
-
-      this.apiService.post(url, groupPayload)
+      const url = `${environment.apiUrl}/api/v1/users`;
+      this.apiService.get(url, {keyword})
         .then(res => {
           console.log(res);
-          observer.next(res);
         });
     });
   }
