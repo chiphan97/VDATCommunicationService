@@ -9,10 +9,6 @@ import (
 
 func RegisterUserOnlineApi(r *mux.Router) {
 	r.HandleFunc("/api/v1/users", AuthenMiddleJWT(UserOnlineApi))
-	r.HandleFunc("/api/v1/users", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-		writer.Header().Set("Access-Control-Max-Age", "86400")
-	})
 
 }
 
