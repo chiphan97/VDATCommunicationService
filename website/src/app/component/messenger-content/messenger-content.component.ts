@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {formatDistance} from 'date-fns';
 import {Message} from '../../model/message.model';
-import {NzDrawerService} from 'ng-zorro-antd';
-import {MessengerDrawerComponent} from '../messenger-drawer/messenger-drawer.component';
 
 @Component({
   selector: 'app-messenger-content',
   templateUrl: './messenger-content.component.html',
   styleUrls: ['./messenger-content.component.sass']
 })
-export class MessengerContentComponent implements OnInit {
+export class MessengerContentComponent implements OnInit, AfterViewChecked {
+
+  @ViewChild('message-content') private myScrollContainer: ElementRef;
 
   currentUser = 'Me';
   messages: Array<Message>;
@@ -19,10 +19,21 @@ export class MessengerContentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.scrollToBottom();
+  }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
   }
 
   formatDistanceTime(date: Date = new Date()): string {
     return formatDistance(date, new Date());
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    } catch (err) { }
   }
 
   fakeDate(): Array<Message> {

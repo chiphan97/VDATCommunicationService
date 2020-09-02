@@ -1,7 +1,7 @@
 import {Message} from './message.model';
 
 export class Group {
-  title: string;
+  name: string;
   thumbnail: string;
   lastMessage: Message;
 }

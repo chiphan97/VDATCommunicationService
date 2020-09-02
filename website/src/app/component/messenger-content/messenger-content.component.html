@@ -37,7 +37,18 @@
         <input type="text" nz-input placeholder="Nhập tin nhắn ..." />
       </nz-input-group>
       <ng-template #suffixIconSearch>
-        <i nz-icon nzType="send"></i>
+        <nz-space>
+          <nz-space-item>
+            <a nz-button nzType="link">
+              <i nz-icon nzType="link" nzTheme="outline"></i>
+            </a>
+          </nz-space-item>
+          <nz-space-item>
+            <a nz-button nzType="link">
+              <i nz-icon nzType="send" nzTheme="outline"></i>
+            </a>
+          </nz-space-item>
+        </nz-space>
       </ng-template>
     </form>
   </nz-col>

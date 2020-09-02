@@ -7,6 +7,4 @@ import {ApiService} from './api.service';
 export class GroupService {
 
   constructor(private apiService: ApiService) { }
-
-  create
 }

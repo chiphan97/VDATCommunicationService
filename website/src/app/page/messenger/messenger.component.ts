@@ -17,11 +17,7 @@ export class MessengerComponent implements OnInit {
 
   constructor(private userOnlineService: UserOnlineService,
               private route: ActivatedRoute) {
-    this.route.queryParams
-      .subscribe(params => {
-        const token  = params.token;
-        this.userOnlineService.initWebSocket(token);
-      });
+    this.userOnlineService.initWebSocket();
   }
 
   ngOnInit(): void {

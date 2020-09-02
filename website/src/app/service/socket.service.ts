@@ -16,7 +16,7 @@ export class SocketService {
   }
 
   public initWebSocket(accessToken: string) {
-    this.socket = new WebSocket(`${environment.WEBSOCKET_URL}/test?token=${accessToken}`);
+    this.socket = new WebSocket(`${environment.wsUrl}/test?token=${accessToken}`);
     this.socket.onopen = event => {
       this.listener.emit({type: 'open', data: event});
     };
