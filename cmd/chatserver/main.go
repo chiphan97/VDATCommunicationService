@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"gitlab.com/vdat/mcsvc/chat/pkg/controller"
 	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"net"
 	"net/http"
 	"os"
@@ -38,11 +39,11 @@ func main() {
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 
 	//api
-	controller.RegisterGroupApi(r)
-	controller.RegisterUserOnlineApi(r)
+	groups.RegisterGroupApi(r)
+	useronline.RegisterUserOnlineApi(r)
 
 	r.Use(mux.CORSMethodMiddleware(r))
-
+	//corsObj := handlers.AllowedOrigins([]string{"*"})
 	err := http.ListenAndServe(":5000", r)
 	if err != nil {
 		panic("Error: " + err.Error())

@@ -55,10 +55,10 @@ package service
 //	// Registered clients.
 //	clients map[*Client]bool
 //
-//	// Inbound messages from the clients.
+//	// Inbound message from the clients.
 //	inbound chan Message
 //
-//	// Outbound messages that need to send to clients.
+//	// Outbound message that need to send to clients.
 //	outbound chan Message
 //
 //	// Register requests from the clients.
@@ -143,7 +143,7 @@ package service
 //	// The websocket connection.
 //	conn *websocket.Conn
 //
-//	// Buffered channel of outbound messages.
+//	// Buffered channel of outbound message.
 //	send chan []byte
 //}
 //
@@ -173,7 +173,7 @@ package service
 //	}
 //}
 //
-//// writePump pumps messages from the broker to the websocket connection.
+//// writePump pumps message from the broker to the websocket connection.
 ////
 //// A goroutine running writePump is started for each connection. The
 //// application ensures that there is at most one writer to a connection by
@@ -200,7 +200,7 @@ package service
 //			}
 //			w.Write(message)
 //
-//			// Add queued chat messages to the current websocket message.
+//			// Add queued chat message to the current websocket message.
 //			n := len(c.send)
 //			for i := 0; i < n; i++ {
 //				w.Write(newline)

@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"time"
 )
 
@@ -11,10 +11,10 @@ type WsBroker struct {
 	// Registered clients.
 	Clients map[*WsClient]bool
 
-	// Inbound messages from the clients.
+	// Inbound message from the clients.
 	Inbound chan WsMessage
 
-	// Outbound messages that need to send to clients.
+	// Outbound message that need to send to clients.
 	Outbound chan WsMessage
 
 	// Register requests from the clients.
@@ -53,11 +53,11 @@ func (broker *WsBroker) run() {
 		case client := <-broker.Register:
 			broker.Clients[client] = true
 			//add in database when client on
-			_ = service.AddUserOnlineService(client.User)
+			_ = useronline.AddUserOnlineService(client.User)
 		case client := <-broker.Unregister:
 			if _, ok := broker.Clients[client]; ok {
 				//delete in database when client off
-				_ = service.DeleteUserOnlineService(client.User.SocketID)
+				_ = useronline.DeleteUserOnlineService(client.User.SocketID)
 				delete(broker.Clients, client)
 				close(client.Send)
 			}

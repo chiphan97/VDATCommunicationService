@@ -6,6 +6,7 @@ CREATE TABLE Groups(
     name varchar(100),
     type varchar(15) NOT NULL,
     private boolean,
+    thumbnail varchar(255),
     created_at timestamp not null default now(),
     updated_at timestamp not null default now(),
     deleted_at timestamp,
@@ -42,7 +43,7 @@ CREATE TABLE Messages_Delete(
 CREATE TABLE ONLINE(
     hostname varchar(100),
     socket_id varchar(100),
-    user_id varchar(100),
+    user_id varchar(100) ,
     username varchar(100),
     first varchar(100),
     last varchar(100),

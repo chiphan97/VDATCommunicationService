@@ -11,11 +11,11 @@ func main() {
 	//}
 	//fmt.Println(chatboxs)
 	//
-	//messages, err1 := impl.NewMessageRepoImpl(database.DB).GetMessages()
+	//message, err1 := impl.NewMessageRepoImpl(database.DB).GetMessages()
 	//if err1 != nil {
 	//	log.Fatal(err1)
 	//}
-	//fmt.Println(messages)
+	//fmt.Println(message)
 
 	//err := http.ListenAndServe("8000",r)
 	//if err != nil{

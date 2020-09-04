@@ -1,0 +1,33 @@
+package useronline
+
+import (
+	"fmt"
+	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"testing"
+)
+
+func TestAddUserOnlineService(t *testing.T) {
+	database.Connect()
+	user := UserOnline{
+		HostName: "test",
+		SocketID: "test",
+		UserID:   "test",
+		Username: "test",
+		First:    "test",
+		Last:     "test",
+	}
+	err := AddUserOnlineService(user)
+	if err != nil {
+		t.Error(err)
+	} else {
+		fmt.Println("success")
+	}
+}
+func TestGetListUSerOnlineService(t *testing.T) {
+	database.Connect()
+	users, err := GetListUSerOnlineService("1")
+	if err != nil {
+		t.Error(err)
+	}
+	println(users)
+}
