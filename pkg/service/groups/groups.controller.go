@@ -3,30 +3,31 @@ package groups
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"gitlab.com/vdat/mcsvc/chat/pkg/controller"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
 	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"net/http"
 	"strconv"
 )
 
 func RegisterGroupApi(r *mux.Router) {
-	r.HandleFunc("/api/v1/groups", controller.AuthenMiddleJWT(GetGroupApi)).Methods(http.MethodGet, http.MethodOptions)
-	r.HandleFunc("/api/v1/groups", controller.AuthenMiddleJWT(PostGroupApi)).Methods(http.MethodPost, http.MethodOptions)
-	r.HandleFunc("/api/v1/groups/{idGroup}", controller.AuthenMiddleJWT(PutGroupApi)).Methods(http.MethodPut, http.MethodOptions)
-	r.HandleFunc("/api/v1/groups/{idGroup}", controller.AuthenMiddleJWT(DeleteGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(GetGroupApi)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(PostGroupApi)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}", auth.AuthenMiddleJWT(PutGroupApi)).Methods(http.MethodPut, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}", auth.AuthenMiddleJWT(DeleteGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
 
-	r.HandleFunc("/api/v1/groups/{idGroup}/members", controller.AuthenMiddleJWT(GetListUserByGroupApi)).Methods(http.MethodGet, http.MethodOptions)
-	r.HandleFunc("/api/v1/groups/{idGroup}/members", controller.AuthenMiddleJWT(PatchGroupUserApi)).Methods(http.MethodPatch, http.MethodOptions)
-	r.HandleFunc("/api/v1/groups/{idGroup}/members", controller.AuthenMiddleJWT(UserOutGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
-	r.HandleFunc("/api/v1/groups/{idGroup}/members/{userId}", controller.AuthenMiddleJWT(DeleteGroupUserApi)).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(GetListUserByGroupApi)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(PatchGroupUserApi)).Methods(http.MethodPatch, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(UserOutGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}/members/{userId}", auth.AuthenMiddleJWT(DeleteGroupUserApi)).Methods(http.MethodDelete, http.MethodOptions)
 
 }
 
 func GetGroupApi(w http.ResponseWriter, r *http.Request) {
 	//API load danh sách groups (public, private)
-	controller.SetupResponse(&w, r)
+	cors.SetupResponse(&w, r)
 
-	user := controller.JWTparseOwner(r.Header.Get("Authorization"))
+	user := auth.JWTparseOwner(r.Header.Get("Authorization"))
 	groups, err := GetGroupByUserService(user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -36,7 +37,7 @@ func GetGroupApi(w http.ResponseWriter, r *http.Request) {
 	w.Write(utils.ResponseWithByte(groups))
 }
 func PostGroupApi(w http.ResponseWriter, r *http.Request) {
-	controller.SetupResponse(&w, r)
+	cors.SetupResponse(&w, r)
 
 	var groupPayLoad GroupsPayLoad
 	err := json.NewDecoder(r.Body).Decode(&groupPayLoad)
@@ -46,7 +47,7 @@ func PostGroupApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	owner := controller.JWTparseOwner(r.Header.Get("Authorization"))
+	owner := auth.JWTparseOwner(r.Header.Get("Authorization"))
 
 	if groupPayLoad.Type == ONE { //api Tạo hội thoại 1 - 1 (nhóm bí mật) ||
 		groupsDto, err := GetGroupByOwnerAndUserService(groupPayLoad, owner)
@@ -68,7 +69,7 @@ func PostGroupApi(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func PutGroupApi(w http.ResponseWriter, r *http.Request) {
-	controller.SetupResponse(&w, r)
+	cors.SetupResponse(&w, r)
 
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["idGroup"])
@@ -93,7 +94,7 @@ func PutGroupApi(w http.ResponseWriter, r *http.Request) {
 	w.Write(utils.ResponseWithByte(newgroup))
 }
 func DeleteGroupApi(w http.ResponseWriter, r *http.Request) {
-	controller.SetupResponse(&w, r)
+	cors.SetupResponse(&w, r)
 
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["idGroup"])
@@ -102,7 +103,7 @@ func DeleteGroupApi(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErr(w, http.StatusBadRequest)
 		return
 	}
-	owner := controller.JWTparseOwner(r.Header.Get("Authorization"))
+	owner := auth.JWTparseOwner(r.Header.Get("Authorization"))
 	check, err := CheckRoleOwnerInGroupService(owner, id)
 	if !check {
 		w.WriteHeader(http.StatusForbidden)
@@ -121,7 +122,7 @@ func DeleteGroupApi(w http.ResponseWriter, r *http.Request) {
 
 //API thêm thành viên vào 1 nhóm
 func PatchGroupUserApi(w http.ResponseWriter, r *http.Request) {
-	controller.SetupResponse(&w, r)
+	cors.SetupResponse(&w, r)
 
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["idGroup"])
@@ -146,7 +147,7 @@ func PatchGroupUserApi(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseOk(w, true)
 }
 func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
-	controller.SetupResponse(&w, r)
+	cors.SetupResponse(&w, r)
 
 	params := mux.Vars(r)
 	groupID, err := strconv.Atoi(params["idGroup"])
@@ -156,7 +157,7 @@ func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userid := params["userId"]
-	owner := controller.JWTparseOwner(r.Header.Get("Authorization"))
+	owner := auth.JWTparseOwner(r.Header.Get("Authorization"))
 	check, err := CheckRoleOwnerInGroupService(owner, groupID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -180,7 +181,7 @@ func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func UserOutGroupApi(w http.ResponseWriter, r *http.Request) {
-	controller.SetupResponse(&w, r)
+	cors.SetupResponse(&w, r)
 
 	params := mux.Vars(r)
 	groupID, err := strconv.Atoi(params["idGroup"])
@@ -189,7 +190,7 @@ func UserOutGroupApi(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErr(w, http.StatusBadRequest)
 		return
 	}
-	owner := controller.JWTparseOwner(r.Header.Get("Authorization"))
+	owner := auth.JWTparseOwner(r.Header.Get("Authorization"))
 	check, err := CheckRoleOwnerInGroupService(owner, groupID)
 
 	if check {
@@ -210,14 +211,16 @@ func UserOutGroupApi(w http.ResponseWriter, r *http.Request) {
 
 }
 func GetListUserByGroupApi(w http.ResponseWriter, r *http.Request) {
-	controller.SetupResponse(&w, r)
+	cors.SetupResponse(&w, r)
 	params := mux.Vars(r)
 	groupID, err := strconv.Atoi(params["idGroup"])
+
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		utils.ResponseErr(w, http.StatusBadRequest)
 		return
 	}
+
 	users, err := GetListUserByGroupService(groupID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

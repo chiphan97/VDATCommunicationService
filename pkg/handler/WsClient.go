@@ -4,8 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gorilla/websocket"
-	"gitlab.com/vdat/mcsvc/chat/pkg/model"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"time"
 )
@@ -16,10 +15,10 @@ type WsClient struct {
 	// The websocket connection.
 	Conn *websocket.Conn
 
-	// Buffered channel of outbound messages.
+	// Buffered channel of outbound message.
 	Send chan []byte
 
-	User model.UserOnline
+	User useronline.UserOnline
 }
 
 func (client *WsClient) ReadPump() {
@@ -55,7 +54,7 @@ func (client *WsClient) CheckUserOnlinePump(userHide string) {
 	}()
 
 	for {
-		usersOnline, _ := service.GetListUSerOnlineService("")
+		usersOnline, _ := useronline.GetListUSerOnlineService("")
 		message := WsMessage{
 			From:   "VDAT-SERVICE",
 			To:     nil,
@@ -92,7 +91,7 @@ func (client *WsClient) WritePump() {
 			}
 			_, _ = w.Write(message)
 
-			// Add queued chat messages to the current websocket message.
+			// Add queued chat message to the current websocket message.
 			n := len(client.Send)
 			for i := 0; i < n; i++ {
 				_, _ = w.Write(Newline)

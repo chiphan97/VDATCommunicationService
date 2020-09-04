@@ -1,20 +1,18 @@
-package impl
+package useronline
 
 import (
 	"database/sql"
-	"gitlab.com/vdat/mcsvc/chat/pkg/model"
-	"gitlab.com/vdat/mcsvc/chat/pkg/repository"
 )
 
 type UserOnlineRepoImpl struct {
 	Db *sql.DB
 }
 
-func NewUserOnlineRepoImpl(db *sql.DB) repository.UserOnlineRepo {
+func NewUserOnlineRepoImpl(db *sql.DB) UserOnlineRepo {
 	return &UserOnlineRepoImpl{Db: db}
 }
-func (u *UserOnlineRepoImpl) GetListUSerOnline(filter string) ([]model.UserOnline, error) {
-	userOnlines := make([]model.UserOnline, 0)
+func (u *UserOnlineRepoImpl) GetListUSerOnline(filter string) ([]UserOnline, error) {
+	userOnlines := make([]UserOnline, 0)
 	statement := `SELECT user_id,username,first,last,log_at FROM ONLINE `
 	if len(filter) > 0 {
 		statement = statement + `WHERE username LIKE '` + filter + `%'`
@@ -25,7 +23,7 @@ func (u *UserOnlineRepoImpl) GetListUSerOnline(filter string) ([]model.UserOnlin
 		return userOnlines, err
 	}
 	for rows.Next() {
-		var user model.UserOnline
+		var user UserOnline
 		err = rows.Scan(&user.UserID, &user.Username, &user.First, &user.Last, &user.LogAt)
 		if err != nil {
 			return userOnlines, err
@@ -34,7 +32,7 @@ func (u *UserOnlineRepoImpl) GetListUSerOnline(filter string) ([]model.UserOnlin
 	}
 	return userOnlines, nil
 }
-func (u *UserOnlineRepoImpl) AddUserOnline(online model.UserOnline) error {
+func (u *UserOnlineRepoImpl) AddUserOnline(online UserOnline) error {
 	statement := `INSERT INTO ONLINE VALUES ($1,$2,$3,$4,$5,$6)`
 	_, err := u.Db.Exec(statement, online.HostName, online.SocketID, online.UserID, online.Username, online.First, online.Last)
 	if err != nil {
@@ -50,8 +48,8 @@ func (u *UserOnlineRepoImpl) DeleteUserOnline(socketid string) error {
 	}
 	return nil
 }
-func (u *UserOnlineRepoImpl) GetUserOnline(userId string) (model.UserOnline, error) {
-	var user model.UserOnline
+func (u *UserOnlineRepoImpl) GetUserOnline(userId string) (UserOnline, error) {
+	var user UserOnline
 	statement := `SELECT user_id,username,first,last,log_at FROM ONLINE WHERE user_id=$1`
 	rows, err := u.Db.Query(statement, userId)
 	//println(err)

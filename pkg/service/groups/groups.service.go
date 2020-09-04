@@ -2,7 +2,7 @@ package groups
 
 import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/database"
-	"gitlab.com/vdat/mcsvc/chat/pkg/model"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 )
 
 // tao chat 1 1 neu chua co, neu co r tra lai
@@ -106,8 +106,8 @@ func AddUserInGroupService(userIds []string, groupId int) error {
 func DeleteUserInGroupService(userIds []string, groupId int) error {
 	return NewGroupRepoImpl(database.DB).DeleteGroupUser(userIds, groupId)
 }
-func GetListUserByGroupService(groupId int) ([]model.User, error) {
-	users := make([]model.User, 0)
+func GetListUserByGroupService(groupId int) ([]useronline.User, error) {
+	users := make([]useronline.User, 0)
 	userOnlines, err := NewGroupRepoImpl(database.DB).GetListUserByGroup(groupId)
 	if err != nil {
 		return users, err

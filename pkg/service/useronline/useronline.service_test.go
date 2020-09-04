@@ -1,15 +1,14 @@
-package service
+package useronline
 
 import (
 	"fmt"
 	"gitlab.com/vdat/mcsvc/chat/pkg/database"
-	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"testing"
 )
 
 func TestAddUserOnlineService(t *testing.T) {
 	database.Connect()
-	user := model.UserOnline{
+	user := UserOnline{
 		HostName: "test",
 		SocketID: "test",
 		UserID:   "test",

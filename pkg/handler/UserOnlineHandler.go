@@ -4,7 +4,8 @@ import (
 	_ "bytes"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"gitlab.com/vdat/mcsvc/chat/pkg/model"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"net/http"
 	"strings"
@@ -15,7 +16,7 @@ var userOnlineBroker *WsBroker
 func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 	// authenticate
 	var (
-		claims model.UserClaims
+		claims auth.UserClaims
 
 		// https://accounts.vdatlab.com/auth/realms/vdatlab.com/protocol/openid-connect/certs
 		publicKey = "MIICpTCCAY0CBgFrPLdvYjANBgkqhkiG9w0BAQsFADAWMRQwEgYDVQQDDAt2ZGF0bGFiLmNvbTAeFw0xOTA2MDkxNDQ4MDNaFw0yOTA2MDkxNDQ5NDNaMBYxFDASBgNVBAMMC3ZkYXRsYWIuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAleIkHoO6Q0GRQ4POIAKmN5Ev3zfAm8raTJQ1e/CbTXW4FQ0kDS9YPhLXPwcdnbxiL3rSGgz7+iWcq/Ix7yExuNbSyqDUjLUJSU6I9JvB1YP8GSaO8d996+TVCDC8E/VSID6wmfWbMNb5Ns6Y7YY/HAhj9zc73ObErvi0NV0BjeYAVOBqJKKgl9cHfyBshr+kpC/7nrbTRnAP7JQhKrQF6wBTKQiuJlEyYqvi1ugCRBYg2BZLPtTry+Kineb1DT8ynmxJjKMtr9hU0dsLPJpqW/4DWwNOarLOBP/K9WkfR2LUxbrm41goSTjJbz6s7f/Mvn/gDLjGjIsdlFP3Y7I2lwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBXU5Awwhv/cYJKCdSUzmtXpXty8KrdrHaDNa8potDXlEc2JrK3wHyFRwwfpBhkaicP0LllxRHUGUNsWFnggae1fudc75fysZ16NPH7VJlUuyV96K06K4v1aM5VCSWl5djky7rtyfi2W9iH2ddWZvCeSyFsSgCD4P5GjgYpsLy27g/cvdJJAdp/b7bweVDI1grlBtnInxLUPhJ4cnoNw3crh7twqKgG6F3GmZc2Hjl45LdlxBFfftDUYH66D1X0mdoipQCbg4JWlIxUZHVjJDIrSIlwnRMwjzCm7MUYv0ySmvsxgoNVI2NuFU6A/F7zlyVkDkmO4ilp4BueRtBKb7yR"
@@ -83,7 +84,7 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := model.UserOnline{
+	user := useronline.UserOnline{
 		HostName: r.URL.Path,
 		SocketID: claims.Subject,
 		UserID:   claims.Subject,

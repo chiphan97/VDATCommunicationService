@@ -2,7 +2,7 @@ package groups
 
 import (
 	"database/sql"
-	"gitlab.com/vdat/mcsvc/chat/pkg/model"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 )
 
 type GroupRepoImpl struct {
@@ -217,8 +217,8 @@ func (g *GroupRepoImpl) GetOwnerByGroupAndOwner(owner string, groupId int) (bool
 	}
 	return false, nil
 }
-func (g *GroupRepoImpl) GetListUserByGroup(idGourp int) ([]model.UserOnline, error) {
-	usersOnlines := make([]model.UserOnline, 0)
+func (g *GroupRepoImpl) GetListUserByGroup(idGourp int) ([]useronline.UserOnline, error) {
+	usersOnlines := make([]useronline.UserOnline, 0)
 	statement := `SELECT o.user_id, o.username,o.first,o.last
 					FROM Groups_Users as g 
 					INNER JOIN ONLINE as o 
@@ -229,7 +229,7 @@ func (g *GroupRepoImpl) GetListUserByGroup(idGourp int) ([]model.UserOnline, err
 		return usersOnlines, err
 	}
 	for rows.Next() {
-		var usersOnline model.UserOnline
+		var usersOnline useronline.UserOnline
 		err = rows.Scan(&usersOnline.UserID,
 			&usersOnline.Username,
 			&usersOnline.First,

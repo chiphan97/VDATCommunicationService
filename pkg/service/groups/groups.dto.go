@@ -5,5 +5,6 @@ type GroupsDTO struct {
 	Name      string `json:"nameGroup"`
 	Type      string `json:"type"`
 	Private   bool   `json:"private"`
+	Owner     string `json:"owner"`
 	Thumbnail string `json:"thumbnail"`
 }

@@ -1,70 +1,68 @@
-package impl
+package message
 
 import (
 	"database/sql"
-	"gitlab.com/vdat/mcsvc/chat/pkg/model"
-	"gitlab.com/vdat/mcsvc/chat/pkg/repository"
 )
 
 type MessageRepoImpl struct {
 	Db *sql.DB
 }
 
-func NewMessageRepoImpl(db *sql.DB) repository.MessageRepo {
+func NewMessageRepoImpl(db *sql.DB) MessageRepo {
 	return &MessageRepoImpl{Db: db}
 }
 
 //func (mess *MessageRepoImpl) GetMessagesByChatBox(idChatBox int) ([]model.MessageModel, error) {
-//	messages := make([]model.MessageModel, 0)
-//	statement := `SELECT * FROM messages WHERE id_chat = $1`
+//	message := make([]model.MessageModel, 0)
+//	statement := `SELECT * FROM message WHERE id_chat = $1`
 //	rows, err := mess.Db.Query(statement, idChatBox)
 //	if err != nil {
-//		return messages, err
+//		return message, err
 //	}
 //	for rows.Next() {
 //		message := model.MessageModel{}
 //		err := rows.Scan(&message.ID, &message.IdChat, &message.Content, &message.SeenAt, &message.CreatedAt, &message.UpdatedAt, &message.DeletedAt)
 //		if err != nil {
-//			return messages, err
+//			return message, err
 //		}
-//		messages = append(messages, message)
+//		message = append(message, message)
 //	}
 //
-//	return messages, nil
+//	return message, nil
 //}
 //func (mess *MessageRepoImpl) InsertMessage(messageModel model.MessageModel) error {
-//	statement := `INSERT INTO messages (id_chat,content) VALUES ($1,$2)`
+//	statement := `INSERT INTO message (id_chat,content) VALUES ($1,$2)`
 //	_, err := mess.Db.Exec(statement,
 //		messageModel.IdChat,
 //		messageModel.Content)
 //	return err
 //}
 //func (mess *MessageRepoImpl) GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error) {
-//	messages := make([]model.MessageModel, 0)
-//	statement := `SELECT * FROM messages WHERE id_chat = $1 AND seen_at IS NULL ORDER BY created_at LIMIT 10`
+//	message := make([]model.MessageModel, 0)
+//	statement := `SELECT * FROM message WHERE id_chat = $1 AND seen_at IS NULL ORDER BY created_at LIMIT 10`
 //	rows, err := mess.Db.Query(statement, idChatBox)
 //	if err != nil {
-//		return messages, err
+//		return message, err
 //	}
 //	for rows.Next() {
 //		message := model.MessageModel{}
 //		err := rows.Scan(&message.ID, &message.IdChat, &message.Content, &message.SeenAt, &message.CreatedAt, &message.UpdatedAt, &message.DeletedAt)
 //		if err != nil {
-//			return messages, err
+//			return message, err
 //		}
-//		messages = append(messages, message)
+//		message = append(message, message)
 //	}
-//	return messages, nil
+//	return message, nil
 //}
 //func (mess *MessageRepoImpl) UpdateMessageByChatBox(idChatBox int) error {
-//	statement := `UPDATE messages SET seen_at=now() WHERE id_chat = $1`
+//	statement := `UPDATE message SET seen_at=now() WHERE id_chat = $1`
 //	_, err := mess.Db.Exec(statement, idChatBox)
 //	return err
 //}
-func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]model.Messages, error) {
-	messages := make([]model.Messages, 0)
+func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]Messages, error) {
+	messages := make([]Messages, 0)
 	statement := `SELECT m.id_mess,m.subject_sender,m.content,m.created_at,m.updated_at,m.deleted_at,m.id_group
-					FROM (SELECT * FROM dchat.public.messages WHERE id_group = $1) AS m
+					FROM (SELECT * FROM dchat.public.message WHERE id_group = $1) AS m
 					LEFT JOIN Messages_Delete AS md
 					ON m.id_mess = md.id_mess
 					WHERE  m.created_at >= (SELECT g_u.last_deleted_messages
@@ -82,7 +80,7 @@ func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser stri
 		return messages, err
 	}
 	for rows.Next() {
-		message := model.Messages{}
+		message := Messages{}
 		err := rows.Scan(&message.ID, &message.SubjectSender, &message.Content, &message.CreatedAt, &message.UpdatedAt, &message.DeletedAt, &message.IdGroup)
 		if err != nil {
 			return messages, err
@@ -93,7 +91,7 @@ func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser stri
 }
 
 //func (mess *MessageRepoImpl) DeleteMessageById(idMesssage int) error {
-//	statement := `DELETE FROM messages WHERE id_mess = $1`
+//	statement := `DELETE FROM message WHERE id_mess = $1`
 //	_, err := mess.Db.Exec(statement, idMesssage)
 //	return err
 //}

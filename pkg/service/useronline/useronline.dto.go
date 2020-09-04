@@ -1,4 +1,4 @@
-package model
+package useronline
 
 type User struct {
 	UserID   string `json:"userId"`

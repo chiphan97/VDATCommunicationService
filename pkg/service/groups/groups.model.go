@@ -37,6 +37,7 @@ func (g *Groups) ConvertToDTO() GroupsDTO {
 		Type:      g.Type,
 		Private:   g.Private,
 		Thumbnail: g.Thumbnail,
+		Owner:     g.UserCreate,
 	}
 	return dto
 }

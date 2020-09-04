@@ -1,6 +1,8 @@
 package groups
 
-import "gitlab.com/vdat/mcsvc/chat/pkg/model"
+import (
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
+)
 
 type GroupRepo interface {
 	//chat one - one
@@ -11,7 +13,7 @@ type GroupRepo interface {
 	UpdateGroup(group Groups) (Groups, error)
 	DeleteGroup(idGourp int) error
 	GetOwnerByGroupAndOwner(owner string, groupId int) (bool, error)
-	GetListUserByGroup(idGourp int) ([]model.UserOnline, error)
+	GetListUserByGroup(idGourp int) ([]useronline.UserOnline, error)
 	AddGroupUser(users []string, idgroup int) error
 	DeleteGroupUser(users []string, idgroup int) error
 }
