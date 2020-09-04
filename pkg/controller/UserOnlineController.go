@@ -8,21 +8,24 @@ import (
 )
 
 func RegisterUserOnlineApi(r *mux.Router) {
-	r.HandleFunc("/api/v1/users", AuthenMiddleJWT(UserOnlineApi))
+	r.HandleFunc("/api/v1/users", AuthenMiddleJWT(GetUserOnlineApi)).Methods(http.MethodGet)
 
 }
 
 //API tìm kiếm người dùng filtter
-func UserOnlineApi(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		fil := r.URL.Query()["keyword"]
-		userOns, err := service.GetListUSerOnlineService(fil[0])
-		if err != nil {
-			utils.ResponseErr(w, http.StatusNotFound)
-		}
-		w.Write(utils.ResponseWithByte(userOns))
-	default:
-		utils.ResponseErr(w, http.StatusBadRequest)
+func GetUserOnlineApi(w http.ResponseWriter, r *http.Request) {
+	SetupResponse(&w, r)
+
+	fil := r.URL.Query()["keyword"]
+	userOns, err := service.GetListUSerOnlineService(fil[0])
+	if err != nil {
+		utils.ResponseErr(w, http.StatusNotFound)
 	}
+	w.Write(utils.ResponseWithByte(userOns))
+	//switch r.Method {
+	//case http.MethodGet:
+	//
+	//default:
+	//	utils.ResponseErr(w, http.StatusBadRequest)
+	//}
 }

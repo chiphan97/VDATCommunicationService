@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"gitlab.com/vdat/mcsvc/chat/pkg/controller"
@@ -44,8 +43,8 @@ func main() {
 	controller.RegisterUserOnlineApi(r)
 
 	r.Use(mux.CORSMethodMiddleware(r))
-	corsObj := handlers.AllowedOrigins([]string{"*"})
-	err := http.ListenAndServe(":5000", handlers.CORS(corsObj)(r))
+	//corsObj := handlers.AllowedOrigins([]string{"*"})
+	err := http.ListenAndServe(":5000", r)
 	if err != nil {
 		panic("Error: " + err.Error())
 	}
