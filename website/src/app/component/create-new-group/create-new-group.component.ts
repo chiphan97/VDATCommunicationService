@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {MentionOnSearchTypes} from 'ng-zorro-antd';
 
 @Component({
-  selector: 'app-create-new-group',
-  templateUrl: './create-new-group.component.html',
-  styleUrls: ['./create-new-group.component.sass']
+  selector: 'app-create-new-groups',
+  templateUrl: './create-new-groups.component.html',
+  styleUrls: ['./create-new-groups.component.sass']
 })
 export class CreateNewGroupComponent implements OnInit {
 

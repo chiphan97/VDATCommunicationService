@@ -17,6 +17,7 @@ MIICpTCCAY0CBgFrPLdvYjANBgkqhkiG9w0BAQsFADAWMRQwEgYDVQQDDAt2ZGF0bGFiLmNvbTAeFw0x
 
 func AuthenMiddleJWT(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		SetupResponse(&w, r)
 
 		tokenHeader := r.Header.Get("Authorization")
 

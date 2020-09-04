@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"golang.org/x/oauth2"
 
-	//"github.com/oklog/oklog/pkg/group"
+	//"github.com/oklog/oklog/pkg/groups"
 	"io"
 	"io/ioutil"
 	"net"
@@ -59,10 +59,10 @@ func getWellKnownConfig(serverUrl string) (*WellKnownConfig, error) {
 // AuthorizeUser implements the PKCE OAuth2 flow.
 func login() (*oauth2.Token, error) {
 	var (
-		authServerUrl		= "https://accounts.vdatlab.com/auth/realms/vdatlab.com"
-		clientID			= "chat.services.vdatlab.com"
-		redirectURL			= "http://127.0.0.1:12345/auth/callback"
-		token				*oauth2.Token
+		authServerUrl = "https://accounts.vdatlab.com/auth/realms/vdatlab.com"
+		clientID      = "chat.services.vdatlab.com"
+		redirectURL   = "http://127.0.0.1:12345/auth/callback"
+		token         *oauth2.Token
 	)
 
 	authServerWellKnownCfg, err := getWellKnownConfig(authServerUrl)
@@ -80,10 +80,10 @@ func login() (*oauth2.Token, error) {
 	authorizationURL := fmt.Sprintf(
 		"%s?audience="+
 			"&scope=openid"+
-			"&response_type=code" +
+			"&response_type=code"+
 			"&client_id=%s"+
 			"&code_challenge=%s"+
-			"&code_challenge_method=S256" +
+			"&code_challenge_method=S256"+
 			"&redirect_uri=%s",
 		authServerWellKnownCfg.AuthorizationEndpoint, clientID, codeChallenge, redirectURL)
 

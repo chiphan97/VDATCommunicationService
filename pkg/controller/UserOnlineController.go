@@ -8,7 +8,7 @@ import (
 )
 
 func RegisterUserOnlineApi(r *mux.Router) {
-	r.HandleFunc("/api/v1/users", AuthenMiddleJWT(GetUserOnlineApi)).Methods(http.MethodGet)
+	r.HandleFunc("/api/v1/users", AuthenMiddleJWT(GetUserOnlineApi)).Methods(http.MethodGet, http.MethodOptions)
 
 }
 
@@ -17,11 +17,11 @@ func GetUserOnlineApi(w http.ResponseWriter, r *http.Request) {
 	SetupResponse(&w, r)
 
 	fil := r.URL.Query()["keyword"]
-	userOns, err := service.GetListUSerOnlineService(fil[0])
+	users, err := service.GetListUSerOnlineService(fil[0])
 	if err != nil {
 		utils.ResponseErr(w, http.StatusNotFound)
 	}
-	w.Write(utils.ResponseWithByte(userOns))
+	w.Write(utils.ResponseWithByte(users))
 	//switch r.Method {
 	//case http.MethodGet:
 	//

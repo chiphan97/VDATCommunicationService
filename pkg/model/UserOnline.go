@@ -13,3 +13,13 @@ type UserOnline struct {
 	Last     string     `json:"last"`
 	LogAt    *time.Time `json:"log_at"`
 }
+
+func (u *UserOnline) ConvertToDto() User {
+	user := User{
+		UserID:   u.UserID,
+		Username: u.Username,
+		First:    u.First,
+		Last:     u.Last,
+	}
+	return user
+}
