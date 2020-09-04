@@ -1,6 +1,7 @@
-import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {formatDistance} from 'date-fns';
 import {Message} from '../../model/message.model';
+import {Group} from '../../model/group.model';
 
 @Component({
   selector: 'app-messenger-content',
@@ -8,6 +9,8 @@ import {Message} from '../../model/message.model';
   styleUrls: ['./messenger-content.component.sass']
 })
 export class MessengerContentComponent implements OnInit, AfterViewChecked {
+
+  @Input() groupSelected: Group;
 
   @ViewChild('message-content') private myScrollContainer: ElementRef;
 
@@ -41,6 +44,7 @@ export class MessengerContentComponent implements OnInit, AfterViewChecked {
       id: 1,
       groupId: 1,
       sender: {
+        avatar: '',
         userId: '1',
         fullName: 'Nguyễn Chí Cường',
         lastName: '',

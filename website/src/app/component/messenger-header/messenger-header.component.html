@@ -1,10 +1,12 @@
 <div class="site-page-header-ghost-wrapper">
   <nz-page-header [nzGhost]="false">
     <nz-page-header-title>
-      <nz-avatar nzIcon="user" nzSrc="//zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></nz-avatar>
-      Hồ Thị Quốc Vửng
+      <nz-avatar nzIcon="team" style="background-color:#87d068;"
+                 [nzSrc]="isGroup(groupSelected?.type) ? '' : groupSelected?.thumbnail">
+      </nz-avatar>
+      <span nz-typography>{{groupSelected?.nameGroup}}</span>
     </nz-page-header-title>
-    <nz-page-header-subtitle>
+    <nz-page-header-subtitle *ngIf="!isGroup(groupSelected.type)">
       <nz-badge nzStatus="success"></nz-badge>
       <span>online</span>
     </nz-page-header-subtitle>

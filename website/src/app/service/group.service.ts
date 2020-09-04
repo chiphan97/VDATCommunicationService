@@ -3,8 +3,8 @@ import {ApiService} from './api.service';
 import {GroupPayload} from '../model/payload/group.payload';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
-import axios from 'axios';
-import {group} from '@angular/animations';
+import {Group} from '../model/group.model';
+import {User} from '../model/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,27 +13,93 @@ export class GroupService {
 
   constructor(private apiService: ApiService) { }
 
-  public getAllGroup(): Observable<any> {
-    return new Observable<any>(observer => {
-      const url = `${environment.apiUrl}/api/v1/groups`;
 
+  public getAllGroup(): Observable<Array<Group>> {
+    return new Observable<Array<Group>>(observer => {
+      const url = `${environment.apiUrl}/api/v1/groups`;
       this.apiService.get(url)
         .then(res => {
-          console.log(res);
-          observer.next(res);
-        });
+          const data = res.data;
+          const groups = data.map(item => Group.fromJson(item));
+          observer.next(groups);
+        })
+        .catch(err => observer.error(err))
+        .finally(() => observer.complete());
     });
   }
 
   public createGroup(groupPayload: GroupPayload): Observable<any> {
     return new Observable<any>(observer => {
       const url = `${environment.apiUrl}/api/v1/groups`;
-
       this.apiService.post(url, groupPayload)
         .then(res => {
-          console.log(res);
-          observer.next(res);
-        });
+          const data = res.data;
+          const group = Group.fromJson(data);
+          observer.next(group);
+        })
+        .catch(err => observer.error(err))
+        .finally(() => observer.complete());
+    });
+  }
+
+  public updateNameGroup(groupId: number, nameGroup: string): Observable<Group> {
+    return new Observable<Group>(observer => {
+      const url = `${environment.apiUrl}/api/v1/groups/${groupId}`;
+      this.apiService.put(url, {nameGroup})
+        .then(res => {
+          const data = res.data;
+          const group = Group.fromJson(data);
+          observer.next(group);
+        })
+        .catch(err => observer.error(err))
+        .finally(() => observer.complete());
+    });
+  }
+
+  public deleteGroup(groupId: number): Observable<boolean> {
+    return new Observable<boolean>(observer => {
+      const url = `${environment.apiUrl}/api/v1/groups/${groupId}`;
+      this.apiService.delete(url)
+        .then(res => {
+          if (res.data) {
+            observer.next(res.data === true);
+          } else {
+            observer.next(false);
+          }
+
+        })
+        .catch(err => observer.error(err))
+        .finally(() => observer.complete());
+    });
+  }
+
+  public getAllMemberOfGroup(groupId: number): Observable<Array<User>> {
+    return new Observable<Array<User>>(observer => {
+      const url = `${environment.apiUrl}/api/v1/groups/${groupId}/members`;
+      this.apiService.get(url)
+        .then(res => {
+          const data = res.data;
+          const users = data.map(item => User.fromJson(item));
+          observer.next(users);
+        })
+        .catch(err => observer.error(err))
+        .finally(() => observer.complete());
+    });
+  }
+
+  public deleteMemberOfGroup(groupId: number, userId: string): Observable<boolean> {
+    return new Observable<boolean>(observer => {
+      const url = `${environment.apiUrl}/api/v1/groups/${groupId}/members/${userId}`;
+      this.apiService.delete(url)
+        .then(res => {
+          if (res.data) {
+            observer.next(res.data === true);
+          } else {
+            observer.next(false);
+          }
+        })
+        .catch(err => observer.error(err))
+        .finally(() => observer.complete());
     });
   }
 }

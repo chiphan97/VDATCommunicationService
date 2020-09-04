@@ -2,7 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { FooterComponent } from './footer/footer.component';
-import {NzButtonModule, NzGridModule, NzIconModule, NzLayoutModule} from 'ng-zorro-antd';
+import {
+  NzAvatarModule,
+  NzButtonModule,
+  NzDropDownModule,
+  NzGridModule,
+  NzIconModule,
+  NzLayoutModule,
+  NzTypographyModule
+} from 'ng-zorro-antd';
+import {NzSpaceModule} from 'ng-zorro-antd/space';
 
 
 
@@ -17,7 +26,11 @@ import {NzButtonModule, NzGridModule, NzIconModule, NzLayoutModule} from 'ng-zor
     NzLayoutModule,
     NzGridModule,
     NzButtonModule,
-    NzIconModule
+    NzIconModule,
+    NzAvatarModule,
+    NzDropDownModule,
+    NzSpaceModule,
+    NzTypographyModule
   ]
 })
 export class SharedModule { }

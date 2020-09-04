@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import {ApiService} from './service/api.service';
-import {UserOnlineService} from './service/user-online.service';
+import {KeycloakService} from './service/keycloak.service';
 
 @Component({
   selector: 'app-root',
@@ -8,10 +7,9 @@ import {UserOnlineService} from './service/user-online.service';
   styleUrls: ['./app.component.sass']
 })
 export class AppComponent {
-  title = 'website';
 
-  constructor(private userOnlineService: UserOnlineService) {
-    this.userOnlineService.initWebSocket();
+  constructor(private keycloakService: KeycloakService) {
+    this.keycloakService.initKeycloak();
   }
 
 }

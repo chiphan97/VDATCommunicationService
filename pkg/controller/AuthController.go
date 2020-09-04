@@ -4,7 +4,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/model"
 	"gitlab.com/vdat/mcsvc/chat/pkg/utils"

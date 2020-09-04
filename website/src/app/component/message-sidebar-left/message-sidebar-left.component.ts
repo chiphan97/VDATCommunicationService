@@ -1,69 +1,74 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Group} from '../../model/group.model';
 import {NzModalService} from 'ng-zorro-antd';
 import {CreateNewGroupComponent} from '../create-new-group/create-new-group.component';
 import {GroupType} from '../../const/group-type.const';
 import {GroupService} from '../../service/group.service';
 import {ApiService} from '../../service/api.service';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-message-sidebar-left',
   templateUrl: './message-sidebar-left.component.html',
   styleUrls: ['./message-sidebar-left.component.sass']
 })
-export class MessageSidebarLeftComponent implements OnInit {
+export class MessageSidebarLeftComponent implements OnInit, OnChanges {
+
+  @Input() changed: boolean;
+  @Input() groupSelected: Group;
+  @Output() groupSelectedChange = new EventEmitter<Group>();
+
   loading = false;
 
   public groups: Array<Group>;
 
   constructor(private modalService: NzModalService,
               private groupService: GroupService) {
-
-    this.groupService.getAllGroup()
-      .subscribe(groups => {
-        console.log(groups);
-      });
-    this.groups = this.fakeData();
+    this.groups = new Array<Group>();
+    this.groupSelected = null;
   }
 
+  isGroup = (type) => type === GroupType.MANY;
+  isGroupPublic = (isPrivate) => isPrivate === false;
+
   ngOnInit(): void {
+    this.fetchingData();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.changed) {
+      this.fetchingData();
+    }
+  }
+
+  private fetchingData() {
+    this.loading = true;
+    this.groupService.getAllGroup()
+      .subscribe(groups => {
+          this.groups = groups;
+
+          if (groups.length > 0) {
+            this.groupSelectedChange.emit(groups[0]);
+          }
+        }, error => this.groups = [],
+        () => this.loading = false);
   }
 
   showModalCreateGroup(): void {
-    this.modalService.create({
+    const modalCreate = this.modalService.create({
       nzTitle: 'Tạo nhóm mới',
-      nzContent: CreateNewGroupComponent,
-      nzOkText: 'Tạo nhóm',
-      nzCancelText: 'Hủy'
+      nzContent: CreateNewGroupComponent
     });
+
+    modalCreate.afterClose
+      .subscribe(value => {
+        if (value === 'created') {
+          this.fetchingData();
+        }
+      });
   }
 
-  fakeData(): Array<Group> {
-    const group: Group = {
-      nameGroup: 'Hồ Quốc Vững',
-      private: true,
-      type: GroupType.ONE,
-      users: [],
-      thumbnail: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-      lastMessage: {
-        id: 1,
-        groupId: 1,
-        sender: {
-          userId: '1',
-          fullName: 'Nguyễn Chí Cường',
-          firstName: '',
-          lastName: ''
-        },
-        createdAt: new Date(),
-        content: 'Hello world !!!'
-      }
-    };
-
-    const groups = new Array<Group>();
-    for (let i = 1; i < 30; i++) {
-      groups.push(group);
-    }
-
-    return groups;
+  onSelectGroup(group: Group): void {
+    this.groupSelectedChange.emit(group);
   }
 }

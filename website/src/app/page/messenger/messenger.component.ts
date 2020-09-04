@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {NzResizeEvent} from 'ng-zorro-antd/resizable';
+import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {UserOnlineService} from '../../service/user-online.service';
 import { ActivatedRoute } from '@angular/router';
+import {Group} from '../../model/group.model';
 
 @Component({
   selector: 'app-messenger',
@@ -10,23 +10,17 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MessengerComponent implements OnInit {
 
-  public collapseSidebar = true;
+  public collapseSidebar = false;
+  public groupSelected: Group;
+  public changed: boolean;
 
-  public col = 5;
-  id = -1;
-
-  constructor(private userOnlineService: UserOnlineService,
-              private route: ActivatedRoute) {
-    this.userOnlineService.initWebSocket();
+  constructor() {
   }
 
   ngOnInit(): void {
   }
 
-  onResize({col}: NzResizeEvent): void {
-    cancelAnimationFrame(this.id);
-    this.id = requestAnimationFrame(() => {
-      this.col = col;
-    });
+  onEventChange(isChange: boolean) {
+    this.changed = isChange;
   }
 }

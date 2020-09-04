@@ -1,19 +1,27 @@
 <nz-row>
   <nz-col nzSpan="5">
-    <app-message-sidebar-left></app-message-sidebar-left>
+    <app-message-sidebar-left [(groupSelected)]="groupSelected" [changed]="changed"></app-message-sidebar-left>
   </nz-col>
+
   <nz-col [nzSpan]="collapseSidebar ? 14 : 19">
-    <nz-row>
+    <nz-row *ngIf="groupSelected">
       <nz-col nzSpan="24">
-        <app-messenger-header [(collapseSidebar)]="collapseSidebar"></app-messenger-header>
+        <app-messenger-header [groupSelected]="groupSelected"
+                              [(collapseSidebar)]="collapseSidebar"></app-messenger-header>
       </nz-col>
       <nz-col nzSpan="24">
-        <app-messenger-content></app-messenger-content>
+        <app-messenger-content [groupSelected]="groupSelected"></app-messenger-content>
       </nz-col>
     </nz-row>
 
+    <nz-result *ngIf="!groupSelected" nzStatus="404" nzTitle="Uh ohhh ..."
+               nzSubTitle="Bạn chưa có tin nhắn nào, hãy tìm một người nào đó và bắt đầu trò chuyện nào">
+    </nz-result>
   </nz-col>
+
   <nz-col [nzSpan]="collapseSidebar ? 5 : 0">
-    <app-message-sidebar-right></app-message-sidebar-right>
+    <app-message-sidebar-right [groupSelected]="groupSelected"
+                               (changeGroup)="onEventChange($event)">
+    </app-message-sidebar-right>
   </nz-col>
 </nz-row>
