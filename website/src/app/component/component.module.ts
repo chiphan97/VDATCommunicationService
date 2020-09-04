@@ -25,7 +25,15 @@ import {AddMemberGroupComponent} from './add-member-group/add-member-group.compo
 
 
 @NgModule({
-  declarations: [MessengerContentComponent, MessengerOptionComponent, MessengerHeaderComponent, MessengerDrawerComponent, MessageSidebarLeftComponent, MessageSidebarRightComponent, CreateNewGroupComponent, AddMemberGroupComponent],
+  declarations: [
+    MessengerContentComponent,
+    MessengerOptionComponent,
+    MessengerHeaderComponent,
+    MessengerDrawerComponent,
+    MessageSidebarLeftComponent,
+    MessageSidebarRightComponent,
+    CreateNewGroupComponent,
+    AddMemberGroupComponent],
   exports: [
     MessengerContentComponent,
     MessageSidebarLeftComponent,
