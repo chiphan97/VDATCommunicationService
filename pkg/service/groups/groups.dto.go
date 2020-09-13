@@ -1,6 +1,6 @@
 package groups
 
-type GroupsDTO struct {
+type Dto struct {
 	Id        uint   `json:"id"`
 	Name      string `json:"nameGroup"`
 	Type      string `json:"type"`

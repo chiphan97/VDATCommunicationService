@@ -19,7 +19,7 @@ const (
 	PATIENT = "patient"
 )
 
-func (u *UserDetail) convertToDto() Dto {
+func (u *UserDetail) ConvertToDto() Dto {
 	dto := Dto{
 		ID:       u.ID,
 		Username: u.Username,
