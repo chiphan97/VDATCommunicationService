@@ -230,10 +230,7 @@ func (g *GroupRepoImpl) GetListUserByGroup(idGourp int) ([]useronline.UserOnline
 	}
 	for rows.Next() {
 		var usersOnline useronline.UserOnline
-		err = rows.Scan(&usersOnline.UserID,
-			&usersOnline.Username,
-			&usersOnline.First,
-			&usersOnline.Last)
+		err = rows.Scan(&usersOnline.UserID)
 		if err != nil {
 			return usersOnlines, err
 		}

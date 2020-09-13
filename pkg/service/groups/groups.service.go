@@ -106,8 +106,8 @@ func AddUserInGroupService(userIds []string, groupId int) error {
 func DeleteUserInGroupService(userIds []string, groupId int) error {
 	return NewGroupRepoImpl(database.DB).DeleteGroupUser(userIds, groupId)
 }
-func GetListUserByGroupService(groupId int) ([]useronline.User, error) {
-	users := make([]useronline.User, 0)
+func GetListUserByGroupService(groupId int) ([]useronline.Dto, error) {
+	users := make([]useronline.Dto, 0)
 	userOnlines, err := NewGroupRepoImpl(database.DB).GetListUserByGroup(groupId)
 	if err != nil {
 		return users, err

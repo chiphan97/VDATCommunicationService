@@ -1,33 +1,34 @@
 package useronline
 
 import (
-	"fmt"
 	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 	"testing"
 )
 
 func TestAddUserOnlineService(t *testing.T) {
 	database.Connect()
-	user := UserOnline{
-		HostName: "test",
-		SocketID: "test",
+	p := Payload{
+		HostName: "test host",
+		SocketID: "test socket",
 		UserID:   "test",
-		Username: "test",
-		First:    "test",
-		Last:     "test",
 	}
-	err := AddUserOnlineService(user)
+	dp := userdetail.Payload{
+		ID:       "test",
+		Username: "ko co thi them",
+		First:    "ko co thi them",
+		Last:     "ko co thi them",
+		Role:     userdetail.ADMIN,
+	}
+	err := AddUserOnlineService(p, dp)
 	if err != nil {
-		t.Error(err)
-	} else {
-		fmt.Println("success")
+		t.Log(err)
 	}
 }
-func TestGetListUSerOnlineService(t *testing.T) {
+func TestDeleteUserOnlineService(t *testing.T) {
 	database.Connect()
-	users, err := GetListUSerOnlineService("1")
+	err := DeleteUserOnlineService("test socket")
 	if err != nil {
-		t.Error(err)
+		t.Log(err)
 	}
-	println(users)
 }

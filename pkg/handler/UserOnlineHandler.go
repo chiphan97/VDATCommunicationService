@@ -88,9 +88,6 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 		HostName: r.URL.Path,
 		SocketID: claims.Subject,
 		UserID:   claims.Subject,
-		Username: claims.UserName,
-		First:    claims.GivenName,
-		Last:     claims.FamilyName,
 	}
 
 	client := &WsClient{User: user, Broker: userOnlineBroker, Conn: conn, Send: make(chan []byte, 256)}
