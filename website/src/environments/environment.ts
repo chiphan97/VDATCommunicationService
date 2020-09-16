@@ -1,4 +1,4 @@
-const SERVER_URL = 'c010f9cf6ceb.ngrok.io';
+const SERVER_URL = '95c5ba7175cb.ngrok.io';
 
 export const environment = {
   production: false,
