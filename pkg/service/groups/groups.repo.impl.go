@@ -43,7 +43,7 @@ const (
 //}
 func (g *RepoImpl) GetGroupByOwnerAndUserAndTypeOne(owner string, user string) ([]Groups, error) {
 	groups := make([]Groups, 0)
-	statement := `SELECT g.id_group, owner_id,name, type,private,thumbnail, created_at, updated_at, deleted_at 
+	statement := `SELECT g.id_group, owner_id,name, type,private,thumbnail,description, created_at, updated_at, deleted_at 
 					FROM groups AS g
 					INNER JOIN groups_users AS g_u
 						ON g.id_group = g_u.id_group
@@ -63,6 +63,7 @@ func (g *RepoImpl) GetGroupByOwnerAndUserAndTypeOne(owner string, user string) (
 			&group.Type,
 			&group.Private,
 			&group.Thumbnail,
+			&group.Description,
 			&group.CreatedAt,
 			&group.UpdatedAt,
 			&group.DeletedAt)
@@ -75,7 +76,7 @@ func (g *RepoImpl) GetGroupByOwnerAndUserAndTypeOne(owner string, user string) (
 }
 func (g *RepoImpl) GetGroupByUser(user string) ([]Groups, error) {
 	groups := make([]Groups, 0)
-	statement := `SELECT g.id_group, owner_id, name, type,private,thumbnail,created_at, updated_at, deleted_at 
+	statement := `SELECT g.id_group, owner_id, name, type,private,thumbnail,description,created_at, updated_at, deleted_at 
  					FROM groups AS g
 					INNER JOIN groups_users AS g_u
 					ON g.id_group = g_u.id_group
@@ -94,6 +95,7 @@ func (g *RepoImpl) GetGroupByUser(user string) ([]Groups, error) {
 			&group.Type,
 			&group.Private,
 			&group.Thumbnail,
+			&group.Description,
 			&group.CreatedAt,
 			&group.UpdatedAt,
 			&group.DeletedAt)
@@ -106,13 +108,13 @@ func (g *RepoImpl) GetGroupByUser(user string) ([]Groups, error) {
 }
 func (g *RepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]Groups, error) {
 	groups := make([]Groups, 0)
-	statement := `((SELECT gr.id_group, owner_id,name, type,private,thumbnail, created_at, updated_at, deleted_at 
+	statement := `((SELECT gr.id_group, owner_id,name, type,private,thumbnail,description, created_at, updated_at, deleted_at 
 					FROM groups AS gr
                     WHERE gr.private = $1
 					ORDER BY created_at DESC
 					LIMIT 20)
             		EXCEPT
-					(SELECT distinct g.id_group, owner_id,name, type,private,thumbnail, created_at, updated_at, deleted_at 
+					(SELECT distinct g.id_group, owner_id,name, type,private,thumbnail,description, created_at, updated_at, deleted_at 
 					from groups_users as gs inner join groups as g on gs.id_group=g.id_group  
 					where user_id = $2))`
 	rows, err := g.Db.Query(statement, private, user)
@@ -127,6 +129,7 @@ func (g *RepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]Groups
 			&group.Type,
 			&group.Private,
 			&group.Thumbnail,
+			&group.Description,
 			&group.CreatedAt,
 			&group.UpdatedAt,
 			&group.DeletedAt)
@@ -157,6 +160,7 @@ func (g *RepoImpl) GetGroupByType(typeGroup string, user string) ([]Groups, erro
 			&group.Type,
 			&group.Private,
 			&group.Thumbnail,
+			&group.Description,
 			&group.CreatedAt,
 			&group.UpdatedAt,
 			&group.DeletedAt)
@@ -201,8 +205,12 @@ func (g *RepoImpl) GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, err
 }
 func (g *RepoImpl) AddGroupType(group Groups) (Groups, error) {
 
-	statement := `INSERT INTO groups (owner_id,name ,type,private,thumbnail) VALUES ($1,$2,$3,$4,$5)`
-	_, err := g.Db.Exec(statement, group.UserCreate, group.Name, group.Type, group.Private, thumbnail)
+	statement := `INSERT INTO groups (owner_id,name ,type,private,thumbnail,description) VALUES ($1,$2,$3,$4,$5,$6)`
+	_, err := g.Db.Exec(statement, group.UserCreate,
+		group.Name, group.Type,
+		group.Private,
+		thumbnail,
+		group.Description)
 	if err != nil {
 		return group, err
 	}
@@ -222,6 +230,7 @@ func (g *RepoImpl) AddGroupType(group Groups) (Groups, error) {
 			&group.Type,
 			&group.Private,
 			&group.Thumbnail,
+			&group.Description,
 			&group.CreatedAt,
 			&group.UpdatedAt,
 			&group.DeletedAt)
@@ -249,6 +258,7 @@ func (g *RepoImpl) UpdateGroup(group Groups) (Groups, error) {
 			&newgroup.Type,
 			&newgroup.Private,
 			&newgroup.Thumbnail,
+			&newgroup.Description,
 			&newgroup.CreatedAt,
 			&newgroup.UpdatedAt,
 			&newgroup.DeletedAt)

@@ -7,6 +7,7 @@ CREATE TABLE Groups(
     type varchar(15) NOT NULL,
     private boolean,
     thumbnail varchar(255),
+    description varchar(255),
     created_at timestamp not null default now(),
     updated_at timestamp not null default now(),
     deleted_at timestamp,
