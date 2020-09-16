@@ -1,7 +1,9 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {MessengerContentComponent} from './messenger-content/messenger-content.component';
-import {MessengerOptionComponent} from './messenger-option/messenger-option.component';
+import {ChatSidebarLeftComponent} from './chat-sidebar-left/chat-sidebar-left.component';
+import {ChatSidebarRightComponent} from './chat-sidebar-right/chat-sidebar-right.component';
+import {ChatContentComponent} from './chat-content/chat-content.component';
+import {ChatHeaderComponent} from './chat-header/chat-header.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {
   NzAffixModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzCheckboxModule, NzCollapseModule,
@@ -13,32 +15,24 @@ import {
   NzListModule, NzMentionModule, NzMessageModule, NzModalModule, NzPageHeaderModule, NzPopconfirmModule, NzSelectModule,
   NzSkeletonModule, NzSwitchModule, NzToolTipModule, NzTypographyModule
 } from 'ng-zorro-antd';
-import {MessengerHeaderComponent} from './messenger-header/messenger-header.component';
-import {MessengerDrawerComponent} from './messenger-drawer/messenger-drawer.component';
 import {NzResizableModule} from 'ng-zorro-antd/resizable';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NzSpaceModule} from 'ng-zorro-antd/space';
-import {MessageSidebarLeftComponent} from './message-sidebar-left/message-sidebar-left.component';
-import {MessageSidebarRightComponent} from './message-sidebar-right/message-sidebar-right.component';
-import {CreateNewGroupComponent} from './create-new-group/create-new-group.component';
-import {AddMemberGroupComponent} from './add-member-group/add-member-group.component';
+import {GroupModule} from '../group/group.module';
 
 
 @NgModule({
   declarations: [
-    MessengerContentComponent,
-    MessengerOptionComponent,
-    MessengerHeaderComponent,
-    MessengerDrawerComponent,
-    MessageSidebarLeftComponent,
-    MessageSidebarRightComponent,
-    CreateNewGroupComponent,
-    AddMemberGroupComponent],
+    ChatSidebarLeftComponent,
+    ChatSidebarRightComponent,
+    ChatContentComponent,
+    ChatHeaderComponent
+  ],
   exports: [
-    MessengerContentComponent,
-    MessageSidebarLeftComponent,
-    MessageSidebarRightComponent,
-    MessengerHeaderComponent,
+    ChatSidebarLeftComponent,
+    ChatHeaderComponent,
+    ChatContentComponent,
+    ChatSidebarRightComponent
   ],
   imports: [
     CommonModule,
@@ -55,7 +49,6 @@ import {AddMemberGroupComponent} from './add-member-group/add-member-group.compo
     NzPageHeaderModule,
     NzButtonModule,
     NzBadgeModule,
-    NzDrawerModule,
     NzResizableModule,
     NzPopconfirmModule,
     NzModalModule,
@@ -71,8 +64,9 @@ import {AddMemberGroupComponent} from './add-member-group/add-member-group.compo
     NzCheckboxModule,
     ReactiveFormsModule,
     NzSelectModule,
-    NzMessageModule
+    NzMessageModule,
+    GroupModule
   ]
 })
-export class ComponentModule {
+export class ChatModule {
 }

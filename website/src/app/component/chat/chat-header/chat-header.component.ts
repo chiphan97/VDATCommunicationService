@@ -1,15 +1,13 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {MessengerDrawerComponent} from '../messenger-drawer/messenger-drawer.component';
-import {NzDrawerService} from 'ng-zorro-antd';
-import {Group} from '../../model/group.model';
-import {GroupType} from '../../const/group-type.const';
+import {Group} from '../../../model/group.model';
+import {GroupType} from '../../../const/group-type.const';
 
 @Component({
-  selector: 'app-messenger-header',
-  templateUrl: './messenger-header.component.html',
-  styleUrls: ['./messenger-header.component.sass']
+  selector: 'app-chat-header',
+  templateUrl: './chat-header.component.html',
+  styleUrls: ['./chat-header.component.sass']
 })
-export class MessengerHeaderComponent implements OnInit, OnChanges {
+export class ChatHeaderComponent implements OnInit, OnChanges {
 
   @Input() groupSelected: Group;
   @Input() collapseSidebar: boolean;

@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {NzMessageService, NzModalRef, NzSafeAny} from 'ng-zorro-antd';
-import {UserService} from '../../service/user.service';
+import { Component, OnInit } from '@angular/core';
+import {User} from '../../../model/user.model';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {User} from '../../model/user.model';
-import {GroupPayload} from '../../model/payload/group.payload';
-import {GroupType} from '../../const/group-type.const';
-import {GroupService} from '../../service/group.service';
+import {UserService} from '../../../service/user.service';
+import {GroupService} from '../../../service/group.service';
+import {NzMessageService, NzModalRef} from 'ng-zorro-antd';
+import {GroupPayload} from '../../../model/payload/group.payload';
+import {GroupType} from '../../../const/group-type.const';
 
 @Component({
   selector: 'app-create-new-group',
@@ -64,17 +64,17 @@ export class CreateNewGroupComponent implements OnInit {
 
       this.groupService.createGroup(groupPayload)
         .subscribe(group => {
-            if (group) {
-              this.messageService.success('Tạo cuộc hội thoại thành công');
-              this.modalService.destroy('created');
-            } else {
-              this.messageService.error('Không thể tạo cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
-              this.formGroup.enable();
-            }
-          }, error => {
+          if (group) {
+            this.messageService.success('Tạo cuộc hội thoại thành công');
+            this.modalService.destroy('created');
+          } else {
+            this.messageService.error('Không thể tạo cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
             this.formGroup.enable();
-            this.messageService.error(error);
-          }, () => this.loading = false);
+          }
+        }, error => {
+          this.formGroup.enable();
+          this.messageService.error(error);
+        }, () => this.loading = false);
     }
   }
 

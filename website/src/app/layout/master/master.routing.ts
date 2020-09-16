@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {MasterComponent} from './master.component';
-import {MessengerComponent} from '../../page/messenger/messenger.component';
 
 const routes: Routes = [
   {
@@ -10,7 +9,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: MessengerComponent
+        loadChildren: () => import('./../../page/chat-page/chat-page.module').then(m => m.ChatPageModule)
       }
     ]
   }

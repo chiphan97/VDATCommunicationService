@@ -6,13 +6,6 @@
   <nz-col style="text-align: right" nzSpan="16">
     <nz-space>
       <nz-space-item>
-        <button nz-button nzType="dashed" [nzGhost]="true" (click)="onOpenMessengerDrawer()">
-          <i nz-icon nzType="user" nzTheme="outline"></i>
-          Người dùng online
-        </button>
-      </nz-space-item>
-
-      <nz-space-item>
         <ng-container *ngIf="userInfo">
           <nz-avatar [nzText]="userInfo?.given_name"
                      nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"

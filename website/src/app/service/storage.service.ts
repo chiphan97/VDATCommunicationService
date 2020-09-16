@@ -6,10 +6,10 @@ import {isPlatformBrowser} from '@angular/common';
 })
 export class StorageService {
 
-  private static TOKEN_KEY = 'TOKEN';
-  private static REFRESH_TOKEN_KEY = 'TOKEN';
-  private static ID_TOKEN_KEY = 'TOKEN';
-  private static USER_INFO_KEY = 'USER_INFO';
+  private static ACCESS_TOKEN = 'ACCESS_TOKEN';
+  private static REFRESH_TOKEN = 'REFRESH_TOKEN';
+  private static ID_TOKEN = 'ID_TOKEN';
+  private static USER_INFO = 'USER_INFO';
 
   private readonly isBrowser: boolean;
 
@@ -17,53 +17,60 @@ export class StorageService {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  public setToken(accessToken: string, refreshToken?: string, idToken?: string): void {
+  // region Access Token
+  public set accessToken(accessToken: string) {
     if (this.isBrowser) {
-      localStorage.setItem(StorageService.TOKEN_KEY, accessToken);
-
-      if (refreshToken) {
-        localStorage.setItem(StorageService.REFRESH_TOKEN_KEY, refreshToken);
-      }
-
-      if (idToken) {
-        localStorage.setItem(StorageService.ID_TOKEN_KEY, idToken);
-      }
+      localStorage.setItem(StorageService.ACCESS_TOKEN, accessToken);
     }
   }
-
-  public getToken(): string {
+  public get accessToken(): string {
     if (this.isBrowser) {
-      return localStorage.getItem(StorageService.TOKEN_KEY);
+      return localStorage.getItem(StorageService.ACCESS_TOKEN);
     }
 
     return '';
   }
+  // endregion
 
-  public getRefreshToken(): string {
+  // region Refresh Token
+  public set refreshToken(refreshToken: string) {
     if (this.isBrowser) {
-      return localStorage.getItem(StorageService.REFRESH_TOKEN_KEY);
+      localStorage.setItem(StorageService.REFRESH_TOKEN, refreshToken);
+    }
+  }
+  public get refreshToken(): string {
+    if (this.isBrowser) {
+      return localStorage.getItem(StorageService.REFRESH_TOKEN);
     }
 
     return '';
   }
+  // endregion
 
-  public getIdToken(): string {
+  // region ID Token
+  public set idToken(idToken: string) {
     if (this.isBrowser) {
-      return localStorage.getItem(StorageService.REFRESH_TOKEN_KEY);
+      localStorage.setItem(StorageService.ID_TOKEN, idToken);
+    }
+  }
+  public get idToken(): string {
+    if (this.isBrowser) {
+      return localStorage.getItem(StorageService.ID_TOKEN);
     }
 
     return '';
   }
+  // endregion
 
-  public setUserInfo(userInfo: any): void {
+  // region User info
+  public set userInfo(userInfo: any) {
     if (this.isBrowser) {
-      localStorage.setItem(StorageService.USER_INFO_KEY, JSON.stringify(userInfo));
+      localStorage.setItem(StorageService.USER_INFO, JSON.stringify(userInfo));
     }
   }
-
-  public getUserInfo(): any {
+  public get userInfo(): any {
     if (this.isBrowser) {
-      const userInfoRaw = localStorage.getItem(StorageService.USER_INFO_KEY);
+      const userInfoRaw = localStorage.getItem(StorageService.USER_INFO);
 
       if (userInfoRaw) {
         return JSON.parse(userInfoRaw);
@@ -72,12 +79,13 @@ export class StorageService {
 
     return null;
   }
+  // endregion
 
   public clearAuth(): void {
     if (this.isBrowser) {
-      localStorage.removeItem(StorageService.TOKEN_KEY);
-      localStorage.removeItem(StorageService.REFRESH_TOKEN_KEY);
-      localStorage.removeItem(StorageService.USER_INFO_KEY);
+      localStorage.removeItem(StorageService.ACCESS_TOKEN);
+      localStorage.removeItem(StorageService.REFRESH_TOKEN);
+      localStorage.removeItem(StorageService.USER_INFO);
     }
   }
 }

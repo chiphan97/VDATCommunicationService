@@ -1,18 +1,16 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Group} from '../../model/group.model';
+import {Group} from '../../../model/group.model';
 import {NzModalService} from 'ng-zorro-antd';
-import {CreateNewGroupComponent} from '../create-new-group/create-new-group.component';
-import {GroupType} from '../../const/group-type.const';
-import {GroupService} from '../../service/group.service';
-import {ApiService} from '../../service/api.service';
-import {environment} from '../../../environments/environment';
+import {GroupService} from '../../../service/group.service';
+import {GroupType} from '../../../const/group-type.const';
+import {CreateNewGroupComponent} from '../../group/create-new-group/create-new-group.component';
 
 @Component({
-  selector: 'app-message-sidebar-left',
-  templateUrl: './message-sidebar-left.component.html',
-  styleUrls: ['./message-sidebar-left.component.sass']
+  selector: 'app-chat-sidebar-left',
+  templateUrl: './chat-sidebar-left.component.html',
+  styleUrls: ['./chat-sidebar-left.component.sass']
 })
-export class MessageSidebarLeftComponent implements OnInit, OnChanges {
+export class ChatSidebarLeftComponent implements OnInit, OnChanges {
 
   @Input() changed: boolean;
   @Input() groupSelected: Group;

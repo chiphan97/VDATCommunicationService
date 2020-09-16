@@ -1,14 +1,14 @@
 import {AfterViewChecked, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Group} from '../../../model/group.model';
+import {Message} from '../../../model/message.model';
 import {formatDistance} from 'date-fns';
-import {Message} from '../../model/message.model';
-import {Group} from '../../model/group.model';
 
 @Component({
-  selector: 'app-messenger-content',
-  templateUrl: './messenger-content.component.html',
-  styleUrls: ['./messenger-content.component.sass']
+  selector: 'app-chat-content',
+  templateUrl: './chat-content.component.html',
+  styleUrls: ['./chat-content.component.sass']
 })
-export class MessengerContentComponent implements OnInit, AfterViewChecked {
+export class ChatContentComponent implements OnInit, AfterViewChecked {
 
   @Input() groupSelected: Group;
 

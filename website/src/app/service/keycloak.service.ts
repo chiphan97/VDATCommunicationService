@@ -27,10 +27,10 @@ export class KeycloakService {
       const initOptions: KeycloakInitOptions = {
         onLoad: 'check-sso',
         checkLoginIframe: true,
-        checkLoginIframeInterval: 60000,
-        idToken: this.storageService.getIdToken(),
-        token: this.storageService.getToken(),
-        refreshToken: this.storageService.getRefreshToken()
+        checkLoginIframeInterval: 240,
+        idToken: this.storageService.idToken,
+        token: this.storageService.accessToken,
+        refreshToken: this.storageService.refreshToken
       };
 
       this.keycloak.init(initOptions)
@@ -41,14 +41,13 @@ export class KeycloakService {
             return;
           }
 
-          const accessToken = this.keycloak.token;
-          const refreshToken = this.keycloak.refreshToken;
-          const idToken = this.keycloak.idToken;
-          this.storageService.setToken(accessToken, refreshToken, idToken);
+          this.storageService.accessToken = this.keycloak.token;
+          this.storageService.refreshToken = this.keycloak.refreshToken;
+          this.storageService.idToken = this.keycloak.idToken;
 
           this.keycloak.loadUserInfo()
             .then(userInfo => {
-              this.storageService.setUserInfo(userInfo);
+              this.storageService.userInfo = userInfo;
             });
 
           setTimeout(() => {

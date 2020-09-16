@@ -1,5 +1,4 @@
 import {AfterViewChecked, Component, OnInit} from '@angular/core';
-import {MessengerDrawerComponent} from '../../component/messenger-drawer/messenger-drawer.component';
 import {NzDrawerService} from 'ng-zorro-antd';
 import {KeycloakService} from '../../service/keycloak.service';
 import {environment} from '../../../environments/environment';
@@ -14,8 +13,7 @@ export class NavBarComponent implements OnInit, AfterViewChecked {
 
   public userInfo: any;
 
-  constructor(private drawerService: NzDrawerService,
-              private keycloakService: KeycloakService,
+  constructor(private keycloakService: KeycloakService,
               private storageService: StorageService) { }
 
   ngOnInit(): void {
@@ -23,24 +21,8 @@ export class NavBarComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked() {
     setTimeout(() => {
-      this.userInfo = this.storageService.getUserInfo();
+      this.userInfo = this.storageService.userInfo;
     }, 1000);
-  }
-
-  onOpenMessengerDrawer() {
-    const drawerRef = this.drawerService.create<MessengerDrawerComponent>({
-      nzTitle: 'Danh sách người dùng online',
-      nzContent: MessengerDrawerComponent,
-      nzWidth: '300px'
-    });
-
-    drawerRef.afterOpen.subscribe(() => {
-      console.log('Drawer(Component) open');
-    });
-
-    drawerRef.afterClose.subscribe(data => {
-      console.log(data);
-    });
   }
 
   public onLogout(): void {

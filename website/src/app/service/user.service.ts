@@ -14,18 +14,9 @@ export class UserService {
 
   public findUserByKeyword(keyword: string): Observable<any> {
     return new Observable<any>(observer => {
-      const url = `${environment.apiUrl}/api/v1/users`;
 
-      this.apiService.get(url, {keyword})
-        .then(res => {
-          const data = res.data;
-          if (_.isArray(data)) {
-            const users = data.map(item => User.fromJson(item));
-            observer.next(users);
-          }
-        })
-        .catch(err => observer.error(err))
-        .finally(() => observer.complete());
+      observer.next(null);
+      observer.complete();
     });
   }
 }

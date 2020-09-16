@@ -11,12 +11,13 @@ import {User} from '../model/user.model';
 })
 export class GroupService {
 
-  constructor(private apiService: ApiService) { }
+  private readonly API_ENDPOINT = `${environment.service.apiUrl}/${environment.service.endpoint.groups}`;
 
+  constructor(private apiService: ApiService) { }
 
   public getAllGroup(): Observable<Array<Group>> {
     return new Observable<Array<Group>>(observer => {
-      const url = `${environment.apiUrl}/api/v1/groups`;
+      const url = `${this.API_ENDPOINT}`;
       this.apiService.get(url)
         .then(res => {
           const data = res.data;
@@ -30,7 +31,7 @@ export class GroupService {
 
   public createGroup(groupPayload: GroupPayload): Observable<any> {
     return new Observable<any>(observer => {
-      const url = `${environment.apiUrl}/api/v1/groups`;
+      const url = `${environment.service.endpoint.groups}`;
       this.apiService.post(url, groupPayload)
         .then(res => {
           const data = res.data;
@@ -44,7 +45,7 @@ export class GroupService {
 
   public updateNameGroup(groupId: number, nameGroup: string): Observable<Group> {
     return new Observable<Group>(observer => {
-      const url = `${environment.apiUrl}/api/v1/groups/${groupId}`;
+      const url = `${this.API_ENDPOINT}/${groupId}`;
       this.apiService.put(url, {nameGroup})
         .then(res => {
           const data = res.data;
@@ -58,7 +59,7 @@ export class GroupService {
 
   public deleteGroup(groupId: number): Observable<boolean> {
     return new Observable<boolean>(observer => {
-      const url = `${environment.apiUrl}/api/v1/groups/${groupId}`;
+      const url = `${this.API_ENDPOINT}/${groupId}`;
       this.apiService.delete(url)
         .then(res => {
           if (res.data) {
@@ -75,7 +76,7 @@ export class GroupService {
 
   public getAllMemberOfGroup(groupId: number): Observable<Array<User>> {
     return new Observable<Array<User>>(observer => {
-      const url = `${environment.apiUrl}/api/v1/groups/${groupId}/members`;
+      const url = `${this.API_ENDPOINT}/${groupId}/members`;
       this.apiService.get(url)
         .then(res => {
           const data = res.data;
@@ -89,7 +90,7 @@ export class GroupService {
 
   public deleteMemberOfGroup(groupId: number, userId: string): Observable<boolean> {
     return new Observable<boolean>(observer => {
-      const url = `${environment.apiUrl}/api/v1/groups/${groupId}/members/${userId}`;
+      const url = `${this.API_ENDPOINT}/${groupId}/members/${userId}`;
       this.apiService.delete(url)
         .then(res => {
           if (res.data) {

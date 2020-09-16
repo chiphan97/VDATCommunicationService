@@ -1,21 +1,18 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Group} from '../../model/group.model';
+import {Group} from '../../../model/group.model';
+import {User} from '../../../model/user.model';
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
-import {NzResizeEvent} from 'ng-zorro-antd/resizable';
-import {GroupType} from '../../const/group-type.const';
-import {GroupService} from '../../service/group.service';
-import {concatMap} from 'rxjs/operators';
-import {Router} from '@angular/router';
-import {User} from '../../model/user.model';
-import {StorageService} from '../../service/storage.service';
+import {GroupService} from '../../../service/group.service';
+import {StorageService} from '../../../service/storage.service';
+import {GroupType} from '../../../const/group-type.const';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-message-sidebar-right',
-  templateUrl: './message-sidebar-right.component.html',
-  styleUrls: ['./message-sidebar-right.component.sass']
+  selector: 'app-chat-sidebar-right',
+  templateUrl: './chat-sidebar-right.component.html',
+  styleUrls: ['./chat-sidebar-right.component.sass']
 })
-export class MessageSidebarRightComponent implements OnInit, OnChanges {
+export class ChatSidebarRightComponent implements OnInit, OnChanges {
 
   @Input() groupSelected: Group;
   @Output() changeGroup = new EventEmitter<boolean>();
@@ -45,7 +42,7 @@ export class MessageSidebarRightComponent implements OnInit, OnChanges {
     if (changes.groupSelected) {
       this.fetchingData();
 
-      const userInfo = this.storageService.getUserInfo();
+      const userInfo = this.storageService.userInfo;
       this.isOwner = _.get(userInfo, 'sub', '') === this.groupSelected.owner;
     }
   }
@@ -112,21 +109,21 @@ export class MessageSidebarRightComponent implements OnInit, OnChanges {
   }
 
   checkOwner(userId: string): boolean {
-    const userInfo = this.storageService.getUserInfo();
+    const userInfo = this.storageService.userInfo;
     return _.get(userInfo, 'sub', '') === userId;
   }
 
   onChangeGroupName() {
     this.groupService.updateNameGroup(this.groupSelected.id, this.groupSelected.nameGroup)
       .subscribe(group => {
-          if (group) {
-            this.changeGroup.emit(true);
-            this.messageService.success('Cập nhật thông tin nhóm thành công');
-          } else {
-            this.messageService.error('Không thể cập nhật thông tin nhóm vào lúc này. Vui lòng thử lại sau');
-          }
-        }, error => {
-          this.messageService.error(error);
-        });
+        if (group) {
+          this.changeGroup.emit(true);
+          this.messageService.success('Cập nhật thông tin nhóm thành công');
+        } else {
+          this.messageService.error('Không thể cập nhật thông tin nhóm vào lúc này. Vui lòng thử lại sau');
+        }
+      }, error => {
+        this.messageService.error(error);
+      });
   }
 }
