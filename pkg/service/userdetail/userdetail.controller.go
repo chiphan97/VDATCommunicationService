@@ -1,4 +1,4 @@
-package useronline
+package userdetail
 
 import (
 	"github.com/gorilla/mux"
@@ -8,16 +8,16 @@ import (
 	"net/http"
 )
 
-func RegisterUserOnlineApi(r *mux.Router) {
-	r.HandleFunc("/api/v1/users", auth.AuthenMiddleJWT(GetUserOnlineApi)).Methods(http.MethodGet, http.MethodOptions)
+func RegisterUserApi(r *mux.Router) {
+	r.HandleFunc("/api/v1/users", auth.AuthenMiddleJWT(GetUserApi)).Methods(http.MethodGet, http.MethodOptions)
 }
 
 //API tìm kiếm người dùng filtter
-func GetUserOnlineApi(w http.ResponseWriter, r *http.Request) {
+func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
 	fil := r.URL.Query()["keyword"]
-	users, err := GetListUSerOnlineService(fil[0])
+	users, err := GetListUserDetailService(fil[0])
 	if err != nil {
 		utils.ResponseErr(w, http.StatusNotFound)
 	}

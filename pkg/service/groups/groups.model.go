@@ -12,7 +12,7 @@ type AbstractModel struct {
 }
 type Groups struct {
 	AbstractModel
-	UserCreate string   `json:"userId""`
+	UserCreate string   `json:"userId"`
 	Name       string   `json:"nameGroup"`
 	Type       string   `json:"type"`
 	Private    bool     `json:"private"`
@@ -21,8 +21,9 @@ type Groups struct {
 }
 
 type GroupsUsers struct {
-	AbstractModel
-	UserIDJoin string `json:"userId"`
+	ID         uint       `json:"id"`
+	CreatedAt  *time.Time `json:"joinAt"`
+	UserIDJoin string     `json:"userId"`
 }
 
 const (

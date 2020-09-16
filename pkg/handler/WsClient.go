@@ -3,6 +3,7 @@ package handler
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
@@ -23,6 +24,7 @@ type WsClient struct {
 
 func (client *WsClient) ReadPump() {
 	defer func() {
+		fmt.Println("Doc tin nhan")
 		client.Broker.Unregister <- client
 		_ = client.Conn.Close()
 	}()
@@ -49,16 +51,17 @@ func (client *WsClient) ReadPump() {
 
 func (client *WsClient) CheckUserOnlinePump(userHide string) {
 	defer func() {
+		fmt.Println("Check tin nhan")
 		client.Broker.Unregister <- client
 		_ = client.Conn.Close()
 	}()
 
 	for {
-		usersOnline, _ := useronline.GetListUSerOnlineService("")
+		//usersOnline, _ := useronline.GetListUSerOnlineService("")
 		message := WsMessage{
 			From:   "VDAT-SERVICE",
 			To:     nil,
-			Body:   usersOnline,
+			Body:   "",
 			Status: "",
 		}
 

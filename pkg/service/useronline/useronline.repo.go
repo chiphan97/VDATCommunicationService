@@ -1,8 +1,7 @@
 package useronline
 
-type UserOnlineRepo interface {
-	GetListUSerOnline(filter string) ([]UserOnline, error)
+type Repo interface {
 	AddUserOnline(online UserOnline) error
 	DeleteUserOnline(socketid string) error
-	GetUserOnline(userId string) (UserOnline, error)
+	GetUserOnlineById(userId string) (UserOnline, error)
 }

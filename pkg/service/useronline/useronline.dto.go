@@ -1,8 +1,10 @@
 package useronline
 
-type User struct {
-	UserID   string `json:"userId"`
-	Username string `json:"fullName"`
-	First    string `json:"firstName"`
-	Last     string `json:"lastName"`
+import "time"
+
+type Dto struct {
+	HostName string     `json:"hostName"`
+	SocketID string     `json:"socketId"`
+	UserID   string     `json:"id"`
+	LogAt    *time.Time `json:"log_at"`
 }
