@@ -5,41 +5,62 @@ import (
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
 	"net/http"
 	"strconv"
 )
 
 func RegisterGroupApi(r *mux.Router) {
-	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(GetGroupApi)).Methods(http.MethodGet, http.MethodOptions)
-	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(PostGroupApi)).Methods(http.MethodPost, http.MethodOptions)
-	r.HandleFunc("/api/v1/groups/{idGroup}", auth.AuthenMiddleJWT(PutGroupApi)).Methods(http.MethodPut, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(GetListGroupApi)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(CreateGroupApi)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}", auth.AuthenMiddleJWT(UpdateInfoGroupApi)).Methods(http.MethodPut, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}", auth.AuthenMiddleJWT(DeleteGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
 
 	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(GetListUserByGroupApi)).Methods(http.MethodGet, http.MethodOptions)
-	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(PatchGroupUserApi)).Methods(http.MethodPatch, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(AddUserInGroupApi)).Methods(http.MethodPatch, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(UserOutGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}/members/{userId}", auth.AuthenMiddleJWT(DeleteGroupUserApi)).Methods(http.MethodDelete, http.MethodOptions)
 
 }
 
-func GetGroupApi(w http.ResponseWriter, r *http.Request) {
-	//API load danh sách groups (public, private)
+//API load danh sách groups theo patient hoac theo doctor
+func GetListGroupApi(w http.ResponseWriter, r *http.Request) {
+
 	cors.SetupResponse(&w, r)
 
 	user := auth.JWTparseOwner(r.Header.Get("Authorization"))
-	groups, err := GetGroupByUserService(user)
+	check, err := userdetail.GetUserDetailByIDService(user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		utils.ResponseErr(w, http.StatusInternalServerError)
 		return
 	}
-	w.Write(utils.ResponseWithByte(groups))
+	if check.Role == userdetail.PATIENT {
+		groups, err := GetGroupByPatientService(user)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			utils.ResponseErr(w, http.StatusInternalServerError)
+			return
+		}
+		w.Write(utils.ResponseWithByte(groups))
+	} else {
+		groups, err := GetGroupByDoctorService(user)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			utils.ResponseErr(w, http.StatusInternalServerError)
+			return
+		}
+		w.Write(utils.ResponseWithByte(groups))
+	}
+
 }
-func PostGroupApi(w http.ResponseWriter, r *http.Request) {
+
+// api tao group n - n chi doctor dc tao va tao chat 1 1
+func CreateGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
-	var groupPayLoad GroupsPayLoad
+	var groupPayLoad PayLoad
 	err := json.NewDecoder(r.Body).Decode(&groupPayLoad)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -58,7 +79,12 @@ func PostGroupApi(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Write(utils.ResponseWithByte(groupsDto))
 	} else { //Tạo hội thoại n- n
-
+		check, err := userdetail.GetUserDetailByIDService(owner)
+		if check.Role == userdetail.PATIENT {
+			w.WriteHeader(http.StatusForbidden)
+			utils.ResponseErr(w, http.StatusForbidden)
+			return
+		}
 		groupDto, err := AddGroupManyService(groupPayLoad, owner)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -67,8 +93,11 @@ func PostGroupApi(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Write(utils.ResponseWithByte(groupDto))
 	}
+
 }
-func PutGroupApi(w http.ResponseWriter, r *http.Request) {
+
+// api update ten nhom
+func UpdateInfoGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
 	params := mux.Vars(r)
@@ -78,20 +107,35 @@ func PutGroupApi(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErr(w, http.StatusBadRequest)
 		return
 	}
-	var groupPayLoad GroupsPayLoad
-	err = json.NewDecoder(r.Body).Decode(&groupPayLoad)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		utils.ResponseErr(w, http.StatusBadRequest)
-		return
-	}
-	newgroup, err := UpdateGroupService(groupPayLoad, id)
+
+	owner := auth.JWTparseOwner(r.Header.Get("Authorization"))
+	check, err := CheckRoleOwnerInGroupService(owner, id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		utils.ResponseErr(w, http.StatusInternalServerError)
 		return
 	}
-	w.Write(utils.ResponseWithByte(newgroup))
+	if !check {
+		w.WriteHeader(http.StatusForbidden)
+		utils.ResponseErr(w, http.StatusForbidden)
+		return
+	} else {
+		var groupPayLoad PayLoad
+		err = json.NewDecoder(r.Body).Decode(&groupPayLoad)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			utils.ResponseErr(w, http.StatusBadRequest)
+			return
+		}
+		newgroup, err := UpdateGroupService(groupPayLoad, id)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			utils.ResponseErr(w, http.StatusInternalServerError)
+			return
+		}
+		w.Write(utils.ResponseWithByte(newgroup))
+	}
+
 }
 func DeleteGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
@@ -120,8 +164,8 @@ func DeleteGroupApi(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//API thêm thành viên vào 1 nhóm
-func PatchGroupUserApi(w http.ResponseWriter, r *http.Request) {
+//API thêm thành viên vào 1 nhóm va chi owner moi dc them
+func AddUserInGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
 	params := mux.Vars(r)
@@ -131,21 +175,31 @@ func PatchGroupUserApi(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErr(w, http.StatusBadRequest)
 		return
 	}
-	var groupPayload GroupsPayLoad
-	err = json.NewDecoder(r.Body).Decode(&groupPayload)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		utils.ResponseErr(w, http.StatusBadRequest)
+	owner := auth.JWTparseOwner(r.Header.Get("Authorization"))
+	check, err := CheckRoleOwnerInGroupService(owner, id)
+	if !check {
+		w.WriteHeader(http.StatusForbidden)
+		utils.ResponseErr(w, http.StatusForbidden)
 		return
-	}
+	} else {
+		var groupPayload PayLoad
+		err = json.NewDecoder(r.Body).Decode(&groupPayload)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			utils.ResponseErr(w, http.StatusBadRequest)
+			return
+		}
 
-	err = AddUserInGroupService(groupPayload.Users, id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		utils.ResponseErr(w, http.StatusInternalServerError)
+		err = AddUserInGroupService(groupPayload.Users, id)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			utils.ResponseErr(w, http.StatusInternalServerError)
+		}
+		utils.ResponseOk(w, true)
 	}
-	utils.ResponseOk(w, true)
 }
+
+//API xoa thành viên khoi 1 nhóm va chi owner moi dc xoa
 func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
@@ -180,6 +234,8 @@ func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseOk(w, true)
 	}
 }
+
+//API user outgroup nhung owner ko dc out
 func UserOutGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
