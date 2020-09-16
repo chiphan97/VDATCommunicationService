@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Group} from '../../../model/group.model';
 import {NzModalService} from 'ng-zorro-antd';
-import {GroupService} from '../../../service/group.service';
+import {GroupService} from '../../../service/collector/group.service';
 import {GroupType} from '../../../const/group-type.const';
 import {CreateNewGroupComponent} from '../../group/create-new-group/create-new-group.component';
 

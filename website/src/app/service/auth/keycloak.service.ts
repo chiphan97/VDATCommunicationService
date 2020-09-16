@@ -1,8 +1,8 @@
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 import {KeycloakInstance, KeycloakLoginOptions, KeycloakInitOptions, KeycloakLogoutOptions} from 'keycloak-js';
-import {StorageService} from './storage.service';
+import {StorageService} from '../common/storage.service';
 
 @Injectable({
   providedIn: 'root'

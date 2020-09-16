@@ -1,7 +1,7 @@
 import {AfterViewChecked, Component, OnInit} from '@angular/core';
-import {KeycloakService} from '../../service/keycloak.service';
+import {KeycloakService} from '../../service/auth/keycloak.service';
 import {environment} from '../../../environments/environment';
-import {StorageService} from '../../service/storage.service';
+import {StorageService} from '../../service/common/storage.service';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 

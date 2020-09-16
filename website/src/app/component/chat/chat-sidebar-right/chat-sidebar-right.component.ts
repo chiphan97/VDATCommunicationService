@@ -2,8 +2,8 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {Group} from '../../../model/group.model';
 import {User} from '../../../model/user.model';
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
-import {GroupService} from '../../../service/group.service';
-import {StorageService} from '../../../service/storage.service';
+import {GroupService} from '../../../service/collector/group.service';
+import {StorageService} from '../../../service/common/storage.service';
 import {GroupType} from '../../../const/group-type.const';
 import * as _ from 'lodash';
 

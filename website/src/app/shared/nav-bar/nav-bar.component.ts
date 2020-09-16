@@ -1,8 +1,8 @@
 import {AfterViewChecked, Component, OnInit} from '@angular/core';
 import {NzDrawerService} from 'ng-zorro-antd';
-import {KeycloakService} from '../../service/keycloak.service';
+import {KeycloakService} from '../../service/auth/keycloak.service';
 import {environment} from '../../../environments/environment';
-import {StorageService} from '../../service/storage.service';
+import {StorageService} from '../../service/common/storage.service';
 
 @Component({
   selector: 'app-nav-bar',

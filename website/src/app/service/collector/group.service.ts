@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {ApiService} from './api.service';
-import {GroupPayload} from '../model/payload/group.payload';
+import {ApiService} from '../common/api.service';
+import {GroupPayload} from '../../model/payload/group.payload';
 import {Observable} from 'rxjs';
-import {environment} from '../../environments/environment';
-import {Group} from '../model/group.model';
-import {User} from '../model/user.model';
+import {environment} from '../../../environments/environment';
+import {Group} from '../../model/group.model';
+import {User} from '../../model/user.model';
 
 @Injectable({
   providedIn: 'root'

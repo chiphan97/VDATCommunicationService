@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {ApiService} from './api.service';
+import {ApiService} from './common/api.service';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 import * as _ from 'lodash';
