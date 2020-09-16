@@ -1,13 +1,13 @@
 package groups
 
-type GroupsPayLoad struct {
+type PayLoad struct {
 	Name    string   `json:"nameGroup"`
 	Type    string   `json:"type"`
 	Private bool     `json:"private"`
 	Users   []string `json:"users"`
 }
 
-func (g *GroupsPayLoad) ConvertToModel() Groups {
+func (g *PayLoad) ConvertToModel() Groups {
 	model := Groups{
 		Name:    g.Name,
 		Type:    g.Type,

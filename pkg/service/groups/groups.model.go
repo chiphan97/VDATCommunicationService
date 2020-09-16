@@ -31,8 +31,8 @@ const (
 	MANY = "many-to-many"
 )
 
-func (g *Groups) ConvertToDTO() GroupsDTO {
-	dto := GroupsDTO{
+func (g *Groups) ConvertToDTO() Dto {
+	dto := Dto{
 		Id:        g.ID,
 		Name:      g.Name,
 		Type:      g.Type,

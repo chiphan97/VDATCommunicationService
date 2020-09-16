@@ -16,7 +16,7 @@ func GetUserDetailByIDService(id string) (Dto, error) {
 	if err != nil {
 		return dto, err
 	}
-	dto = detail.convertToDto()
+	dto = detail.ConvertToDto()
 	return dto, nil
 }
 func GetListUserDetailService(fil string) ([]Dto, error) {
@@ -26,7 +26,7 @@ func GetListUserDetailService(fil string) ([]Dto, error) {
 		return dtos, err
 	}
 	for _, detail := range userdetails {
-		dto := detail.convertToDto()
+		dto := detail.ConvertToDto()
 		dtos = append(dtos, dto)
 	}
 	return dtos, nil

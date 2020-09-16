@@ -2,25 +2,25 @@ package groups
 
 import (
 	"database/sql"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 )
 
-type GroupRepoImpl struct {
+type RepoImpl struct {
 	Db *sql.DB
 }
 
-func NewGroupRepoImpl(db *sql.DB) GroupRepo {
-	return &GroupRepoImpl{Db: db}
+func NewRepoImpl(db *sql.DB) Repo {
+	return &RepoImpl{Db: db}
 }
 
 const (
 	thumbnail = "https://minio.nguyenchicuong.dev/public/57187617_2128229763962598_2406036693489549312_o.jpg"
 )
 
-//func (groupuser *GroupRepoImpl) GetListGroupByUser(subUser string) ([]model.Groups, error) {
+//func (groupuser *RepoImpl) GetListGroupByUser(subUser string) ([]model.Groups, error) {
 //	var groups []model.Groups
 //	statement := `SELECT * FROM Groups AS g
-//					INNER JOIN Groups_Users AS g_u
+//					INNER JOIN GroupsUsers AS g_u
 //					ON g.id_group = g_u.id_group
 //					WHERE g_u.sub_user_join = $1
 //					ORDER BY created_at DESC
@@ -41,7 +41,7 @@ const (
 //	}
 //	return groups, nil
 //}
-func (g *GroupRepoImpl) GetGroupByOwnerAndUserAndTypeOne(owner string, user string) ([]Groups, error) {
+func (g *RepoImpl) GetGroupByOwnerAndUserAndTypeOne(owner string, user string) ([]Groups, error) {
 	groups := make([]Groups, 0)
 	statement := `SELECT g.id_group, owner_id,name, type,private,thumbnail, created_at, updated_at, deleted_at 
 					FROM groups AS g
@@ -73,7 +73,7 @@ func (g *GroupRepoImpl) GetGroupByOwnerAndUserAndTypeOne(owner string, user stri
 	}
 	return groups, nil
 }
-func (g *GroupRepoImpl) GetGroupByUser(user string) ([]Groups, error) {
+func (g *RepoImpl) GetGroupByUser(user string) ([]Groups, error) {
 	groups := make([]Groups, 0)
 	statement := `SELECT g.id_group, owner_id, name, type,private,thumbnail,created_at, updated_at, deleted_at 
  					FROM groups AS g
@@ -104,14 +104,17 @@ func (g *GroupRepoImpl) GetGroupByUser(user string) ([]Groups, error) {
 	}
 	return groups, nil
 }
-func (g *GroupRepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]Groups, error) {
+func (g *RepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]Groups, error) {
 	groups := make([]Groups, 0)
-	statement := `SELECT g.id_group, owner_id, name, type,private, thumbnail,created_at, updated_at, deleted_at 
- 					FROM groups AS g
- 					WHERE g.private = $1
- 					AND owner_id !=$2
-					ORDER BY created_at DESC 
-					LIMIT 20`
+	statement := `((SELECT gr.id_group, owner_id,name, type,private,thumbnail, created_at, updated_at, deleted_at 
+					FROM groups AS gr
+                    WHERE gr.private = $1
+					ORDER BY created_at DESC
+					LIMIT 20)
+            		EXCEPT
+					(SELECT distinct g.id_group, owner_id,name, type,private,thumbnail, created_at, updated_at, deleted_at 
+					from groups_users as gs inner join groups as g on gs.id_group=g.id_group  
+					where user_id = $2))`
 	rows, err := g.Db.Query(statement, private, user)
 	if err != nil {
 		return groups, err
@@ -134,7 +137,69 @@ func (g *GroupRepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]G
 	}
 	return groups, nil
 }
-func (g *GroupRepoImpl) AddGroupType(group Groups) (Groups, error) {
+func (g *RepoImpl) GetGroupByType(typeGroup string, user string) ([]Groups, error) {
+	groups := make([]Groups, 0)
+	statement := `SELECT *
+ 					FROM groups
+ 					WHERE type = $1
+ 					AND owner_id != $2
+					ORDER BY created_at DESC 
+					LIMIT 20`
+	rows, err := g.Db.Query(statement, typeGroup, user)
+	if err != nil {
+		return groups, err
+	}
+	for rows.Next() {
+		var group Groups
+		err = rows.Scan(&group.ID,
+			&group.UserCreate,
+			&group.Name,
+			&group.Type,
+			&group.Private,
+			&group.Thumbnail,
+			&group.CreatedAt,
+			&group.UpdatedAt,
+			&group.DeletedAt)
+		if err != nil {
+			return groups, err
+		}
+		groups = append(groups, group)
+	}
+	return groups, nil
+}
+func (g *RepoImpl) GetOwnerByGroupAndOwner(owner string, groupId int) (bool, error) {
+	statement := `SELECT owner_id FROM Groups WHERE owner_id=$1 AND id_group=$2`
+	rows, err := g.Db.Query(statement, owner, groupId)
+	if err != nil {
+		return false, err
+	}
+	if rows.Next() {
+		return true, nil
+	}
+	return false, nil
+}
+func (g *RepoImpl) GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, error) {
+	users := make([]userdetail.UserDetail, 0)
+	statement := `SELECT o.user_id, o.username,o.first,o.last,o.role
+					FROM Groups_Users as g 
+					INNER JOIN userdetail as o 
+					ON g.user_id = o.user_id 					 
+					WHERE id_group =$1`
+	rows, err := g.Db.Query(statement, idGourp)
+	if err != nil {
+		return users, err
+	}
+	for rows.Next() {
+		var user userdetail.UserDetail
+		err = rows.Scan(&user.ID, &user.Username, &user.First, &user.Last, &user.Role)
+		if err != nil {
+			return users, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
+}
+func (g *RepoImpl) AddGroupType(group Groups) (Groups, error) {
 
 	statement := `INSERT INTO groups (owner_id,name ,type,private,thumbnail) VALUES ($1,$2,$3,$4,$5)`
 	_, err := g.Db.Exec(statement, group.UserCreate, group.Name, group.Type, group.Private, thumbnail)
@@ -142,7 +207,7 @@ func (g *GroupRepoImpl) AddGroupType(group Groups) (Groups, error) {
 		return group, err
 	}
 
-	statement = `SELECT g.id_group, owner_id,name, type,private, thumbnail,created_at, updated_at, deleted_at 
+	statement = `SELECT *
  					FROM Groups AS g WHERE owner_id = $1
  					ORDER BY created_at DESC
  					LIMIT 1`
@@ -166,14 +231,14 @@ func (g *GroupRepoImpl) AddGroupType(group Groups) (Groups, error) {
 	}
 	return group, nil
 }
-func (g *GroupRepoImpl) UpdateGroup(group Groups) (Groups, error) {
+func (g *RepoImpl) UpdateGroup(group Groups) (Groups, error) {
 	var newgroup Groups
 	statement := `UPDATE groups SET name=$1 WHERE id_group=$2`
 	_, err := g.Db.Exec(statement, group.Name, group.ID)
 	if err != nil {
 		return newgroup, err
 	}
-	statement = `SELECT id_group, owner_id, name, type,private,thumbnail, created_at, updated_at, deleted_at 
+	statement = `SELECT *
  					FROM groups
  					WHERE  id_group= $1`
 	rows, err := g.Db.Query(statement, group.ID)
@@ -193,7 +258,7 @@ func (g *GroupRepoImpl) UpdateGroup(group Groups) (Groups, error) {
 	}
 	return newgroup, nil
 }
-func (g *GroupRepoImpl) DeleteGroup(idGourp int) error {
+func (g *RepoImpl) DeleteGroup(idGourp int) error {
 	statement := `DELETE FROM Groups_Users WHERE id_group = $1 `
 	_, err := g.Db.Exec(statement, idGourp)
 	if err != nil {
@@ -206,39 +271,7 @@ func (g *GroupRepoImpl) DeleteGroup(idGourp int) error {
 	}
 	return nil
 }
-func (g *GroupRepoImpl) GetOwnerByGroupAndOwner(owner string, groupId int) (bool, error) {
-	statement := `SELECT owner_id FROM Groups WHERE owner_id=$1 AND id_group=$2`
-	rows, err := g.Db.Query(statement, owner, groupId)
-	if err != nil {
-		return false, err
-	}
-	if rows.Next() {
-		return true, nil
-	}
-	return false, nil
-}
-func (g *GroupRepoImpl) GetListUserByGroup(idGourp int) ([]useronline.UserOnline, error) {
-	usersOnlines := make([]useronline.UserOnline, 0)
-	statement := `SELECT o.user_id, o.username,o.first,o.last
-					FROM Groups_Users as g 
-					INNER JOIN ONLINE as o 
-					ON g.user_id = o.user_id 					 
-					WHERE id_group =$1`
-	rows, err := g.Db.Query(statement, idGourp)
-	if err != nil {
-		return usersOnlines, err
-	}
-	for rows.Next() {
-		var usersOnline useronline.UserOnline
-		err = rows.Scan(&usersOnline.UserID)
-		if err != nil {
-			return usersOnlines, err
-		}
-		usersOnlines = append(usersOnlines, usersOnline)
-	}
-	return usersOnlines, nil
-}
-func (g *GroupRepoImpl) AddGroupUser(users []string, idgroup int) error {
+func (g *RepoImpl) AddGroupUser(users []string, idgroup int) error {
 	statement := `INSERT INTO Groups_Users (id_group, user_id)  VALUES ($1,$2)`
 	for _, user := range users {
 		_, err := g.Db.Exec(statement, idgroup, user)
@@ -248,7 +281,7 @@ func (g *GroupRepoImpl) AddGroupUser(users []string, idgroup int) error {
 	}
 	return nil
 }
-func (g *GroupRepoImpl) DeleteGroupUser(users []string, idgroup int) error {
+func (g *RepoImpl) DeleteGroupUser(users []string, idgroup int) error {
 	statement := `DELETE FROM Groups_Users WHERE id_group=$1 AND user_id = $2`
 	for _, user := range users {
 		_, err := g.Db.Exec(statement, idgroup, user)
