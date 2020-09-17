@@ -71,3 +71,16 @@ func (u *RepoImpl) GetUserDetailById(id string) (UserDetail, error) {
 	}
 	return detail, nil
 }
+func (u *RepoImpl) UpdateUserDetail(detail UserDetail) error {
+	statement := `UPDATE userdetail SET username = $1,first = $2,last=$3,role= $4  WHERE user_id = $5`
+	_, err := u.Db.Exec(statement,
+		detail.Username,
+		detail.First,
+		detail.Last,
+		detail.Role,
+		detail.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
