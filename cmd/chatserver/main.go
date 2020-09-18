@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"gitlab.com/vdat/mcsvc/chat/pkg/database"
-	"gitlab.com/vdat/mcsvc/chat/pkg/handler"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 	"net"
@@ -36,7 +35,7 @@ func main() {
 	r.HandleFunc("/", serveHome)
 	//http.HandleFunc("/test", service.TestHandler)
 	//http.HandleFunc("/test", handler.TestHandler)
-	r.HandleFunc("/user-online", handler.UserOnlineHandler)
+	//r.HandleFunc("/user-online", handler.UserOnlineHandler)
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 
 	//api

@@ -1,7 +1,7 @@
 package groups
 
 import (
-	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 )
 

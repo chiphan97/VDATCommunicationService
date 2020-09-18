@@ -1,12 +1,12 @@
 package useronline
 
 import (
-	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 )
 
 //func GetListUSerOnlineService(fil string) ([]Dto, error) {
 //	users := make([]Dto, 0)
-//	userOnlines, err := NewUserOnlineRepoImpl(database.DB).GetListUSerOnline(fil)
+//	userOnlines, err := NewRepoImpl(database.DB).GetListUSerOnline(fil)
 //	if err != nil {
 //		return users, err
 //	}
@@ -22,14 +22,21 @@ import (
 //	return users, nil
 //}
 func AddUserOnlineService(payload Payload) error {
-	online := payload.convertToModel()
-
-	err := NewUserOnlineRepoImpl(database.DB).AddUserOnline(online)
+	check, err := NewRepoImpl(database.DB).GetUserOnlineBySocketIdAndHostId(payload.SocketID, payload.HostName)
 	if err != nil {
 		return err
 	}
+	if check == (UserOnline{}) {
+		online := payload.convertToModel()
+
+		err = NewRepoImpl(database.DB).AddUserOnline(online)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 func DeleteUserOnlineService(socketid string) error {
-	return NewUserOnlineRepoImpl(database.DB).DeleteUserOnline(socketid)
+	return NewRepoImpl(database.DB).DeleteUserOnline(socketid)
 }

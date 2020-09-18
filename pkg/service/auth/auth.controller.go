@@ -6,7 +6,7 @@ import (
 	"encoding/pem"
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
-	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 	"net/http"
 	"strings"
 )

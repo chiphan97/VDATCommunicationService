@@ -5,8 +5,8 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"github.com/dgrijalva/jwt-go"
-	"gitlab.com/vdat/mcsvc/chat/pkg/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"strings"
 )
 
@@ -66,11 +66,12 @@ func CheckUserDetailService(payload Payload) (Dto, error) {
 			return dto, err
 		}
 	}
+
 	userdetail, err = NewRepoImpl(database.DB).GetUserDetailById(payload.ID)
 	if err != nil {
 		return dto, err
 	}
-	dto = userdetail.convertToDto()
+	dto = userdetail.ConvertToDto()
 	return dto, nil
 }
 
