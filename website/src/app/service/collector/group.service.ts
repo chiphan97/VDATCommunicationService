@@ -11,7 +11,7 @@ import {User} from '../../model/user.model';
 })
 export class GroupService {
 
-  private readonly API_ENDPOINT = `${environment.service.apiUrl}/${environment.service.endpoint.groups}`;
+  private readonly API_ENDPOINT = `${environment.service.apiUrl}${environment.service.endpoint.groups}`;
 
   constructor(private apiService: ApiService) { }
 

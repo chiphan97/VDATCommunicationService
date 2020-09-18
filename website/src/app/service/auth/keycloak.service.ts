@@ -2,19 +2,22 @@ import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {environment} from '../../../environments/environment';
 import {KeycloakInstance, KeycloakLoginOptions, KeycloakInitOptions, KeycloakLogoutOptions} from 'keycloak-js';
-import {StorageService} from '../common/storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class KeycloakService {
 
+  private readonly ACCESS_TOKEN = 'KC_ACCESS_TOKEN';
+  private readonly REFRESH_TOKEN = 'KC_REFRESH_TOKEN';
+  private readonly ID_TOKEN = 'KC_ID_TOKEN';
+  private readonly USER_INFO = 'KC_USER_INFO';
+
   private keycloak: KeycloakInstance;
   private readonly isBrowser: boolean;
   public authenticated: boolean;
 
-  constructor(@Inject(PLATFORM_ID) platformId: any,
-              private storageService: StorageService) {
+  constructor(@Inject(PLATFORM_ID) platformId: any) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
@@ -28,9 +31,9 @@ export class KeycloakService {
         onLoad: 'check-sso',
         checkLoginIframe: true,
         checkLoginIframeInterval: 240,
-        idToken: this.storageService.idToken,
-        token: this.storageService.accessToken,
-        refreshToken: this.storageService.refreshToken
+        idToken: this.idToken,
+        token: this.accessToken,
+        refreshToken: this.refreshToken
       };
 
       this.keycloak.init(initOptions)
@@ -41,13 +44,13 @@ export class KeycloakService {
             return;
           }
 
-          this.storageService.accessToken = this.keycloak.token;
-          this.storageService.refreshToken = this.keycloak.refreshToken;
-          this.storageService.idToken = this.keycloak.idToken;
+          this.accessToken = this.keycloak.token;
+          this.refreshToken = this.keycloak.refreshToken;
+          this.idToken = this.keycloak.idToken;
 
           this.keycloak.loadUserInfo()
             .then(userInfo => {
-              this.storageService.userInfo = userInfo;
+              this.userInfo = userInfo;
             });
 
           setTimeout(() => {
@@ -65,7 +68,7 @@ export class KeycloakService {
           }, 60000);
 
         }).catch(() => {
-        this.storageService.clearAuth();
+        this.clearAuth();
         console.error('Authenticated Failed');
       });
     }
@@ -77,7 +80,7 @@ export class KeycloakService {
 
   public logout(options?: KeycloakLogoutOptions) {
     this.keycloak.logout(options);
-    this.storageService.clearAuth();
+    this.clearAuth();
   }
 
   private getKeycloakConfig(): any {
@@ -87,4 +90,70 @@ export class KeycloakService {
       clientId: environment.keycloak.clientId
     };
   }
+
+  // region Storage
+  public set userInfo(userInfo: any) {
+    if (this.isBrowser) {
+      localStorage.setItem(this.USER_INFO, JSON.stringify(userInfo));
+    }
+  }
+  public get userInfo(): any {
+    if (this.isBrowser) {
+      const userInfoRaw = localStorage.getItem(this.USER_INFO);
+
+      if (userInfoRaw) {
+        return JSON.parse(userInfoRaw);
+      }
+    }
+
+    return null;
+  }
+
+  public set idToken(idToken: string) {
+    if (this.isBrowser) {
+      localStorage.setItem(this.ID_TOKEN, idToken);
+    }
+  }
+  public get idToken(): string {
+    if (this.isBrowser) {
+      return localStorage.getItem(this.ID_TOKEN);
+    }
+
+    return '';
+  }
+
+  public set refreshToken(refreshToken: string) {
+    if (this.isBrowser) {
+      localStorage.setItem(this.REFRESH_TOKEN, refreshToken);
+    }
+  }
+  public get refreshToken(): string {
+    if (this.isBrowser) {
+      return localStorage.getItem(this.REFRESH_TOKEN);
+    }
+
+    return '';
+  }
+
+  public set accessToken(accessToken: string) {
+    if (this.isBrowser) {
+      localStorage.setItem(this.ACCESS_TOKEN, accessToken);
+    }
+  }
+  public get accessToken(): string {
+    if (this.isBrowser) {
+      return localStorage.getItem(this.ACCESS_TOKEN);
+    }
+
+    return '';
+  }
+
+  public clearAuth(): void {
+    if (this.isBrowser) {
+      localStorage.removeItem(this.ACCESS_TOKEN);
+      localStorage.removeItem(this.REFRESH_TOKEN);
+      localStorage.removeItem(this.USER_INFO);
+    }
+  }
+  // endregion
 }

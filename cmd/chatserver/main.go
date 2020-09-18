@@ -59,7 +59,7 @@ func metrics() {
 	if err != nil {
 		fmt.Println("transport", "debug/HTTP", "during", "Listen", "err", err)
 		os.Exit(1)
-	}
+	} giờ
 
 	defer debugListener.Close()
 

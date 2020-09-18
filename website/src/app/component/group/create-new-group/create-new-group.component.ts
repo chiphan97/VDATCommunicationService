@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {User} from '../../../model/user.model';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {UserService} from '../../../service/user.service';
+import {UserService} from '../../../service/collector/user.service';
 import {GroupService} from '../../../service/collector/group.service';
 import {NzMessageService, NzModalRef} from 'ng-zorro-antd';
 import {GroupPayload} from '../../../model/payload/group.payload';
