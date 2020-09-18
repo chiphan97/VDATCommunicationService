@@ -1,6 +1,7 @@
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
+import {StorageConst} from '../../const/storage.const';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 export class ApiService {
 
   private DEFAULT_TIMEOUT = 5000;
-  private TOKEN_KEY = 'TOKEN';
+  private TOKEN_KEY = StorageConst.KC_ACCESS_TOKEN;
   private readonly isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: any) {

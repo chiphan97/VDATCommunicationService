@@ -2,16 +2,17 @@ import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {environment} from '../../../environments/environment';
 import {KeycloakInstance, KeycloakLoginOptions, KeycloakInitOptions, KeycloakLogoutOptions} from 'keycloak-js';
+import {StorageConst} from '../../const/storage.const';
 
 @Injectable({
   providedIn: 'root'
 })
 export class KeycloakService {
 
-  private readonly ACCESS_TOKEN = 'KC_ACCESS_TOKEN';
-  private readonly REFRESH_TOKEN = 'KC_REFRESH_TOKEN';
-  private readonly ID_TOKEN = 'KC_ID_TOKEN';
-  private readonly USER_INFO = 'KC_USER_INFO';
+  private readonly ACCESS_TOKEN = StorageConst.KC_ACCESS_TOKEN;
+  private readonly REFRESH_TOKEN = StorageConst.KC_REFRESH_TOKEN;
+  private readonly ID_TOKEN = StorageConst.KC_ID_TOKEN;
+  private readonly USER_INFO = StorageConst.KC_USER_INFO;
 
   private keycloak: KeycloakInstance;
   private readonly isBrowser: boolean;
