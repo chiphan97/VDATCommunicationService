@@ -4,7 +4,8 @@ import (
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
-	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 	"net/http"
 )
 
@@ -43,6 +44,17 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	uo := useronline.Payload{
+		HostName: r.URL.RawPath,
+		SocketID: payload.ID,
+		UserID:   payload.ID,
+	}
+	err = useronline.AddUserOnlineService(uo)
+	if err != nil {
+		utils.ResponseErr(w, http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.Write(utils.ResponseWithByte(dto))
 	// check user he thong neu login chua ton tai thong tin trong he thong thi ghi vao database
 

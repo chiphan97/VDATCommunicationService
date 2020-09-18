@@ -6,7 +6,7 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
-	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 	"net/http"
 	"strconv"
 )
