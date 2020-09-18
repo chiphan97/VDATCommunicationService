@@ -17,7 +17,8 @@ MIICpTCCAY0CBgFrPLdvYjANBgkqhkiG9w0BAQsFADAWMRQwEgYDVQQDDAt2ZGF0bGFiLmNvbTAeFw0x
 
 type UserClaims struct {
 	jwt.StandardClaims
-	UserName   string `json:"name"`
+	FullName   string `json:"name"`
+	UserName   string `json:"preferred_username"`
 	GivenName  string `json:"given_name"`
 	FamilyName string `json:"family_name"`
 }

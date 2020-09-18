@@ -35,7 +35,7 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload.Role = DOCTOR
+	payload.Role = PATIENT
 
 	dto, err := CheckUserDetailService(payload)
 	if err != nil {

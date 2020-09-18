@@ -13,7 +13,7 @@ import (
 //	for _, userOnline := range userOnlines {
 //		user := Dto{
 //			UserID:   userOnline.UserID,
-//			Username: userOnline.Username,
+//			UserName: userOnline.UserName,
 //			First:    userOnline.First,
 //			Last:     userOnline.Last,
 //		}
