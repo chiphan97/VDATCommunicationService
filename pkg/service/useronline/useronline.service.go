@@ -2,7 +2,6 @@ package useronline
 
 import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/database"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 )
 
 //func GetListUSerOnlineService(fil string) ([]Dto, error) {
@@ -22,19 +21,10 @@ import (
 //	}
 //	return users, nil
 //}
-func AddUserOnlineService(payload Payload, deltailPayload userdetail.Payload) error {
+func AddUserOnlineService(payload Payload) error {
 	online := payload.convertToModel()
-	check, err := userdetail.GetUserDetailByIDService(payload.UserID)
-	if err != nil {
-		return err
-	}
-	if check == (userdetail.Dto{}) {
-		err := userdetail.AddUserDetailService(deltailPayload)
-		if err != nil {
-			return err
-		}
-	}
-	err = NewUserOnlineRepoImpl(database.DB).AddUserOnline(online)
+
+	err := NewUserOnlineRepoImpl(database.DB).AddUserOnline(online)
 	if err != nil {
 		return err
 	}

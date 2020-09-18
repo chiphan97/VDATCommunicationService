@@ -1,10 +1,26 @@
 package userdetail
 
-import "gitlab.com/vdat/mcsvc/chat/pkg/database"
+import (
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"github.com/dgrijalva/jwt-go"
+	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
+	"strings"
+)
 
 func AddUserDetailService(payload Payload) error {
 	detail := payload.convertToModel()
 	err := NewRepoImpl(database.DB).AddUserDetail(detail)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UpdateUserDetailservice(payload Payload) error {
+	detail := payload.convertToModel()
+	err := NewRepoImpl(database.DB).UpdateUserDetail(detail)
 	if err != nil {
 		return err
 	}
@@ -30,4 +46,56 @@ func GetListUserDetailService(fil string) ([]Dto, error) {
 		dtos = append(dtos, dto)
 	}
 	return dtos, nil
+}
+
+//neu user chua co thi add thong tin tu token vao database user
+func CheckUserDetailService(payload Payload) (Dto, error) {
+	var dto Dto
+	userdetail, err := NewRepoImpl(database.DB).GetUserDetailById(payload.ID)
+	if err != nil {
+		return dto, err
+	}
+	if userdetail == (UserDetail{}) {
+		err = AddUserDetailService(payload)
+		if err != nil {
+			return dto, err
+		}
+	} else {
+		err = UpdateUserDetailservice(payload)
+		if err != nil {
+			return dto, err
+		}
+	}
+	userdetail, err = NewRepoImpl(database.DB).GetUserDetailById(payload.ID)
+	if err != nil {
+		return dto, err
+	}
+	dto = userdetail.convertToDto()
+	return dto, nil
+}
+
+func JWTparseUser(tokenHeader string) (Payload, error) {
+	var payload Payload
+	splitted := strings.Split(tokenHeader, " ") // Bearer jwt_token
+
+	block, _ := pem.Decode([]byte(auth.Jwtkey))
+	var cert *x509.Certificate
+	cert, _ = x509.ParseCertificate(block.Bytes)
+
+	rsaPublicKey := cert.PublicKey.(*rsa.PublicKey)
+	tokenPart := splitted[1]
+	tk := &auth.UserClaims{}
+	_, err := jwt.ParseWithClaims(tokenPart, tk, func(token *jwt.Token) (interface{}, error) {
+		return rsaPublicKey, nil
+	})
+	if err != nil {
+		return payload, err
+	}
+	payload = Payload{
+		ID:       tk.Subject,
+		Username: tk.UserName,
+		First:    tk.GivenName,
+		Last:     tk.FamilyName,
+	}
+	return payload, nil
 }

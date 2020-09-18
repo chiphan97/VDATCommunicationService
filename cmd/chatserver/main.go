@@ -27,7 +27,7 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	go metrics()
+	//go metrics()
 	r := mux.NewRouter()
 	fmt.Println("starting")
 
