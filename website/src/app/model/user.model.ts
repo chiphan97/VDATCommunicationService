@@ -6,6 +6,7 @@ export class User {
   lastName: string;
   fullName: string;
   avatar: string;
+  role: string;
 
   constructor(userId: string, firstName: string, lastName: string, fullName: string, avatar: string) {
     this.userId = userId;

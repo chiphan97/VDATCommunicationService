@@ -17,9 +17,9 @@ export class UserService {
   public getUserInfo(): Observable<User> {
     return new Observable<User>(observer => {
       this.apiService.get(`${this.API_ENDPOINT}/info`)
-        .then(userInfo => {
-          console.log(userInfo);
-          observer.next(null);
+        .then(res => {
+          console.log(res.data);
+          observer.next(User.fromJson(res.data));
         })
         .catch(err => observer.error(err))
         .finally(() => observer.complete());

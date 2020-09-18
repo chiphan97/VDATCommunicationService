@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../service/collector/user.service';
+import {StorageService} from '../../service/common/storage.service';
 
 @Component({
   selector: 'app-master',
@@ -8,13 +9,14 @@ import {UserService} from '../../service/collector/user.service';
 })
 export class MasterComponent implements OnInit {
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService,
+              private storageService: StorageService) {
   }
 
   ngOnInit(): void {
     this.userService.getUserInfo()
       .subscribe(userInfo => {
-        console.log(userInfo);
+        this.storageService.userInfo = userInfo;
       });
   }
 }

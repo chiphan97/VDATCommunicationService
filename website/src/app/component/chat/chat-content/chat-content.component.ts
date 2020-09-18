@@ -48,7 +48,8 @@ export class ChatContentComponent implements OnInit, AfterViewChecked {
         userId: '1',
         fullName: 'Nguyễn Chí Cường',
         lastName: '',
-        firstName: ''
+        firstName: '',
+        role: ''
       },
       createdAt: new Date(),
       content: 'Hello world !!!'
