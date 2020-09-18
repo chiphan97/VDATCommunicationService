@@ -182,27 +182,6 @@ func (g *RepoImpl) GetOwnerByGroupAndOwner(owner string, groupId int) (bool, err
 	}
 	return false, nil
 }
-func (g *RepoImpl) GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, error) {
-	users := make([]userdetail.UserDetail, 0)
-	statement := `SELECT o.user_id, o.username,o.first,o.last,o.role
-					FROM Groups_Users as g 
-					INNER JOIN userdetail as o 
-					ON g.user_id = o.user_id 					 
-					WHERE id_group =$1`
-	rows, err := g.Db.Query(statement, idGourp)
-	if err != nil {
-		return users, err
-	}
-	for rows.Next() {
-		var user userdetail.UserDetail
-		err = rows.Scan(&user.ID, &user.Username, &user.First, &user.Last, &user.Role)
-		if err != nil {
-			return users, err
-		}
-		users = append(users, user)
-	}
-	return users, nil
-}
 func (g *RepoImpl) AddGroupType(group Groups) (Groups, error) {
 
 	statement := `INSERT INTO groups (owner_id,name ,type,private,thumbnail,description) VALUES ($1,$2,$3,$4,$5,$6)`
@@ -300,4 +279,30 @@ func (g *RepoImpl) DeleteGroupUser(users []string, idgroup int) error {
 		}
 	}
 	return nil
+}
+func (g *RepoImpl) GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, error) {
+	users := make([]userdetail.UserDetail, 0)
+	statement := `SELECT o.user_id,o.fullname, o.username,o.first,o.last,o.role
+					FROM Groups_Users as g 
+					INNER JOIN userdetail as o 
+					ON g.user_id = o.user_id 					 
+					WHERE id_group =$1`
+	rows, err := g.Db.Query(statement, idGourp)
+	if err != nil {
+		return users, err
+	}
+	for rows.Next() {
+		var user userdetail.UserDetail
+		err = rows.Scan(&user.ID,
+			&user.FullName,
+			&user.UserName,
+			&user.First,
+			&user.Last,
+			&user.Role)
+		if err != nil {
+			return users, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }

@@ -94,6 +94,7 @@ func JWTparseUser(tokenHeader string) (Payload, error) {
 	}
 	payload = Payload{
 		ID:       tk.Subject,
+		FullName: tk.FullName,
 		Username: tk.UserName,
 		First:    tk.GivenName,
 		Last:     tk.FamilyName,
