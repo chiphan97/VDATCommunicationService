@@ -49,7 +49,8 @@ export class ChatContentComponent implements OnInit, AfterViewChecked {
         fullName: 'Nguyễn Chí Cường',
         lastName: '',
         firstName: '',
-        role: ''
+        role: '',
+        username: ''
       },
       createdAt: new Date(),
       content: 'Hello world !!!'

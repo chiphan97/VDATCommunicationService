@@ -17,6 +17,7 @@ export class MasterComponent implements OnInit {
     this.userService.getUserInfo()
       .subscribe(userInfo => {
         this.storageService.userInfo = userInfo;
+        console.log(userInfo);
       });
   }
 }
