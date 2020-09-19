@@ -1,0 +1,36 @@
+<div nz-row>
+  <div nz-col
+       nz-resizable
+       id="sidebar-left"
+       (nzResize)="onResize($event)"
+       [nzMinColumn]="5"
+       [nzMaxColumn]="10"
+       [nzGridColumnCount]="24"
+       [nzSpan]="colResize">
+    <nz-resize-handles [nzDirections]="['right']"></nz-resize-handles>
+    <app-chat-sidebar-left [(groupSelected)]="groupSelected" (groupSelectedChange)="onGroupChange($event)"
+                           [changed]="changed"></app-chat-sidebar-left>
+  </div>
+
+  <div nz-col
+       [nzSpan]="(collapseSidebar ? 19 : 24) - colResize">
+    <nz-row *ngIf="groupSelected">
+      <nz-col nzSpan="24">
+        <app-chat-header [groupSelected]="groupSelected"
+                         [(collapseSidebar)]="collapseSidebar"></app-chat-header>
+      </nz-col>
+      <nz-col nzSpan="24">
+        <app-chat-content [groupSelected]="groupSelected"></app-chat-content>
+      </nz-col>
+    </nz-row>
+
+    <nz-result *ngIf="!groupSelected" nzStatus="404" nzTitle="Uh ohhh ..."
+               nzSubTitle="Bạn chưa có tin nhắn nào, hãy tìm một người nào đó và bắt đầu trò chuyện nào">
+    </nz-result>
+  </div>
+
+  <div nz-col *ngIf="groupSelected" [nzSpan]="collapseSidebar ? 5 : 0">
+    <app-chat-sidebar-right [groupSelected]="groupSelected"
+                            (changeGroup)="onEventChange($event)"></app-chat-sidebar-right>
+  </div>
+</div>

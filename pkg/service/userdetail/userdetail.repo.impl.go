@@ -13,7 +13,7 @@ func (u *RepoImpl) GetListUser(filter string) ([]UserDetail, error) {
 	details := make([]UserDetail, 0)
 	statement := `SELECT * FROM userdetail `
 	if len(filter) > 0 {
-		statement = statement + `WHERE username LIKE '` + filter + `%'`
+		statement = statement + `WHERE fullname LIKE '` + filter + `%'`
 	}
 	rows, err := u.Db.Query(statement)
 	println(err)

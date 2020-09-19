@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NavBarComponent } from './nav-bar/nav-bar.component';
-import { FooterComponent } from './footer/footer.component';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {NavBarComponent} from './nav-bar/nav-bar.component';
+import {FooterComponent} from './footer/footer.component';
 import {
   NzAvatarModule,
   NzButtonModule,
@@ -14,13 +14,15 @@ import {
 import {NzSpaceModule} from 'ng-zorro-antd/space';
 
 
-
 @NgModule({
-  declarations: [NavBarComponent, FooterComponent],
-    exports: [
-        FooterComponent,
-        NavBarComponent
-    ],
+  declarations: [
+    NavBarComponent,
+    FooterComponent
+  ],
+  exports: [
+    FooterComponent,
+    NavBarComponent
+  ],
   imports: [
     CommonModule,
     NzLayoutModule,
@@ -33,4 +35,5 @@ import {NzSpaceModule} from 'ng-zorro-antd/space';
     NzTypographyModule
   ]
 })
-export class SharedModule { }
+export class SharedModule {
+}

@@ -11,12 +11,13 @@ import {environment} from '../../environments/environment';
 export class SocketService {
   private socket: WebSocket;
   private listener: EventEmitter<any> = new EventEmitter();
+  private readonly WS_ENDPOINT = environment.service.wsUrl;
 
   public constructor() {
   }
 
   public initWebSocket(accessToken: string) {
-    this.socket = new WebSocket(`${environment.wsUrl}/test?token=${accessToken}`);
+    this.socket = new WebSocket(`${this.WS_ENDPOINT}/test?token=${accessToken}`);
     this.socket.onopen = event => {
       this.listener.emit({type: 'open', data: event});
     };

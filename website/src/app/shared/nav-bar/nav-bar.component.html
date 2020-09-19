@@ -6,15 +6,8 @@
   <nz-col style="text-align: right" nzSpan="16">
     <nz-space>
       <nz-space-item>
-        <button nz-button nzType="dashed" [nzGhost]="true" (click)="onOpenMessengerDrawer()">
-          <i nz-icon nzType="user" nzTheme="outline"></i>
-          Người dùng online
-        </button>
-      </nz-space-item>
-
-      <nz-space-item>
         <ng-container *ngIf="userInfo">
-          <nz-avatar [nzText]="userInfo?.given_name"
+          <nz-avatar [nzText]="userInfo?.firstName"
                      nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"
                      style="color:#f56a00; background-color:#fde3cf; cursor: pointer">
           </nz-avatar>
@@ -23,7 +16,7 @@
 
             <ul nz-menu>
               <li nz-menu-item nzDisabled>
-                <span nz-typography>Xin chào {{userInfo?.name}} !</span>
+                <span nz-typography>Xin chào {{userInfo?.fullName}} !</span>
               </li>
               <li nz-menu-divider></li>
               <li nz-menu-item nz-typography nzType="danger" (click)="onLogout()">
