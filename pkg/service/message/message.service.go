@@ -7,3 +7,6 @@ import (
 func GetMessagesByGroupAndUserService(idGroup int, subUser string) ([]Messages, error) {
 	return NewMessageRepoImpl(database.DB).GetMessagesByGroupAndUser(idGroup, subUser)
 }
+func AddMessage() {
+
+}
