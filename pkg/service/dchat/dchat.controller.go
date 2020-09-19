@@ -4,6 +4,7 @@ import (
 	_ "bytes"
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 )
 
 func ChatHandlr(w http.ResponseWriter, r *http.Request) {
+	cors.SetupResponse(&w, r)
 	// authenticate
 
 	conn, err := WsUpgrader.Upgrade(w, r, nil)

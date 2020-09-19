@@ -39,7 +39,7 @@ func main() {
 	// handler
 	r.HandleFunc("/", serveHome)
 	//r.HandleFunc("/chat/{idgroup}",auth.AuthenMiddleJWT(dchat.ChatHandlr))
-	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr))
+	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
 	//api
 	groups.RegisterGroupApi(r)
 	userdetail.RegisterUserApi(r)
