@@ -7,10 +7,10 @@ import {
   NzButtonModule,
   NzCheckboxModule,
   NzFormModule,
-  NzGridModule,
+  NzGridModule, NzIconModule,
   NzInputModule,
   NzModalModule,
-  NzSelectModule
+  NzSelectModule, NzTableModule
 } from 'ng-zorro-antd';
 import {ReactiveFormsModule} from '@angular/forms';
 
@@ -28,7 +28,9 @@ import {ReactiveFormsModule} from '@angular/forms';
     NzAvatarModule,
     NzCheckboxModule,
     NzButtonModule,
-    NzModalModule
+    NzModalModule,
+    NzTableModule,
+    NzIconModule
   ]
 })
 export class GroupModule { }

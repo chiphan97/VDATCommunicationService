@@ -3,7 +3,7 @@
               [nzDatetime]="formatDistanceTime(message.createdAt)"
               style="width: 40vw">
     <nz-avatar nz-comment-avatar nzIcon="user"
-               [nzSrc]="message?.sender?.avatarUrl">
+               [nzSrc]="message?.sender?.avatar">
     </nz-avatar>
 
     <nz-comment-content>
@@ -32,9 +32,10 @@
   </nz-col>
 
   <nz-col class="message-input-container" nzSpan="24">
-    <form nz-form>
+    <form nz-form [formGroup]="formGroup" (ngSubmit)="onSubmit()" autocomplete="off">
       <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large">
-        <input type="text" nz-input placeholder="Nhập tin nhắn ..." />
+        <input type="text" nz-input name="message" id="message" formControlName="message"
+               placeholder="Nhập tin nhắn ..."/>
       </nz-input-group>
       <ng-template #suffixIconSearch>
         <nz-space>

@@ -1,5 +1,6 @@
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
+import {User} from '../../model/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +15,13 @@ export class StorageService {
   }
 
   // region User info
-  public set userInfo(userInfo: any) {
+  public set userInfo(userInfo: User) {
     if (this.isBrowser) {
       localStorage.setItem(this.USER_INFO, JSON.stringify(userInfo));
     }
   }
 
-  public get userInfo(): any {
+  public get userInfo(): User {
     if (this.isBrowser) {
       const userInfoRaw = localStorage.getItem(this.USER_INFO);
 

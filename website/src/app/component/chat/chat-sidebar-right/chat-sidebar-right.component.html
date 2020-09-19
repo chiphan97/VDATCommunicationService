@@ -21,7 +21,7 @@
                            [nzActive]="memberCollapse">
           <nz-list nzItemLayout="horizontal" [nzLoading]="loading">
             <nz-list-header style="text-align: center; padding-top: 0">
-              <a nz-button nzType="link" style="width: 100%">Thêm thành viên</a>
+              <a nz-button nzType="link" style="width: 100%" (click)="onOpenModalAddMember()">Thêm thành viên</a>
             </nz-list-header>
 
             <nz-list-item *ngFor="let member of members">

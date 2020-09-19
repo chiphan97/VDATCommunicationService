@@ -25,12 +25,15 @@
           <nz-select id="users"
                      nzShowSearch
                      nzServerSearch
-                     nzPlaceHolder="Nhập tên người dùng cần thêm"
+                     nzPlaceHolder="Nhập tên người dùng cần tìm ..."
                      nzMode="multiple"
                      nzAllowClear
                      nzNotFoundContent="Không tìm thấy người dùng"
                      formControlName="users"
                      nzAutoClearSearchValue
+                     nzOptionHeightPx="120"
+                     nzSize="default"
+                     nzDropdownMatchSelectWidth
                      [nzLoading]="loading"
                      [(ngModel)]="selectedValue"
                      [nzShowArrow]="false"

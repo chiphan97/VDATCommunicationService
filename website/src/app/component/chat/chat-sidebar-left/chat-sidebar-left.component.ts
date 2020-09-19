@@ -45,7 +45,7 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
       .subscribe(groups => {
           this.groups = groups;
 
-          if (groups.length > 0) {
+          if (groups.length > 0 && !this.groupSelected) {
             this.groupSelectedChange.emit(groups[0]);
           }
         }, error => this.groups = [],

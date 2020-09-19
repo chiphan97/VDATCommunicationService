@@ -13,6 +13,7 @@ export class KeycloakService {
   private readonly REFRESH_TOKEN = StorageConst.KC_REFRESH_TOKEN;
   private readonly ID_TOKEN = StorageConst.KC_ID_TOKEN;
   private readonly USER_INFO = StorageConst.KC_USER_INFO;
+  private readonly TIME_REFRESH = 120;
 
   private keycloak: KeycloakInstance;
   private readonly isBrowser: boolean;
@@ -31,7 +32,7 @@ export class KeycloakService {
       const initOptions: KeycloakInitOptions = {
         onLoad: 'check-sso',
         checkLoginIframe: true,
-        checkLoginIframeInterval: 240,
+        checkLoginIframeInterval: this.TIME_REFRESH,
         idToken: this.idToken,
         token: this.accessToken,
         refreshToken: this.refreshToken

@@ -9,6 +9,11 @@ const routes: Routes = [
     children: [
       {
         path: '',
+        pathMatch: 'full',
+        redirectTo: 'messages'
+      },
+      {
+        path: 'messages',
         loadChildren: () => import('./../../page/chat-page/chat-page.module').then(m => m.ChatPageModule)
       }
     ]

@@ -7,7 +7,8 @@ export const environment = {
     wsUrl: `ws://${SERVER_URL}`,
     endpoint: {
       groups: '/api/v1/groups',
-      user: '/api/v1/user'
+      user: '/api/v1/user',
+      chat: '/chat'
     }
   },
   keycloak: {

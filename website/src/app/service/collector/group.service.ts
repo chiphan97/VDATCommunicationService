@@ -31,7 +31,7 @@ export class GroupService {
 
   public createGroup(groupPayload: GroupPayload): Observable<any> {
     return new Observable<any>(observer => {
-      const url = `${environment.service.endpoint.groups}`;
+      const url = `${this.API_ENDPOINT}`;
       this.apiService.post(url, groupPayload)
         .then(res => {
           const data = res.data;

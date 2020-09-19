@@ -6,6 +6,7 @@ import {GroupService} from '../../../service/collector/group.service';
 import {StorageService} from '../../../service/common/storage.service';
 import {GroupType} from '../../../const/group-type.const';
 import * as _ from 'lodash';
+import {AddMemberGroupComponent} from '../../group/add-member-group/add-member-group.component';
 
 @Component({
   selector: 'app-chat-sidebar-right',
@@ -43,8 +44,16 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
       this.fetchingData();
 
       const userInfo = this.storageService.userInfo;
-      this.isOwner = _.get(userInfo, 'sub', '') === this.groupSelected.owner;
+      this.isOwner = _.get(userInfo, 'userId', '') === this.groupSelected.owner;
     }
+  }
+
+  public onOpenModalAddMember(): void {
+    this.modal.create<AddMemberGroupComponent>({
+      nzTitle: 'Thêm thành viên',
+      nzContent: AddMemberGroupComponent,
+      nzWidth: '40vw'
+    });
   }
 
   private fetchingData() {
@@ -110,7 +119,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
 
   checkOwner(userId: string): boolean {
     const userInfo = this.storageService.userInfo;
-    return _.get(userInfo, 'sub', '') === userId;
+    return _.get(userInfo, 'userId', '') === userId;
   }
 
   onChangeGroupName() {

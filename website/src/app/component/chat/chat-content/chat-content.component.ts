@@ -1,24 +1,43 @@
-import {AfterViewChecked, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {Group} from '../../../model/group.model';
 import {Message} from '../../../model/message.model';
 import {formatDistance} from 'date-fns';
+import {StorageService} from '../../../service/common/storage.service';
+import {User} from '../../../model/user.model';
+import {ChatService} from '../../../service/ws/chat.service';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-chat-content',
   templateUrl: './chat-content.component.html',
   styleUrls: ['./chat-content.component.sass']
 })
-export class ChatContentComponent implements OnInit, AfterViewChecked {
+export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges {
 
   @Input() groupSelected: Group;
-
   @ViewChild('message-content') private myScrollContainer: ElementRef;
 
-  currentUser = 'Me';
-  messages: Array<Message>;
+  public currentUser: User;
+  public messages: Array<Message>;
+  public formGroup: FormGroup;
 
-  constructor() {
-    this.messages = this.fakeDate();
+  constructor(private storageService: StorageService,
+              private chatService: ChatService) {
+    this.currentUser = this.storageService.userInfo;
+    this.formGroup = this.createFormGroup();
+    this.messages = new Array<Message>();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes) {
+      if (changes.groupSelected && this.groupSelected) {
+        this.chatService.initWebSocket(this.groupSelected.id);
+
+        this.chatService.getEventListener()
+          .subscribe(message => this.messages.push(message));
+      }
+    }
   }
 
   ngOnInit(): void {
@@ -27,6 +46,15 @@ export class ChatContentComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked() {
     this.scrollToBottom();
+  }
+
+  public onSubmit(): void {
+    if (this.formGroup.valid) {
+      const rawValue = this.formGroup.getRawValue();
+      const message = _.get(rawValue, 'message', '');
+      this.chatService.sendMessage(message);
+      this.formGroup.patchValue({message: ''});
+    }
   }
 
   formatDistanceTime(date: Date = new Date()): string {
@@ -39,28 +67,9 @@ export class ChatContentComponent implements OnInit, AfterViewChecked {
     } catch (err) { }
   }
 
-  fakeDate(): Array<Message> {
-    const message: Message = {
-      id: 1,
-      groupId: 1,
-      sender: {
-        avatar: '',
-        userId: '1',
-        fullName: 'Nguyễn Chí Cường',
-        lastName: '',
-        firstName: '',
-        role: '',
-        username: ''
-      },
-      createdAt: new Date(),
-      content: 'Hello world !!!'
-    };
-
-    const messages = new Array<Message>();
-    for (let i = 0; i < 20; i++) {
-      messages.push(message);
-    }
-
-    return messages;
+  private createFormGroup(): FormGroup {
+    return new FormGroup({
+      message: new FormControl('', [Validators.required])
+    });
   }
 }
