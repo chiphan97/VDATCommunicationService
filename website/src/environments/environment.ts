@@ -1,4 +1,4 @@
-const SERVER_URL = 'loclhost:5000';
+const SERVER_URL = 'localhost:5000';
 
 export const environment = {
   production: false,

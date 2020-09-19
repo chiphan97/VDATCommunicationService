@@ -50,7 +50,8 @@ export class CreateNewGroupComponent implements OnInit {
     return new FormGroup({
       nameGroup: new FormControl('', Validators.required),
       users: new FormControl(null, [Validators.required]),
-      private: new FormControl()
+      private: new FormControl(false),
+      description: new FormControl('')
     });
   }
 

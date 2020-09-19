@@ -27,8 +27,14 @@ export class UserService {
 
   public findUserByKeyword(keyword: string): Observable<any> {
     return new Observable<any>(observer => {
-      observer.next(null);
-      observer.complete();
+      this.apiService.get(`${this.API_ENDPOINT}`, {keyword})
+        .then(res => {
+          const arr = res.data;
+          const users = arr.map(item => User.fromJson(item));
+          observer.next(users);
+        })
+        .catch(err => observer.error(err))
+        .finally(() => observer.complete());
     });
   }
 }

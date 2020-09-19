@@ -9,6 +9,17 @@
       </nz-form-item>
 
       <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzFor="nameGroup">Mô tả</nz-form-label>
+        <nz-form-control [nzSpan]="19">
+          <textarea
+            nz-input
+            id="description" formControlName="description"
+            [nzAutosize]="{ minRows: 2, maxRows: 6 }">
+          </textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
         <nz-form-label [nzSm]="5" nzFor="mention">Thành viên</nz-form-label>
         <nz-form-control [nzSm]="19" nzErrorTip="More than one must be selected!">
           <nz-select id="users"
