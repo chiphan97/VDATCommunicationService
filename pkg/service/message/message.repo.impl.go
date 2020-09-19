@@ -30,13 +30,16 @@ func NewMessageRepoImpl(db *sql.DB) MessageRepo {
 //
 //	return message, nil
 //}
-//func (mess *MessageRepoImpl) InsertMessage(messageModel model.MessageModel) error {
-//	statement := `INSERT INTO message (id_chat,content) VALUES ($1,$2)`
-//	_, err := mess.Db.Exec(statement,
-//		messageModel.IdChat,
-//		messageModel.Content)
-//	return err
-//}
+func (mess *MessageRepoImpl) InsertMessage(message Messages) error {
+	statement := `INSERT INTO message (id_chat,user_sender,content,id_group) VALUES ($1,$2,$3,$4)`
+	_, err := mess.Db.Exec(statement,
+		message.ID,
+		message.SubjectSender,
+		message.Content,
+		message.IdGroup)
+	return err
+}
+
 //func (mess *MessageRepoImpl) GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error) {
 //	message := make([]model.MessageModel, 0)
 //	statement := `SELECT * FROM message WHERE id_chat = $1 AND seen_at IS NULL ORDER BY created_at LIMIT 10`
