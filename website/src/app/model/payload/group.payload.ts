@@ -5,4 +5,5 @@ export class GroupPayload {
   type: GroupType;
   private: boolean;
   users: Array<string>;
+  description: string;
 }

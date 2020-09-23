@@ -8,7 +8,7 @@ type RepoImpl struct {
 	Db *sql.DB
 }
 
-func NewUserOnlineRepoImpl(db *sql.DB) Repo {
+func NewRepoImpl(db *sql.DB) Repo {
 	return &RepoImpl{Db: db}
 }
 
@@ -31,10 +31,10 @@ func (u *RepoImpl) DeleteUserOnline(socketid string) error {
 	}
 	return nil
 }
-func (u *RepoImpl) GetUserOnlineById(userId string) (UserOnline, error) {
+func (u *RepoImpl) GetUserOnlineBySocketIdAndHostId(socketID string, hostname string) (UserOnline, error) {
 	var user UserOnline
-	statement := `SELECT * FROM ONLINE WHERE user_id=$1`
-	rows, err := u.Db.Query(statement, userId)
+	statement := `SELECT * FROM ONLINE WHERE hostname=$1 AND socket_id=$2`
+	rows, err := u.Db.Query(statement, hostname, socketID)
 	//println(err)
 	if err != nil {
 		return user, err

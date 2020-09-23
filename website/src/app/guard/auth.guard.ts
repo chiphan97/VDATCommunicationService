@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router, CanActivateChild} from '@angular/router';
 import {Observable} from 'rxjs';
-import {StorageService} from '../service/storage.service';
+import {StorageService} from '../service/common/storage.service';
 import * as _ from 'lodash';
-import {KeycloakService} from '../service/keycloak.service';
+import {KeycloakService} from '../service/auth/keycloak.service';
 
 @Injectable({
   providedIn: 'root'

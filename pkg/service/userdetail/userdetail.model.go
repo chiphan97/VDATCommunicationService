@@ -7,7 +7,8 @@ type UserDetail struct {
 	CreatedAt *time.Time `json:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt"`
 	DeletedAt *time.Time `json:"deletedAt"`
-	Username  string     `json:"userName"`
+	FullName  string     `json:"fullName"`
+	UserName  string     `json:"userName"`
 	First     string     `json:"first"`
 	Last      string     `json:"last"`
 	Role      string     `json:"role"`
@@ -19,10 +20,11 @@ const (
 	PATIENT = "patient"
 )
 
-func (u *UserDetail) convertToDto() Dto {
+func (u *UserDetail) ConvertToDto() Dto {
 	dto := Dto{
 		ID:       u.ID,
-		Username: u.Username,
+		FullName: u.FullName,
+		Username: u.UserName,
 		First:    u.First,
 		Last:     u.Last,
 		Role:     u.Role,

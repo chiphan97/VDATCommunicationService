@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"gitlab.com/vdat/mcsvc/chat/pkg/database"
-	"gitlab.com/vdat/mcsvc/chat/pkg/handler"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 	"net"
@@ -25,26 +26,27 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	}
 	http.ServeFile(w, r, "index.html")
 }
-
 func main() {
-	go metrics()
-	r := mux.NewRouter()
-	fmt.Println("starting")
+	//go metrics()
+
+	//start broker
+	go dchat.Wsbroker.Run()
 
 	database.Connect()
 
-	r.HandleFunc("/", serveHome)
-	//http.HandleFunc("/test", service.TestHandler)
-	//http.HandleFunc("/test", handler.TestHandler)
-	r.HandleFunc("/user-online", handler.UserOnlineHandler)
-	//http.Handle("/", http.FileServer(http.Dir(".")))
+	r := mux.NewRouter()
 
+	// handler
+	r.HandleFunc("/", serveHome)
+	//r.HandleFunc("/chat/{idgroup}",auth.AuthenMiddleJWT(dchat.ChatHandlr))
+	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
 	//api
 	groups.RegisterGroupApi(r)
 	userdetail.RegisterUserApi(r)
 
 	r.Use(mux.CORSMethodMiddleware(r))
-	//corsObj := handlers.AllowedOrigins([]string{"*"})
+
+	fmt.Println("starting")
 	err := http.ListenAndServe(":5000", r)
 	if err != nil {
 		panic("Error: " + err.Error())

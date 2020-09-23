@@ -10,13 +10,14 @@ export class UserOnlineService {
   private socket: WebSocket;
   private listener: EventEmitter<any> = new EventEmitter();
   private readonly usersOnline: Array<UserOnline>;
+  private readonly WS_ENDPOINT = environment.service.wsUrl;
 
   public constructor() {
     this.usersOnline = new Array<UserOnline>();
   }
 
   public initWebSocket() {
-    this.socket = new WebSocket(`${environment.wsUrl}/user-online?token=${localStorage.getItem('TOKEN')}`);
+    this.socket = new WebSocket(`${this.WS_ENDPOINT}/user-online?token=${localStorage.getItem('TOKEN')}`);
     this.socket.onopen = event => {
       this.listener.emit({type: 'open', data: event});
     };

@@ -12,12 +12,13 @@ type AbstractModel struct {
 }
 type Groups struct {
 	AbstractModel
-	UserCreate string   `json:"userId"`
-	Name       string   `json:"nameGroup"`
-	Type       string   `json:"type"`
-	Private    bool     `json:"private"`
-	Thumbnail  string   `json:"thumbnail"`
-	Users      []string `json:"users"`
+	UserCreate  string   `json:"userId"`
+	Name        string   `json:"nameGroup"`
+	Type        string   `json:"type"`
+	Private     bool     `json:"private"`
+	Thumbnail   string   `json:"thumbnail"`
+	Description string   `json:"description"`
+	Users       []string `json:"users"`
 }
 
 type GroupsUsers struct {
@@ -31,14 +32,15 @@ const (
 	MANY = "many-to-many"
 )
 
-func (g *Groups) ConvertToDTO() GroupsDTO {
-	dto := GroupsDTO{
-		Id:        g.ID,
-		Name:      g.Name,
-		Type:      g.Type,
-		Private:   g.Private,
-		Thumbnail: g.Thumbnail,
-		Owner:     g.UserCreate,
+func (g *Groups) ConvertToDTO() Dto {
+	dto := Dto{
+		Id:          g.ID,
+		Name:        g.Name,
+		Type:        g.Type,
+		Private:     g.Private,
+		Thumbnail:   g.Thumbnail,
+		Owner:       g.UserCreate,
+		Description: g.Description,
 	}
 	return dto
 }

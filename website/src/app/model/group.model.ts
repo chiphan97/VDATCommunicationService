@@ -8,12 +8,13 @@ export class Group {
   type: GroupType;
   isPrivate: boolean;
   thumbnail: string;
+  description: string;
   owner: string;
   lastMessage: Message;
 
 
   constructor(id: number, nameGroup: string, type: GroupType,
-              isPrivate: boolean, thumbnail: string, owner: string, lastMessage: Message) {
+              isPrivate: boolean, thumbnail: string, description: string, owner: string, lastMessage: Message) {
     this.id = id;
     this.nameGroup = nameGroup;
     this.type = type;
@@ -21,6 +22,7 @@ export class Group {
     this.thumbnail = thumbnail;
     this.lastMessage = lastMessage;
     this.owner = owner;
+    this.description = description;
   }
 
   public static fromJson(data: any) {
@@ -30,6 +32,7 @@ export class Group {
       _.get(data, 'type', ''),
       _.get(data, 'private', true),
       _.get(data, 'thumbnail', ''),
+      _.get(data, 'description', ''),
       _.get(data, 'owner', ''),
       null
     );

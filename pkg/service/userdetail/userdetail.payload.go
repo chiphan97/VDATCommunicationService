@@ -2,6 +2,7 @@ package userdetail
 
 type Payload struct {
 	ID       string `json:"id"`
+	FullName string `json:"fullName"`
 	Username string `json:"userName"`
 	First    string `json:"first"`
 	Last     string `json:"last"`
@@ -11,7 +12,8 @@ type Payload struct {
 func (p *Payload) convertToModel() UserDetail {
 	u := UserDetail{
 		ID:       p.ID,
-		Username: p.Username,
+		FullName: p.FullName,
+		UserName: p.Username,
 		First:    p.First,
 		Last:     p.Last,
 		Role:     p.Role,

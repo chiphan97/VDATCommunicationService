@@ -1,20 +1,19 @@
 package useronline
 
 import (
-	"gitlab.com/vdat/mcsvc/chat/pkg/database"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 )
 
 //func GetListUSerOnlineService(fil string) ([]Dto, error) {
 //	users := make([]Dto, 0)
-//	userOnlines, err := NewUserOnlineRepoImpl(database.DB).GetListUSerOnline(fil)
+//	userOnlines, err := NewRepoImpl(database.DB).GetListUSerOnline(fil)
 //	if err != nil {
 //		return users, err
 //	}
 //	for _, userOnline := range userOnlines {
 //		user := Dto{
 //			UserID:   userOnline.UserID,
-//			Username: userOnline.Username,
+//			UserName: userOnline.UserName,
 //			First:    userOnline.First,
 //			Last:     userOnline.Last,
 //		}
@@ -22,24 +21,22 @@ import (
 //	}
 //	return users, nil
 //}
-func AddUserOnlineService(payload Payload, deltailPayload userdetail.Payload) error {
-	online := payload.convertToModel()
-	check, err := userdetail.GetUserDetailByIDService(payload.UserID)
+func AddUserOnlineService(payload Payload) error {
+	check, err := NewRepoImpl(database.DB).GetUserOnlineBySocketIdAndHostId(payload.SocketID, payload.HostName)
 	if err != nil {
 		return err
 	}
-	if check == (userdetail.Dto{}) {
-		err := userdetail.AddUserDetailService(deltailPayload)
+	if check == (UserOnline{}) {
+		online := payload.convertToModel()
+
+		err = NewRepoImpl(database.DB).AddUserOnline(online)
 		if err != nil {
 			return err
 		}
 	}
-	err = NewUserOnlineRepoImpl(database.DB).AddUserOnline(online)
-	if err != nil {
-		return err
-	}
+
 	return nil
 }
 func DeleteUserOnlineService(socketid string) error {
-	return NewUserOnlineRepoImpl(database.DB).DeleteUserOnline(socketid)
+	return NewRepoImpl(database.DB).DeleteUserOnline(socketid)
 }

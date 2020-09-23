@@ -6,7 +6,7 @@ import (
 	"encoding/pem"
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
-	"gitlab.com/vdat/mcsvc/chat/pkg/utils"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 	"net/http"
 	"strings"
 )
@@ -17,7 +17,8 @@ MIICpTCCAY0CBgFrPLdvYjANBgkqhkiG9w0BAQsFADAWMRQwEgYDVQQDDAt2ZGF0bGFiLmNvbTAeFw0x
 
 type UserClaims struct {
 	jwt.StandardClaims
-	UserName   string `json:"name"`
+	FullName   string `json:"name"`
+	UserName   string `json:"preferred_username"`
 	GivenName  string `json:"given_name"`
 	FamilyName string `json:"family_name"`
 }
