@@ -5,14 +5,18 @@ import (
 )
 
 type UserOnline struct {
-	UserID string     `json:"id"`
-	LogAt  *time.Time `json:"log_at"`
+	HostName string     `json:"hostName"`
+	SocketID string     `json:"socketId"`
+	UserID   string     `json:"id"`
+	LogAt    *time.Time `json:"log_at"`
 }
 
 func (u *UserOnline) ConvertToDto() Dto {
 	user := Dto{
-		UserID: u.UserID,
-		LogAt:  u.LogAt,
+		HostName: u.HostName,
+		SocketID: u.SocketID,
+		UserID:   u.UserID,
+		LogAt:    u.LogAt,
 	}
 	return user
 }

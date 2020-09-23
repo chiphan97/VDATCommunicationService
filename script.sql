@@ -55,6 +55,8 @@ CREATE TABLE UserDetail(
 );
 CREATE TABLE ONLINE(
     id_onl  serial,
+    hostname varchar(100),
+    socket_id varchar(100),
     user_id varchar(100) ,
     log_at timestamp not null default now(),
     CONSTRAINT FK_ONLINE_USER FOREIGN KEY (user_id) REFERENCES UserDetail (user_id),

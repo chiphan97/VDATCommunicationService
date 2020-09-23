@@ -1,7 +1,6 @@
 package userdetail
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
@@ -44,13 +43,14 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	fmt.Print(dto)
+
 	uo := useronline.Payload{
-		UserID: payload.ID,
+		HostName: r.URL.RawPath,
+		SocketID: payload.ID,
+		UserID:   payload.ID,
 	}
 	err = useronline.AddUserOnlineService(uo)
 	if err != nil {
-		fmt.Print(err)
 		utils.ResponseErr(w, http.StatusInternalServerError)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
