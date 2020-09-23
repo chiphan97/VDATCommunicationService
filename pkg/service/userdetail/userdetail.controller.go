@@ -46,12 +46,11 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Print(dto)
 	uo := useronline.Payload{
-		HostName: r.URL.RawPath,
-		SocketID: payload.ID,
-		UserID:   payload.ID,
+		UserID: payload.ID,
 	}
 	err = useronline.AddUserOnlineService(uo)
 	if err != nil {
+		fmt.Print(err)
 		utils.ResponseErr(w, http.StatusInternalServerError)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

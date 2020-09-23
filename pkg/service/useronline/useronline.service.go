@@ -22,7 +22,7 @@ import (
 //	return users, nil
 //}
 func AddUserOnlineService(payload Payload) error {
-	check, err := NewRepoImpl(database.DB).GetUserOnlineBySocketIdAndHostId(payload.SocketID, payload.HostName)
+	check, err := NewRepoImpl(database.DB).GetUserOnlineByUserId(payload.UserID)
 	if err != nil {
 		return err
 	}

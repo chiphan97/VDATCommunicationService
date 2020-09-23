@@ -2,7 +2,6 @@ package useronline
 
 import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 	"testing"
 )
 
@@ -13,14 +12,14 @@ func TestAddUserOnlineService(t *testing.T) {
 		SocketID: "test socket",
 		UserID:   "test",
 	}
-	dp := userdetail.Payload{
-		ID:       "test",
-		Username: "ko co thi them",
-		First:    "ko co thi them",
-		Last:     "ko co thi them",
-		Role:     userdetail.ADMIN,
-	}
-	err := AddUserOnlineService(p, dp)
+	//dp := userdetail.Payload{
+	//	ID:       "test",
+	//	Username: "ko co thi them",
+	//	First:    "ko co thi them",
+	//	Last:     "ko co thi them",
+	//	Role:     userdetail.ADMIN,
+	//}
+	err := AddUserOnlineService(p)
 	if err != nil {
 		t.Log(err)
 	}

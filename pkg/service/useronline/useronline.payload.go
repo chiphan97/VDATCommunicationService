@@ -8,9 +8,7 @@ type Payload struct {
 
 func (p *Payload) convertToModel() UserOnline {
 	u := UserOnline{
-		HostName: p.HostName,
-		SocketID: p.SocketID,
-		UserID:   p.UserID,
+		UserID: p.UserID,
 	}
 	return u
 }
