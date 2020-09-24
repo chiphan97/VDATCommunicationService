@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"time"
@@ -50,24 +51,33 @@ func (client *WsClient) ReadPump() {
 }
 
 func (client *WsClient) CheckUserOnlinePump(userHide string) {
-	defer func() {
-		fmt.Println("Check tin nhan")
-		client.Broker.Unregister <- client
-		_ = client.Conn.Close()
-	}()
+	//defer func() {
+	//	fmt.Println("Check tin nhan")
+	//	client.Broker.Unregister <- client
+	//	_ = client.Conn.Close()
+	//}()
 
-	for {
-		//usersOnline, _ := useronline.GetListUSerOnlineService("")
-		message := WsMessage{
-			From:   "VDAT-SERVICE",
-			To:     nil,
-			Body:   "",
-			Status: "",
-		}
-
-		client.Broker.Inbound <- message
-		time.Sleep(10000 * time.Millisecond)
+	//for {
+	//	//usersOnline, _ := useronline.GetListUSerOnlineService("")
+	//	message := WsMessage{
+	//		From:   "VDAT-SERVICE",
+	//		To:     nil,
+	//		Body:   "",
+	//		Status: "",
+	//	}
+	//
+	//	client.Broker.Inbound <- message
+	//	time.Sleep(10000 * time.Millisecond)
+	//}
+	usersOnline, _ := useronline.NewRepoImpl(database.DB).GetListUSerOnline()
+	message := WsMessage{
+		From:   "VDAT-SERVICE",
+		To:     nil,
+		Body:   usersOnline,
+		Status: "",
 	}
+	client.Broker.Inbound <- message
+	//return
 }
 
 func (client *WsClient) WritePump() {
