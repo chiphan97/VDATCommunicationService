@@ -1,3 +1,7 @@
+import {WsEvent} from '../../const/ws.event';
+
 export interface MessagePayload {
-  body: string;
+  type: WsEvent;
+  groupId?: number;
+  data: any;
 }

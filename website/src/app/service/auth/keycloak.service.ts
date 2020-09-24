@@ -50,10 +50,10 @@ export class KeycloakService {
           this.refreshToken = this.keycloak.refreshToken;
           this.idToken = this.keycloak.idToken;
 
-          this.keycloak.loadUserInfo()
-            .then(userInfo => {
-              this.userInfo = userInfo;
-            });
+          // this.keycloak.loadUserInfo()
+          //   .then(userInfo => {
+          //     this.userInfo = userInfo;
+          //   });
 
           setTimeout(() => {
             this.keycloak.updateToken(60)

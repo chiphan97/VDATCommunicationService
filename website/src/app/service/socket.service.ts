@@ -2,7 +2,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 
 import * as socketIo from 'socket.io-client';
 import {Observable} from 'rxjs';
-import {Event} from '../const/event';
+import {WsEvent} from '../const/ws.event';
 import {environment} from '../../environments/environment';
 
 @Injectable({

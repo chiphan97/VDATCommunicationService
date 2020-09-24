@@ -1,4 +1,4 @@
-const SERVER_URL = 'localhost:5000';
+const SERVER_URL = '2.tcp.ngrok.io:19429';
 
 export const environment = {
   production: false,
@@ -6,7 +6,7 @@ export const environment = {
     apiUrl: `http://${SERVER_URL}`,
     wsUrl: `ws://${SERVER_URL}`,
     endpoint: {
-      groups: '/api/v1/groups',
+      groups: '/groups',
       user: '/api/v1/user',
       chat: '/chat'
     }
