@@ -31,6 +31,7 @@ func main() {
 
 	//start broker
 	go dchat.Wsbroker.Run()
+	go groups.Wsbroker.Run()
 
 	database.Connect()
 
@@ -40,8 +41,9 @@ func main() {
 	r.HandleFunc("/", serveHome)
 	//r.HandleFunc("/chat/{idgroup}",auth.AuthenMiddleJWT(dchat.ChatHandlr))
 	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/groups", groups.GroupManageWs).Methods(http.MethodGet, http.MethodOptions)
 	//api
-	groups.RegisterGroupApi(r)
+	//groups.RegisterGroupApi(r)
 	userdetail.RegisterUserApi(r)
 
 	r.Use(mux.CORSMethodMiddleware(r))
