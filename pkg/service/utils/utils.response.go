@@ -52,3 +52,27 @@ func ResponseOk(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jData)
 }
+
+func ResponseWithErrByte(statusCode int) []byte {
+	jData, err := json.Marshal(Error{
+		Status:  statusCode,
+		Message: http.StatusText(statusCode),
+	})
+	if err != nil {
+		return nil
+	}
+	return jData
+}
+func ResponseOkByte(data interface{}) []byte {
+	if data == nil {
+		return ResponseWithErrByte(http.StatusInternalServerError)
+	}
+
+	jData, err := json.Marshal(data)
+	if err != nil {
+		return ResponseWithErrByte(http.StatusInternalServerError)
+		return nil
+	}
+	return jData
+
+}
