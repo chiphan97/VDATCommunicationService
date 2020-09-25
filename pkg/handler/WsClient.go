@@ -44,7 +44,7 @@ func (client *WsClient) ReadPump() {
 
 		var messageJSON WsMessage
 		_ = json.Unmarshal(message, &messageJSON)
-		messageJSON.From = client.User.UserID
+		//messageJSON.From = client.User.UserID
 
 		client.Broker.Inbound <- messageJSON
 	}
@@ -71,10 +71,8 @@ func (client *WsClient) CheckUserOnlinePump(userHide string) {
 	//}
 	usersOnline, _ := useronline.NewRepoImpl(database.DB).GetListUSerOnline()
 	message := WsMessage{
-		From:   "VDAT-SERVICE",
-		To:     nil,
-		Body:   usersOnline,
-		Status: "",
+		Type: "Online:list_online",
+		Body: usersOnline,
 	}
 	client.Broker.Inbound <- message
 	//return
