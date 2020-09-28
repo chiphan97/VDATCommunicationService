@@ -49,6 +49,7 @@ func main() {
 	r.Use(mux.CORSMethodMiddleware(r))
 
 	fmt.Println("starting")
+	connect()
 
 	//fmt.Print(useronline.NewRepoImpl(database.DB).GetListUSerOnline())
 

@@ -294,10 +294,10 @@ func (g *RepoImpl) GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, err
 	for rows.Next() {
 		var user userdetail.UserDetail
 		err = rows.Scan(&user.ID,
-			&user.FullName,
-			&user.UserName,
-			&user.First,
-			&user.Last,
+			//&user.FullName,
+			//&user.UserName,
+			//&user.First,
+			//&user.Last,
 			&user.Role)
 		if err != nil {
 			return users, err
