@@ -95,7 +95,7 @@ func UserOnlineHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
-	go client.CheckUserOnlinePump(client.User.UserID)
+	//go client.CheckUserOnlinePump(client.User.UserID)
 	go client.WritePump()
 	go client.ReadPump()
 

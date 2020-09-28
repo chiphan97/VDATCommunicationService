@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
-
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"time"
@@ -71,19 +69,6 @@ func (client *WsClient) CheckUserOnlinePump(userHide string) {
 	//	client.Broker.Inbound <- message
 	//	time.Sleep(10000 * time.Millisecond)
 	//}
-	listGroup, _ := groups.NewRepoImpl(database.DB).GetGroupByUser(userHide)
-	for group := range listGroup {
-		fmt.Println(listGroup[group].ID)
-		listUser, _ := groups.NewRepoImpl(database.DB).GetListUserByGroup(int(listGroup[group].ID))
-		//fmt.Println("--------")
-		//fmt.Println(listUser)
-		//
-		//fmt.Println("--------")
-		for user := range listUser {
-			fmt.Println(listUser[user].ID)
-		}
-	}
-
 	usersOnline, _ := useronline.NewRepoImpl(database.DB).GetListUSerOnline()
 	message := WsMessage{
 		Type: "Online:list_online",

@@ -68,6 +68,11 @@ func (b *Broker) Run() {
 				b.Groups[client.GroupID] = groupConnect
 			}
 			b.Groups[client.GroupID][client] = true
+			fmt.Print("123")
+			for group := range b.Groups {
+				fmt.Print(group)
+			}
+
 			fmt.Println("client " + client.User.UserID + " is connected")
 		case client := <-b.Unregister:
 			// khi client dang xuat khoi group, delete client khoi group

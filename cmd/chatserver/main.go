@@ -10,6 +10,7 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"net"
 	"net/http"
 	"os"
@@ -50,7 +51,7 @@ func main() {
 
 	fmt.Println("starting")
 
-	//fmt.Print(useronline.NewRepoImpl(database.DB).GetListUSerOnline())
+	fmt.Print(useronline.NewRepoImpl(database.DB).GetListUSerOnline())
 
 	err := http.ListenAndServe(":5000", r)
 	if err != nil {

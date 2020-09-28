@@ -31,8 +31,28 @@ func (u *RepoImpl) GetListUSerOnline() ([]UserOnline, error) {
 	return users, nil
 }
 
+func (u *RepoImpl) GetListUSerOnline() ([]UserOnline, error) {
+	var users []UserOnline
+	statement := `SELECT user_id,hostname,socket_id,log_at FROM ONLINE `
+	rows, err := u.Db.Query(statement)
+	//println(err)
+	if err != nil {
+		return users, err
+	}
+	for rows.Next() {
+		var user UserOnline
+		err = rows.Scan(&user.UserID, &user.HostName, &user.SocketID, &user.LogAt)
+		if err != nil {
+			return users, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
 func (u *RepoImpl) AddUserOnline(online UserOnline) error {
-	statement := `INSERT INTO ONLINE VALUES ($1,$2,$3)`
+	statement := `INSERT INTO ONLINE (hostname,socket_id,user_id) VALUES ($1,$2,$3)`
 	_, err := u.Db.Exec(statement,
 		online.HostName,
 		online.SocketID,
