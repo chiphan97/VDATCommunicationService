@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
+
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"time"
@@ -43,31 +46,51 @@ func (client *WsClient) ReadPump() {
 
 		var messageJSON WsMessage
 		_ = json.Unmarshal(message, &messageJSON)
-		messageJSON.From = client.User.UserID
+		//messageJSON.From = client.User.UserID
 
 		client.Broker.Inbound <- messageJSON
 	}
 }
 
 func (client *WsClient) CheckUserOnlinePump(userHide string) {
-	defer func() {
-		fmt.Println("Check tin nhan")
-		client.Broker.Unregister <- client
-		_ = client.Conn.Close()
-	}()
+	//defer func() {
+	//	fmt.Println("Check tin nhan")
+	//	client.Broker.Unregister <- client
+	//	_ = client.Conn.Close()
+	//}()
 
-	for {
-		//usersOnline, _ := useronline.GetListUSerOnlineService("")
-		message := WsMessage{
-			From:   "VDAT-SERVICE",
-			To:     nil,
-			Body:   "",
-			Status: "",
+	//for {
+	//	//usersOnline, _ := useronline.GetListUSerOnlineService("")
+	//	message := WsMessage{
+	//		From:   "VDAT-SERVICE",
+	//		To:     nil,
+	//		Body:   "",
+	//		Status: "",
+	//	}
+	//
+	//	client.Broker.Inbound <- message
+	//	time.Sleep(10000 * time.Millisecond)
+	//}
+	listGroup, _ := groups.NewRepoImpl(database.DB).GetGroupByUser(userHide)
+	for group := range listGroup {
+		fmt.Println(listGroup[group].ID)
+		listUser, _ := groups.NewRepoImpl(database.DB).GetListUserByGroup(int(listGroup[group].ID))
+		//fmt.Println("--------")
+		//fmt.Println(listUser)
+		//
+		//fmt.Println("--------")
+		for user := range listUser {
+			fmt.Println(listUser[user].ID)
 		}
-
-		client.Broker.Inbound <- message
-		time.Sleep(10000 * time.Millisecond)
 	}
+
+	usersOnline, _ := useronline.NewRepoImpl(database.DB).GetListUSerOnline()
+	message := WsMessage{
+		Type: "Online:list_online",
+		Body: usersOnline,
+	}
+	client.Broker.Inbound <- message
+	//return
 }
 
 func (client *WsClient) WritePump() {
