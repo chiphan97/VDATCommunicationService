@@ -7,4 +7,5 @@ type Dto struct {
 	First    string `json:"first"`
 	Last     string `json:"last"`
 	Role     string `json:"role"`
+	Status   string `json:"status"`
 }
