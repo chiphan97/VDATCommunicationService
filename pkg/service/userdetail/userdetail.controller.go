@@ -10,21 +10,21 @@ import (
 )
 
 func RegisterUserApi(r *mux.Router) {
-	r.HandleFunc("/api/v1/user", auth.AuthenMiddleJWT(GetUserApi)).Methods(http.MethodGet, http.MethodOptions)
+	//r.HandleFunc("/api/v1/user", auth.AuthenMiddleJWT(GetUserApi)).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/v1/user/info", auth.AuthenMiddleJWT(CheckUserDetailApi)).Methods(http.MethodGet, http.MethodOptions)
 }
 
 //API tìm kiếm người dùng filtter
-func GetUserApi(w http.ResponseWriter, r *http.Request) {
-	cors.SetupResponse(&w, r)
-
-	fil := r.URL.Query()["keyword"]
-	users, err := GetListUserDetailService(fil[0])
-	if err != nil {
-		utils.ResponseErr(w, http.StatusNotFound)
-	}
-	w.Write(utils.ResponseWithByte(users))
-}
+//func GetUserApi(w http.ResponseWriter, r *http.Request) {
+//	cors.SetupResponse(&w, r)
+//
+//	fil := r.URL.Query()["keyword"]
+//	users, err := GetListUserDetailService()
+//	if err != nil {
+//		utils.ResponseErr(w, http.StatusNotFound)
+//	}
+//	w.Write(utils.ResponseWithByte(users))
+//}
 func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 

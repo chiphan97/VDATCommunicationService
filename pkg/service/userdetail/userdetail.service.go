@@ -35,9 +35,9 @@ func GetUserDetailByIDService(id string) (Dto, error) {
 	dto = detail.ConvertToDto()
 	return dto, nil
 }
-func GetListUserDetailService(fil string) ([]Dto, error) {
+func GetListUserDetailService() ([]Dto, error) {
 	dtos := make([]Dto, 0)
-	userdetails, err := NewRepoImpl(database.DB).GetListUser(fil)
+	userdetails, err := NewRepoImpl(database.DB).GetListUser()
 	if err != nil {
 		return dtos, err
 	}
