@@ -45,7 +45,7 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uo := useronline.Payload{
-		HostName: r.URL.RawPath,
+		HostName: utils.GetLocalIP(),
 		SocketID: payload.ID,
 		UserID:   payload.ID,
 	}

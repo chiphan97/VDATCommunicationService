@@ -53,7 +53,7 @@ func (u *RepoImpl) DeleteUserOnline(socketid string) error {
 }
 func (u *RepoImpl) GetUserOnlineBySocketIdAndHostId(socketID string, hostname string) (UserOnline, error) {
 	var user UserOnline
-	statement := `SELECT * FROM ONLINE WHERE hostname=$1 AND socket_id=$2`
+	statement := `SELECT hostname,socket_id,user_id,log_at FROM ONLINE WHERE hostname=$1 AND socket_id=$2`
 	rows, err := u.Db.Query(statement, hostname, socketID)
 	//println(err)
 	if err != nil {
