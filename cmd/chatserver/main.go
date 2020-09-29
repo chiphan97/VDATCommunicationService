@@ -36,7 +36,7 @@ func main() {
 	database.Connect()
 
 	//readfile
-	utils.CheckFileSocketId()
+	//utils.CheckFileSocketId()
 
 	r := mux.NewRouter()
 
