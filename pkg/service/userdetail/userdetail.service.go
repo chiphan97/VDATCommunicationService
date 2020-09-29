@@ -121,9 +121,25 @@ func getData(token string, keyword string) []User {
 		log.Println("Error on response.\n[ERRO] -", err)
 	}
 	body, _ := ioutil.ReadAll(resp.Body)
-	var user []User
-	json.Unmarshal([]byte(body), &user)
-	fmt.Print(user)
+	var users []User
+	json.Unmarshal([]byte(body), &users)
+	//fmt.Print(users)
+	for i, _ := range users {
+		fmt.Println(users[i].ID)
+		detail, _ := NewRepoImpl(database.DB).GetUserDetailById(users[i].ID)
+		if detail == (UserDetail{}) {
+			fmt.Println("khong ton tai")
+			users[i].Role = PATIENT
+			payload := Payload{
+				ID:   users[i].ID,
+				Role: PATIENT,
+			}
+			AddUserDetailService(payload)
+
+		} else {
+			users[i].Role = detail.Role
+		}
+	}
 	//fmt.Print(string(body))
-	return user
+	return users
 }

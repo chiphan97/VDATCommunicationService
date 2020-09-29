@@ -18,6 +18,7 @@ type User struct {
 	Username  string `json:"username"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
+	Role      string `json:"role"`
 }
 
 type UserDetail struct {
