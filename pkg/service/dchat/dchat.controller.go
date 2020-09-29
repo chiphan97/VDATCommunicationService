@@ -26,9 +26,7 @@ func ChatHandlr(w http.ResponseWriter, r *http.Request) {
 	idGroup, _ := strconv.Atoi(idgroupstr)
 
 	user := useronline.UserOnline{
-		HostName: r.URL.Hostname(),
-		SocketID: owner,
-		UserID:   owner,
+		UserID: owner,
 	}
 
 	client := &Client{User: user, Broker: Wsbroker, Conn: conn, Send: make(chan []byte, 256), GroupID: idGroup}

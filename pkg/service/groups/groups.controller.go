@@ -92,6 +92,7 @@ func CreateGroupApi(w http.ResponseWriter, r *http.Request) {
 	var groupPayLoad PayLoad
 	err := json.NewDecoder(r.Body).Decode(&groupPayLoad)
 	if err != nil {
+		fmt.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
 		utils.ResponseErr(w, http.StatusBadRequest)
 		return
@@ -102,6 +103,7 @@ func CreateGroupApi(w http.ResponseWriter, r *http.Request) {
 	if groupPayLoad.Type == ONE { //api Tạo hội thoại 1 - 1 (nhóm bí mật) ||
 		groupsDto, err := GetGroupByOwnerAndUserService(groupPayLoad, owner)
 		if err != nil {
+			fmt.Print(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			utils.ResponseErr(w, http.StatusInternalServerError)
 			return
@@ -307,6 +309,30 @@ func GetListUserByGroupApi(w http.ResponseWriter, r *http.Request) {
 	}
 
 	users, err := GetListUserByGroupService(groupID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		utils.ResponseErr(w, http.StatusInternalServerError)
+		return
+	}
+	w.Write(utils.ResponseWithByte(users))
+}
+
+func GetListUserOnlineByGroupApi(w http.ResponseWriter, r *http.Request) {
+	cors.SetupResponse(&w, r)
+	params := mux.Vars(r)
+	groupID, err := strconv.Atoi(params["idGroup"])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		utils.ResponseErr(w, http.StatusBadRequest)
+		return
+	}
+	users, err := GetListUserByGroupService(groupID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		utils.ResponseErr(w, http.StatusInternalServerError)
+		return
+	}
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		utils.ResponseErr(w, http.StatusInternalServerError)

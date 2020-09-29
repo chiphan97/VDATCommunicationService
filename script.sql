@@ -43,10 +43,6 @@ CREATE TABLE Messages_Delete(
 
 CREATE TABLE UserDetail(
     user_id  varchar(100),
-    fullname varchar(100),
-    username varchar(100),
-    first    varchar(100),
-    last     varchar(100),
     role     varchar(15),
     created_at timestamp not null default now(),
     updated_at timestamp not null default now(),
@@ -54,11 +50,11 @@ CREATE TABLE UserDetail(
     PRIMARY KEY (user_id)
 );
 CREATE TABLE ONLINE(
-    id serial,
+    id_onl  serial,
     hostname varchar(100),
     socket_id varchar(100),
     user_id varchar(100) ,
     log_at timestamp not null default now(),
     CONSTRAINT FK_ONLINE_USER FOREIGN KEY (user_id) REFERENCES UserDetail (user_id),
-    PRIMARY KEY (id)
+    PRIMARY KEY (id_onl)
 );

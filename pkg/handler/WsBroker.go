@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"time"
 )
 
@@ -54,15 +55,25 @@ func (broker *WsBroker) run() {
 		select {
 		case client := <-broker.Register:
 			broker.Clients[client] = true
+			uo := useronline.Payload{
+				HostName: "",
+				SocketID: client.User.UserID,
+				UserID:   client.User.UserID,
+			}
 			//add in database when client on
-			//_ = useronline.AddUserOnlineService(client.User)
+			_ = useronline.AddUserOnlineService(uo)
 
+			fmt.Print(client.User.UserID)
+
+			go client.CheckUserOnlinePump(client.User.UserID)
 		case client := <-broker.Unregister:
 			if _, ok := broker.Clients[client]; ok {
 				//delete in database when client off
-				//_ = useronline.DeleteUserOnlineService(client.User.SocketID)
+				_ = useronline.DeleteUserOnlineService(client.User.SocketID)
 				delete(broker.Clients, client)
 				close(client.Send)
+
+				go client.CheckUserOnlinePump(client.User.UserID)
 			}
 		case message := <-broker.Inbound:
 			broker.MessageRepository = append(broker.MessageRepository, &message)

@@ -1,18 +1,15 @@
 package userdetail
 
 import (
-	"gitlab.com/vdat/mcsvc/chat/pkg/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"testing"
 )
 
 func TestAddUserDetailService(t *testing.T) {
 	database.Connect()
 	p := Payload{
-		ID:       "test",
-		Username: "test",
-		First:    "test",
-		Last:     "test",
-		Role:     ADMIN,
+		ID:   "test",
+		Role: ADMIN,
 	}
 	err := AddUserDetailService(p)
 	if err != nil {
@@ -33,7 +30,7 @@ func TestGetUserDetailByIDService(t *testing.T) {
 }
 func TestGetListUserDetailService(t *testing.T) {
 	database.Connect()
-	dtos, err := GetListUserDetailService("a")
+	dtos, err := GetListUserDetailService()
 	if err != nil {
 		t.Fatal(err)
 		return
@@ -44,11 +41,8 @@ func TestUpdateUserDetailservice(t *testing.T) {
 	database.Connect()
 
 	payload := Payload{
-		ID:       "893a4692-63bb-4919-80d9-aece678c0422",
-		Username: "test",
-		First:    "test",
-		Last:     "test",
-		Role:     DOCTOR,
+		ID:   "ffb63922-8f99-46ba-9648-d07f3ac14757",
+		Role: DOCTOR,
 	}
 	err := UpdateUserDetailservice(payload)
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"gitlab.com/vdat/mcsvc/chat/pkg/handler"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
@@ -38,6 +39,7 @@ func main() {
 	r := mux.NewRouter()
 
 	// handler
+	r.HandleFunc("/user-online", handler.UserOnlineHandler)
 	r.HandleFunc("/", serveHome)
 	//r.HandleFunc("/chat/{idgroup}",auth.AuthenMiddleJWT(dchat.ChatHandlr))
 	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
@@ -49,6 +51,9 @@ func main() {
 	r.Use(mux.CORSMethodMiddleware(r))
 
 	fmt.Println("starting")
+
+	//fmt.Print(useronline.NewRepoImpl(database.DB).GetListUSerOnline())
+
 	err := http.ListenAndServe(":5000", r)
 	if err != nil {
 		panic("Error: " + err.Error())
