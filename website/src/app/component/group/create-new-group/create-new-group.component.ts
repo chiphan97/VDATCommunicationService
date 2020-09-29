@@ -5,7 +5,7 @@ import {UserService} from '../../../service/collector/user.service';
 import {NzMessageService, NzModalRef} from 'ng-zorro-antd';
 import {GroupPayload} from '../../../model/payload/group.payload';
 import {GroupType} from '../../../const/group-type.const';
-import {GroupService} from '../../../service/ws/group.service';
+import {GroupService} from '../../../service/collector/group.service';
 
 @Component({
   selector: 'app-create-new-group',
@@ -63,21 +63,19 @@ export class CreateNewGroupComponent implements OnInit {
       const groupPayload: GroupPayload = this.formGroup.getRawValue();
       groupPayload.type = GroupType.MANY;
 
-      this.groupService.createGroup(groupPayload);
-
-      // this.groupService.createGroup(groupPayload)
-      //   .subscribe(group => {
-      //     if (group) {
-      //       this.messageService.success('Tạo cuộc hội thoại thành công');
-      //       this.modalService.destroy('created');
-      //     } else {
-      //       this.messageService.error('Không thể tạo cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
-      //       this.formGroup.enable();
-      //     }
-      //   }, error => {
-      //     this.formGroup.enable();
-      //     this.messageService.error(error);
-      //   }, () => this.loading = false);
+      this.groupService.createGroup(groupPayload)
+        .subscribe(group => {
+          if (group) {
+            this.messageService.success('Tạo cuộc hội thoại thành công');
+            this.modalService.destroy('created');
+          } else {
+            this.messageService.error('Không thể tạo cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
+            this.formGroup.enable();
+          }
+        }, error => {
+          this.formGroup.enable();
+          this.messageService.error(error);
+        }, () => this.loading = false);
     }
   }
 

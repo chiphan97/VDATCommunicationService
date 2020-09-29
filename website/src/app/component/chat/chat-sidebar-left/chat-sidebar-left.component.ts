@@ -3,9 +3,8 @@ import {Group} from '../../../model/group.model';
 import {NzModalService} from 'ng-zorro-antd';
 import {GroupType} from '../../../const/group-type.const';
 import {CreateNewGroupComponent} from '../../group/create-new-group/create-new-group.component';
-import {GroupService} from '../../../service/ws/group.service';
-import {StorageService} from '../../../service/common/storage.service';
 import {KeycloakService} from '../../../service/auth/keycloak.service';
+import {GroupService} from '../../../service/collector/group.service';
 
 @Component({
   selector: 'app-chat-sidebar-left',
@@ -27,12 +26,6 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
               private keycloakService: KeycloakService) {
     this.groups = new Array<Group>();
     this.groupSelected = null;
-    this.groupService.connect(this.keycloakService.accessToken)
-      .subscribe(connected => {
-        if (connected) {
-          this.fetchingData();
-        }
-      });
   }
 
   isGroup = (type) => type === GroupType.MANY;
@@ -49,16 +42,15 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
 
   private fetchingData() {
     this.loading = true;
-    // this.groupService.getAllGroup().subscribe();
-    // this.groupService.getAllGroup()
-    //   .subscribe(groups => {
-    //       this.groups = groups;
-    //
-    //       if (groups.length > 0 && !this.groupSelected) {
-    //         this.groupSelectedChange.emit(groups[0]);
-    //       }
-    //     }, error => this.groups = [],
-    //     () => this.loading = false);
+    this.groupService.getAllGroup()
+      .subscribe(groups => {
+          this.groups = groups;
+
+          if (groups.length > 0 && !this.groupSelected) {
+            this.groupSelectedChange.emit(groups[0]);
+          }
+        }, error => this.groups = [],
+        () => this.loading = false);
   }
 
   showModalCreateGroup(): void {
