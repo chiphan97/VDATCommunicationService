@@ -5,6 +5,8 @@ import {GroupType} from '../../../const/group-type.const';
 import {CreateNewGroupComponent} from '../../group/create-new-group/create-new-group.component';
 import {KeycloakService} from '../../../service/auth/keycloak.service';
 import {GroupService} from '../../../service/collector/group.service';
+import {User} from '../../../model/user.model';
+import {Role} from '../../../const/role.const';
 
 @Component({
   selector: 'app-chat-sidebar-left',
@@ -14,6 +16,7 @@ import {GroupService} from '../../../service/collector/group.service';
 export class ChatSidebarLeftComponent implements OnInit, OnChanges {
 
   @Input() changed: boolean;
+  @Input() currentUser: User;
   @Input() groupSelected: Group;
   @Output() groupSelectedChange = new EventEmitter<Group>();
 
@@ -30,6 +33,7 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
 
   isGroup = (type) => type === GroupType.MANY;
   isGroupPublic = (isPrivate) => isPrivate === false;
+  isDoctor = (role) => role === Role.DOCTOR;
 
   ngOnInit(): void {
   }

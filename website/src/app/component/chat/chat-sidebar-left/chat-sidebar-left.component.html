@@ -30,6 +30,7 @@
             </nz-dropdown-menu>
 
             <a nz-button nzType="link"
+               *ngIf="isDoctor(currentUser?.role)"
                (click)="showModalCreateGroup()"
                nz-tooltip nzTooltipPlacement="bottom"
                nzTooltipTitle="Tạo nhóm mới" nzTooltipTrigger="hover">
