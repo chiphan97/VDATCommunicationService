@@ -49,8 +49,9 @@ func main() {
 	r.Use(mux.CORSMethodMiddleware(r))
 
 	fmt.Println("starting")
-	connect()
-
+	//token := connect()
+	//fmt.Println(token)
+	//getData(token)
 	//fmt.Print(useronline.NewRepoImpl(database.DB).GetListUSerOnline())
 
 	err := http.ListenAndServe(":5000", r)

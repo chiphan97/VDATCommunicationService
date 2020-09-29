@@ -3,10 +3,15 @@ package userdetail
 import (
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"strings"
 )
 
@@ -100,4 +105,25 @@ func JWTparseUser(tokenHeader string) (Payload, error) {
 		Last:     tk.FamilyName,
 	}
 	return payload, nil
+}
+
+func getData(token string, keyword string) []User {
+	var (
+		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users?search="
+	)
+	var bearer = "Bearer " + token
+	req, err := http.NewRequest("GET", urlHost+keyword, nil)
+	req.Header.Add("Authorization", bearer)
+	// Send req using http Client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error on response.\n[ERRO] -", err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	var user []User
+	json.Unmarshal([]byte(body), &user)
+	fmt.Print(user)
+	//fmt.Print(string(body))
+	return user
 }
