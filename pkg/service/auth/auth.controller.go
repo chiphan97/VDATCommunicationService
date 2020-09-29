@@ -85,3 +85,21 @@ func JWTparseOwner(tokenHeader string) string {
 	}
 	return tk.Subject
 }
+
+func JWTparseOwner2(tokenHeader string) string {
+
+	block, _ := pem.Decode([]byte(Jwtkey))
+	var cert *x509.Certificate
+	cert, _ = x509.ParseCertificate(block.Bytes)
+
+	rsaPublicKey := cert.PublicKey.(*rsa.PublicKey)
+
+	tk := &UserClaims{}
+	_, err := jwt.ParseWithClaims(tokenHeader, tk, func(token *jwt.Token) (interface{}, error) {
+		return rsaPublicKey, nil
+	})
+	if err != nil {
+		return ""
+	}
+	return tk.Subject
+}
