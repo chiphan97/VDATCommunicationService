@@ -62,6 +62,7 @@ export class CreateNewGroupComponent implements OnInit {
 
       const groupPayload: GroupPayload = this.formGroup.getRawValue();
       groupPayload.type = GroupType.MANY;
+      groupPayload.private = !groupPayload.private;
 
       this.groupService.createGroup(groupPayload)
         .subscribe(group => {
@@ -75,6 +76,7 @@ export class CreateNewGroupComponent implements OnInit {
         }, error => {
           this.formGroup.enable();
           this.messageService.error(error);
+          this.loading = false;
         }, () => this.loading = false);
     }
   }

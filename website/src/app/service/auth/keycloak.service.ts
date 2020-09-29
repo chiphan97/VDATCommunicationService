@@ -1,5 +1,4 @@
-import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
-import {isPlatformBrowser} from '@angular/common';
+import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {KeycloakInstance, KeycloakLoginOptions, KeycloakInitOptions, KeycloakLogoutOptions} from 'keycloak-js';
 import {StorageConst} from '../../const/storage.const';
@@ -45,14 +44,16 @@ export class KeycloakService {
         this.refreshToken = this.keycloak.refreshToken;
         this.idToken = this.keycloak.idToken;
 
-        // this.keycloak.loadUserInfo()
-        //   .then(userInfo => {
-        //     this.userInfo = userInfo;
-        //   });
+        this.keycloak.loadUserInfo()
+          .then(userInfo => {
+            console.log(userInfo);
+            this.userInfo = userInfo;
+          });
 
         setTimeout(this.updateToken, 60000);
       })
       .catch(() => {
+        console.log('bug');
         this.clearAuth();
         console.error('Authenticated Failed');
       });
@@ -91,71 +92,46 @@ export class KeycloakService {
 
   // region Storage
   public set userInfo(userInfo: any) {
-    if (this.isBrowser) {
-      localStorage.setItem(this.USER_INFO, JSON.stringify(userInfo));
-    }
+    localStorage.setItem(this.USER_INFO, JSON.stringify(userInfo));
   }
 
   public get userInfo(): any {
-    if (this.isBrowser) {
-      const userInfoRaw = localStorage.getItem(this.USER_INFO);
+    const userInfoRaw = localStorage.getItem(this.USER_INFO);
 
-      if (userInfoRaw) {
-        return JSON.parse(userInfoRaw);
-      }
+    if (userInfoRaw) {
+      return JSON.parse(userInfoRaw);
     }
-
     return null;
   }
 
   public set idToken(idToken: string) {
-    if (this.isBrowser) {
-      localStorage.setItem(this.ID_TOKEN, idToken);
-    }
+    localStorage.setItem(this.ID_TOKEN, idToken);
   }
 
   public get idToken(): string {
-    if (this.isBrowser) {
-      return localStorage.getItem(this.ID_TOKEN);
-    }
-
-    return '';
+    return localStorage.getItem(this.ID_TOKEN);
   }
 
   public set refreshToken(refreshToken: string) {
-    if (this.isBrowser) {
-      localStorage.setItem(this.REFRESH_TOKEN, refreshToken);
-    }
+    localStorage.setItem(this.REFRESH_TOKEN, refreshToken);
   }
 
   public get refreshToken(): string {
-    if (this.isBrowser) {
-      return localStorage.getItem(this.REFRESH_TOKEN);
-    }
-
-    return '';
+    return localStorage.getItem(this.REFRESH_TOKEN);
   }
 
   public set accessToken(accessToken: string) {
-    if (this.isBrowser) {
-      localStorage.setItem(this.ACCESS_TOKEN, accessToken);
-    }
+    localStorage.setItem(this.ACCESS_TOKEN, accessToken);
   }
 
   public get accessToken(): string {
-    if (this.isBrowser) {
-      return localStorage.getItem(this.ACCESS_TOKEN);
-    }
-
-    return '';
+    return localStorage.getItem(this.ACCESS_TOKEN);
   }
 
   public clearAuth(): void {
-    if (this.isBrowser) {
-      localStorage.removeItem(this.ACCESS_TOKEN);
-      localStorage.removeItem(this.REFRESH_TOKEN);
-      localStorage.removeItem(this.USER_INFO);
-    }
+    localStorage.removeItem(this.ACCESS_TOKEN);
+    localStorage.removeItem(this.REFRESH_TOKEN);
+    localStorage.removeItem(this.USER_INFO);
   }
 
   // endregion

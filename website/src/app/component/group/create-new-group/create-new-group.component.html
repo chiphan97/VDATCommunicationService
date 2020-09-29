@@ -1,16 +1,16 @@
 <nz-row>
   <nz-col nzSpan="24">
-    <form nz-form autocomplete="off" [formGroup]="formGroup" nzLayout="horizontal">
+    <form nz-form autocomplete="off" [formGroup]="formGroup" nzLayout="vertical">
       <nz-form-item>
-        <nz-form-label [nzSpan]="5" nzFor="nameGroup">Tên nhóm</nz-form-label>
-        <nz-form-control [nzSpan]="19">
+        <nz-form-label nzFor="nameGroup">Tên nhóm</nz-form-label>
+        <nz-form-control>
           <input nz-input id="nameGroup" type="text" formControlName="nameGroup">
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label [nzSpan]="5" nzFor="nameGroup">Mô tả</nz-form-label>
-        <nz-form-control [nzSpan]="19">
+        <nz-form-label nzFor="nameGroup">Mô tả</nz-form-label>
+        <nz-form-control>
           <textarea
             nz-input
             id="description" formControlName="description"
@@ -20,8 +20,8 @@
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label [nzSm]="5" nzFor="mention">Thành viên</nz-form-label>
-        <nz-form-control [nzSm]="19" nzErrorTip="More than one must be selected!">
+        <nz-form-label nzFor="mention">Thành viên</nz-form-label>
+        <nz-form-control nzErrorTip="More than one must be selected!">
           <nz-select id="users"
                      nzShowSearch
                      nzServerSearch
@@ -50,9 +50,9 @@
       </nz-form-item>
 
       <nz-form-item nz-row>
-        <nz-form-control [nzSpan]="19" [nzOffset]="5">
+        <nz-form-control>
           <label nz-checkbox formControlName="private">
-            <span>Nhóm bí mật</span>
+            <span>Cho phép người lạ tham gia vào nhóm</span>
           </label>
         </nz-form-control>
       </nz-form-item>

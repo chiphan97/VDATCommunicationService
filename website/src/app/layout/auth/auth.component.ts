@@ -16,7 +16,6 @@ export class AuthComponent implements OnInit {
 
   ngOnInit() {
     const checkLogin = setInterval(() => {
-      console.log(this.keycloakService.authenticated);
       if (this.keycloakService.authenticated) {
         this.router.navigateByUrl('/').then();
         clearInterval(checkLogin);
