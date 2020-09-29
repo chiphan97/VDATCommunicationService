@@ -36,6 +36,8 @@ func main() {
 
 	database.Connect()
 
+	//readfile
+
 	r := mux.NewRouter()
 
 	// handler
