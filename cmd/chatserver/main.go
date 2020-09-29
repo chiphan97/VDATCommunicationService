@@ -9,7 +9,6 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 	"net"
 	"net/http"
 	"os"
@@ -52,7 +51,7 @@ func main() {
 	r.Use(mux.CORSMethodMiddleware(r))
 
 	fmt.Println("starting")
-	fmt.Println(len(utils.ArraySocketId))
+	//fmt.Println(len(utils.ArraySocketId))
 	//write file
 	//c := make(chan os.Signal, 1)
 	//signal.Notify(c, os.Interrupt)
