@@ -46,7 +46,7 @@ func RegisterGroupApi(r *mux.Router) {
 	r.HandleFunc("/api/v1/groups/{idGroup}", auth.AuthenMiddleJWT(UpdateInfoGroupApi)).Methods(http.MethodPut, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}", auth.AuthenMiddleJWT(DeleteGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
 
-	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(GetListUserByGroupApi)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(GetListUserOnlineByGroupApi)).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(AddUserInGroupApi)).Methods(http.MethodPatch, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(UserOutGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}/members/{userId}", auth.AuthenMiddleJWT(DeleteGroupUserApi)).Methods(http.MethodDelete, http.MethodOptions)
@@ -326,7 +326,7 @@ func GetListUserOnlineByGroupApi(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErr(w, http.StatusBadRequest)
 		return
 	}
-	users, err := GetListUserByGroupService(groupID)
+	users, err := GetListUserOnlineAndOffByGroupService(groupID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		utils.ResponseErr(w, http.StatusInternalServerError)
