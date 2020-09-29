@@ -56,11 +56,13 @@ func CheckUserDetailService(payload Payload) (Dto, error) {
 		return dto, err
 	}
 	if userdetail == (UserDetail{}) {
+		payload.Role = PATIENT
 		err = AddUserDetailService(payload)
 		if err != nil {
 			return dto, err
 		}
 	} else {
+		payload.Role = userdetail.Role
 		err = UpdateUserDetailservice(payload)
 		if err != nil {
 			return dto, err

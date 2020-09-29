@@ -35,17 +35,15 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload.Role = PATIENT
-
 	dto, err := CheckUserDetailService(payload)
 	if err != nil {
 		utils.ResponseErr(w, http.StatusInternalServerError)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
+	hostname := utils.GetLocalIP()
 	uo := useronline.Payload{
-		HostName: utils.GetLocalIP(),
+		HostName: hostname,
 		SocketID: payload.ID,
 		UserID:   payload.ID,
 	}
@@ -55,7 +53,16 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	//dto.HostName = hostname
+	//dto.SocketID = utils.ArraySocketId[0]
+	//utils.ArraySocketId = utils.DeleteItemInArray(utils.ArraySocketId)
+	//utils.WriteLines(utils.ArraySocketId,"/utils/socketid.data")
 	w.Write(utils.ResponseWithByte(dto))
+
 	// check user he thong neu login chua ton tai thong tin trong he thong thi ghi vao database
+
+}
+func UserLogOutApi() {
 
 }
