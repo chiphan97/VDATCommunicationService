@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gorilla/websocket"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"time"
 )
@@ -13,15 +12,13 @@ type Client struct {
 	Broker *Broker
 
 	// user ID, this will be parse from Access Token in production
-	User useronline.UserOnline
+	UserId string
 
 	// The websocket connection.
 	Conn *websocket.Conn
 
 	// Buffered channel of Outbound messages.
 	Send chan []byte
-
-	GroupID int
 }
 
 func (c *Client) ReadPump() {
@@ -44,8 +41,6 @@ func (c *Client) ReadPump() {
 
 		var messageJSON Message
 		_ = json.Unmarshal(message, &messageJSON)
-		messageJSON.From = c.User.UserID
-		messageJSON.GroupId = c.GroupID
 
 		c.Broker.Inbound <- messageJSON
 	}

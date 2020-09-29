@@ -2,13 +2,10 @@ package dchat
 
 import (
 	_ "bytes"
-	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 func ChatHandlr(w http.ResponseWriter, r *http.Request) {
@@ -21,15 +18,9 @@ func ChatHandlr(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	owner := auth.JWTparseOwner(r.Header.Get("Authorization"))
-	idgroupstr := mux.Vars(r)["idgroup"]
-	idGroup, _ := strconv.Atoi(idgroupstr)
+	owner := auth.JWTparseOwner2(r.URL.Query()["token"][0])
 
-	user := useronline.UserOnline{
-		UserID: owner,
-	}
-
-	client := &Client{User: user, Broker: Wsbroker, Conn: conn, Send: make(chan []byte, 256), GroupID: idGroup}
+	client := &Client{UserId: owner, Broker: Wsbroker, Conn: conn, Send: make(chan []byte, 256)}
 	client.Broker.Register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

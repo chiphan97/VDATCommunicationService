@@ -1,8 +1,11 @@
 package dchat
 
 type Message struct {
-	From    string `json:"from"`
-	GroupId int    `json:"group_id"`
+	TypeEvent string `json:"type"`
+	Data      Data   `json:"data"`
+}
+type Data struct {
+	GroupId int    `json:"groupId"`
 	Body    string `json:"body"`
-	status  string
+	Status  string
 }
