@@ -9,6 +9,7 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 	"net"
 	"net/http"
 	"os"
@@ -35,7 +36,7 @@ func main() {
 	database.Connect()
 
 	//readfile
-	//utils.CheckFileSocketId()
+	utils.CheckFileSocketId()
 
 	r := mux.NewRouter()
 
