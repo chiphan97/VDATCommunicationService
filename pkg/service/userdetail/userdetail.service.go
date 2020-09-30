@@ -109,7 +109,7 @@ func JWTparseUser(tokenHeader string) (Payload, error) {
 	return payload, nil
 }
 
-func getData(token string, keyword string) []User {
+func getData(token string, keyword string) []Dto {
 	var (
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users?search="
 	)
@@ -126,6 +126,7 @@ func getData(token string, keyword string) []User {
 	var users []User
 	json.Unmarshal([]byte(body), &users)
 	//fmt.Print(users)
+	var userDtos []Dto
 	for i, _ := range users {
 		fmt.Println(users[i].ID)
 		detail, _ := NewRepoImpl(database.DB).GetUserDetailById(users[i].ID)
@@ -136,12 +137,19 @@ func getData(token string, keyword string) []User {
 				ID:   users[i].ID,
 				Role: PATIENT,
 			}
-			AddUserDetailService(payload)
+			err = AddUserDetailService(payload)
+			if err != nil {
+				fmt.Println(err)
+			}
+			Dto := users[i].ConvertUserToDto()
+			userDtos = append(userDtos, Dto)
 
 		} else {
 			users[i].Role = detail.Role
+			Dto := users[i].ConvertUserToDto()
+			userDtos = append(userDtos, Dto)
 		}
 	}
 	//fmt.Print(string(body))
-	return users
+	return userDtos
 }
