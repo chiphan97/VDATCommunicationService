@@ -12,6 +12,7 @@ import (
 func RegisterUserApi(r *mux.Router) {
 	//r.HandleFunc("/api/v1/user", auth.AuthenMiddleJWT(GetUserApi)).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/v1/user/info", auth.AuthenMiddleJWT(CheckUserDetailApi)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/user/online", auth.AuthenMiddleJWT(UserLogOutApi)).Methods(http.MethodDelete, http.MethodOptions)
 }
 
 //API tìm kiếm người dùng filtter
@@ -41,10 +42,15 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	hostname := utils.GetLocalIP()
+
+	dto.HostName = utils.GetLocalIP()
+	dto.SocketID = utils.ArraySocketId[0]
+	utils.ArraySocketId = utils.DeleteItemInArray(utils.ArraySocketId)
+	utils.WriteLines(utils.ArraySocketId, "socketid.data")
+
 	uo := useronline.Payload{
-		HostName: hostname,
-		SocketID: payload.ID,
+		HostName: dto.HostName,
+		SocketID: dto.SocketID,
 		UserID:   payload.ID,
 	}
 	err = useronline.AddUserOnlineService(uo)
@@ -54,15 +60,21 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//dto.HostName = hostname
-	//dto.SocketID = utils.ArraySocketId[0]
-	//utils.ArraySocketId = utils.DeleteItemInArray(utils.ArraySocketId)
-	//utils.WriteLines(utils.ArraySocketId,"/utils/socketid.data")
 	w.Write(utils.ResponseWithByte(dto))
 
 	// check user he thong neu login chua ton tai thong tin trong he thong thi ghi vao database
 
 }
-func UserLogOutApi() {
-
+func UserLogOutApi(w http.ResponseWriter, r *http.Request) {
+	cors.SetupResponse(&w, r)
+	hostname := r.URL.Query()["hostName"][0]
+	socketID := r.URL.Query()["socketId"][0]
+	err := useronline.DeleteUserOnlineService(socketID, hostname)
+	if err != nil {
+		utils.ResponseErr(w, http.StatusInternalServerError)
+		return
+	}
+	utils.ArraySocketId = utils.RestoreItemArray(utils.ArraySocketId, socketID)
+	utils.WriteLines(utils.ArraySocketId, "socketid.data")
+	w.Write(utils.ResponseWithByte(true))
 }
