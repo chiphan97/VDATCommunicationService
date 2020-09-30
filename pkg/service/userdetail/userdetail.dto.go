@@ -8,4 +8,6 @@ type Dto struct {
 	Last     string `json:"last"`
 	Role     string `json:"role"`
 	Status   string `json:"status"`
+	HostName string `json:"hostName"`
+	SocketID string `json:"socketId"`
 }

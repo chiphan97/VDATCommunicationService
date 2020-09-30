@@ -1,9 +1,13 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {AfterContentChecked, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Group} from '../../../model/group.model';
 import {NzModalService} from 'ng-zorro-antd';
-import {GroupService} from '../../../service/collector/group.service';
 import {GroupType} from '../../../const/group-type.const';
 import {CreateNewGroupComponent} from '../../group/create-new-group/create-new-group.component';
+import {KeycloakService} from '../../../service/auth/keycloak.service';
+import {GroupService} from '../../../service/collector/group.service';
+import {User} from '../../../model/user.model';
+import {Role} from '../../../const/role.const';
+import {group} from '@angular/animations';
 
 @Component({
   selector: 'app-chat-sidebar-left',
@@ -13,6 +17,7 @@ import {CreateNewGroupComponent} from '../../group/create-new-group/create-new-g
 export class ChatSidebarLeftComponent implements OnInit, OnChanges {
 
   @Input() changed: boolean;
+  @Input() currentUser: User;
   @Input() groupSelected: Group;
   @Output() groupSelectedChange = new EventEmitter<Group>();
 
@@ -21,16 +26,18 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
   public groups: Array<Group>;
 
   constructor(private modalService: NzModalService,
-              private groupService: GroupService) {
+              private groupService: GroupService,
+              private keycloakService: KeycloakService) {
     this.groups = new Array<Group>();
     this.groupSelected = null;
   }
 
   isGroup = (type) => type === GroupType.MANY;
   isGroupPublic = (isPrivate) => isPrivate === false;
+  isDoctor = (role) => role === Role.DOCTOR;
+  isSelected = (groupId: number): boolean => this.groupSelected && this.groupSelected.id === groupId;
 
   ngOnInit(): void {
-    this.fetchingData();
   }
 
   ngOnChanges(changes: SimpleChanges) {
