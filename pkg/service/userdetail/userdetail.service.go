@@ -151,3 +151,36 @@ func getData(token string, keyword string) []Dto {
 	//fmt.Print(string(body))
 	return userDtos
 }
+
+func getListFromUserId(listUser []string) []Dto {
+	var (
+		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
+	)
+	token := connect()
+	var bearer = "Bearer " + token
+	var userDtos []Dto
+	for i, _ := range listUser {
+		fmt.Println(listUser[i])
+		req, err := http.NewRequest("GET", urlHost+listUser[i], nil)
+		req.Header.Add("Authorization", bearer)
+		// Send req using http Client
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Println("Error on response.\n[ERRO] -", err)
+		}
+		body, _ := ioutil.ReadAll(resp.Body)
+		var user User
+		json.Unmarshal(body, &user)
+		detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
+		if detail == (UserDetail{}) {
+			user.Role = ""
+		} else {
+			user.Role = detail.Role
+		}
+		dto := user.ConvertUserToDto()
+		userDtos = append(userDtos, dto)
+	}
+	//fmt.Println(userDtos)
+	return userDtos
+}
