@@ -1,31 +1,31 @@
 package userdetail
 
 import (
+	"bytes"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"net/url"
 )
 
 func RegisterUserApi(r *mux.Router) {
-	//r.HandleFunc("/api/v1/user", auth.AuthenMiddleJWT(GetUserApi)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/user", GetUserApi).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/v1/user/info", auth.AuthenMiddleJWT(CheckUserDetailApi)).Methods(http.MethodGet, http.MethodOptions)
-	r.HandleFunc("/api/v1/user/online", auth.AuthenMiddleJWT(UserLogOutApi)).Methods(http.MethodDelete, http.MethodOptions)
 }
 
 //API tìm kiếm người dùng filtter
-//func GetUserApi(w http.ResponseWriter, r *http.Request) {
-//	cors.SetupResponse(&w, r)
-//
-//	fil := r.URL.Query()["keyword"]
-//	users, err := GetListUserDetailService()
-//	if err != nil {
-//		utils.ResponseErr(w, http.StatusNotFound)
-//	}
-//	w.Write(utils.ResponseWithByte(users))
-//}
+func GetUserApi(w http.ResponseWriter, r *http.Request) {
+	cors.SetupResponse(&w, r)
+	fil := r.URL.Query()["keyword"]
+	token := connect()
+	w.Write(utils.ResponseWithByte(getData(token, fil[0])))
+}
 func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
@@ -36,6 +36,8 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	payload.Role = PATIENT
+
 	dto, err := CheckUserDetailService(payload)
 	if err != nil {
 		utils.ResponseErr(w, http.StatusInternalServerError)
@@ -43,14 +45,9 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dto.HostName = utils.GetLocalIP()
-	dto.SocketID = utils.ArraySocketId[0]
-	utils.ArraySocketId = utils.DeleteItemInArray(utils.ArraySocketId)
-	utils.WriteLines(utils.ArraySocketId, "socketid.data")
-
 	uo := useronline.Payload{
-		HostName: dto.HostName,
-		SocketID: dto.SocketID,
+		HostName: r.URL.RawPath,
+		SocketID: payload.ID,
 		UserID:   payload.ID,
 	}
 	err = useronline.AddUserOnlineService(uo)
@@ -59,22 +56,48 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 	w.Write(utils.ResponseWithByte(dto))
-
 	// check user he thong neu login chua ton tai thong tin trong he thong thi ghi vao database
 
 }
-func UserLogOutApi(w http.ResponseWriter, r *http.Request) {
-	cors.SetupResponse(&w, r)
-	hostname := r.URL.Query()["hostName"][0]
-	socketID := r.URL.Query()["socketId"][0]
-	err := useronline.DeleteUserOnlineService(socketID, hostname)
+
+func connect() string {
+	const (
+		clientSecret string = "7161982e-cabe-44d3-ade1-324698d2f5d8"
+		clientId     string = "chat.services.vdatlab.com"
+		urlHost      string = "https://accounts.vdatlab.com/auth/realms/vdatlab.com/protocol/openid-connect/token"
+	)
+
+	client := &http.Client{}
+	data := url.Values{}
+	data.Set("client_id", clientId)
+	data.Add("client_secret", clientSecret)
+	data.Add("grant_type", "client_credentials")
+
+	req, err := http.NewRequest("POST", urlHost, bytes.NewBufferString(data.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+
 	if err != nil {
-		utils.ResponseErr(w, http.StatusInternalServerError)
-		return
+		log.Println(err)
 	}
-	utils.ArraySocketId = utils.RestoreItemArray(utils.ArraySocketId, socketID)
-	utils.WriteLines(utils.ArraySocketId, "socketid.data")
-	w.Write(utils.ResponseWithByte(true))
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println(err)
+	}
+
+	f, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+	}
+	resp.Body.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var token Token
+	json.Unmarshal(f, &token)
+	//fmt.Print(token.AccessToken)
+	//fmt.Println(string(f))
+
+	return token.AccessToken
 }
