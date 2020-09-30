@@ -3,7 +3,12 @@
     <form nz-form nzLayout="horizontal">
       <nz-form-item>
         <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="default">
-          <input type="text" nz-input placeholder="Nhập tên người dùng cần thêm ..."/>
+          <input type="text" nz-input
+                 id="keyword"
+                 name="keyword"
+                 [(ngModel)]="keyword"
+                 (ngModelChange)="onSearchUsers()"
+                 placeholder="Nhập tên người dùng cần thêm ..."/>
         </nz-input-group>
         <ng-template #suffixIconSearch>
           <i nz-icon nzType="search"></i>

@@ -12,6 +12,7 @@ export class SearchUsersComponent implements OnInit {
   public users: Array<User>;
   public usersSelected: Array<User>;
   public loading: boolean;
+  public keyword: string;
 
   constructor(private userService: UserService) {
     this.users = new Array<User>();
@@ -21,11 +22,15 @@ export class SearchUsersComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  private loadUser(keyword: string): void {
-    this.loading = true;
-    this.userService.findUserByKeyword(keyword)
-      .subscribe(users => {
-        console.log(users);
-      });
+  public onSearchUsers(): void {
+    if (this.keyword && this.keyword.length > 0) {
+      this.loading = true;
+      this.userService.findUserByKeyword(this.keyword)
+        .subscribe(users => {
+          console.log(users);
+        }, error => {
+          this.loading = false;
+        }, () => this.loading = false);
+    }
   }
 }
