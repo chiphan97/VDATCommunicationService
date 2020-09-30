@@ -42,3 +42,15 @@ func (u *UserDetail) ConvertToDto() Dto {
 	}
 	return dto
 }
+
+func (u *User) ConvertUserToDto() Dto {
+	dto := Dto{
+		ID:       u.ID,
+		FullName: u.Username,
+		Username: u.Username,
+		First:    u.FirstName,
+		Last:     u.LastName,
+		Role:     u.Role,
+	}
+	return dto
+}
