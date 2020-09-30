@@ -11,12 +11,8 @@ type Payload struct {
 
 func (p *Payload) convertToModel() UserDetail {
 	u := UserDetail{
-		ID:       p.ID,
-		FullName: p.FullName,
-		UserName: p.Username,
-		First:    p.First,
-		Last:     p.Last,
-		Role:     p.Role,
+		ID:   p.ID,
+		Role: p.Role,
 	}
 	return u
 }

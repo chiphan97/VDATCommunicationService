@@ -9,6 +9,7 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 	"net"
 	"net/http"
 	"os"
@@ -34,9 +35,13 @@ func main() {
 
 	database.Connect()
 
+	//readfile
+	utils.CheckFileSocketId()
+
 	r := mux.NewRouter()
 
 	// handler
+	//r.HandleFunc("/user-online", handler.UserOnlineHandler)
 	r.HandleFunc("/", serveHome)
 	//r.HandleFunc("/chat/{idgroup}",auth.AuthenMiddleJWT(dchat.ChatHandlr))
 	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
@@ -47,10 +52,28 @@ func main() {
 	r.Use(mux.CORSMethodMiddleware(r))
 
 	fmt.Println("starting")
+	//fmt.Println(len(utils.ArraySocketId))
+	//write file
+	//c := make(chan os.Signal, 1)
+	//signal.Notify(c, os.Interrupt)
+	//go func() {
+	//	for sig := range c {
+	//		log.Printf("captured %v, stopping profiler and exiting..", sig)
+	//		fmt.Println(utils.ArraySocketId)
+	//		err := utils.WriteLines(utils.ArraySocketId,"socketid.data")
+	//		if err !=nil{
+	//			log.Fatal(err)
+	//		}
+	//		pprof.StopCPUProfile()
+	//		os.Exit(1)
+	//	}
+	//}()
+
 	err := http.ListenAndServe(":5000", r)
 	if err != nil {
 		panic("Error: " + err.Error())
 	}
+
 }
 
 func metrics() {

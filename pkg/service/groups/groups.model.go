@@ -28,8 +28,10 @@ type GroupsUsers struct {
 }
 
 const (
-	ONE  = "one-to-one"
-	MANY = "many-to-many"
+	ONE     = "one-to-one"
+	MANY    = "many-to-many"
+	USERON  = "online"
+	USEROFF = "offline"
 )
 
 func (g *Groups) ConvertToDTO() Dto {

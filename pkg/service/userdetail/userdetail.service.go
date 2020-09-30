@@ -35,9 +35,9 @@ func GetUserDetailByIDService(id string) (Dto, error) {
 	dto = detail.ConvertToDto()
 	return dto, nil
 }
-func GetListUserDetailService(fil string) ([]Dto, error) {
+func GetListUserDetailService() ([]Dto, error) {
 	dtos := make([]Dto, 0)
-	userdetails, err := NewRepoImpl(database.DB).GetListUser(fil)
+	userdetails, err := NewRepoImpl(database.DB).GetListUser()
 	if err != nil {
 		return dtos, err
 	}
@@ -56,11 +56,13 @@ func CheckUserDetailService(payload Payload) (Dto, error) {
 		return dto, err
 	}
 	if userdetail == (UserDetail{}) {
+		payload.Role = PATIENT
 		err = AddUserDetailService(payload)
 		if err != nil {
 			return dto, err
 		}
 	} else {
+		payload.Role = userdetail.Role
 		err = UpdateUserDetailservice(payload)
 		if err != nil {
 			return dto, err
