@@ -24,11 +24,6 @@ func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	fil := r.URL.Query()["keyword"]
 	token := connect()
-	//getData(token,fil[0])
-	//users, err := GetListUserDetailService()
-	//if err != nil {
-	//	utils.ResponseErr(w, http.StatusNotFound)
-	//}
 	w.Write(utils.ResponseWithByte(getData(token, fil[0])))
 }
 func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
