@@ -3,10 +3,15 @@ package userdetail
 import (
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"strings"
 )
 
@@ -35,9 +40,9 @@ func GetUserDetailByIDService(id string) (Dto, error) {
 	dto = detail.ConvertToDto()
 	return dto, nil
 }
-func GetListUserDetailService(fil string) ([]Dto, error) {
+func GetListUserDetailService() ([]Dto, error) {
 	dtos := make([]Dto, 0)
-	userdetails, err := NewRepoImpl(database.DB).GetListUser(fil)
+	userdetails, err := NewRepoImpl(database.DB).GetListUser()
 	if err != nil {
 		return dtos, err
 	}
@@ -56,11 +61,13 @@ func CheckUserDetailService(payload Payload) (Dto, error) {
 		return dto, err
 	}
 	if userdetail == (UserDetail{}) {
+		payload.Role = PATIENT
 		err = AddUserDetailService(payload)
 		if err != nil {
 			return dto, err
 		}
 	} else {
+		payload.Role = userdetail.Role
 		err = UpdateUserDetailservice(payload)
 		if err != nil {
 			return dto, err
@@ -100,4 +107,49 @@ func JWTparseUser(tokenHeader string) (Payload, error) {
 		Last:     tk.FamilyName,
 	}
 	return payload, nil
+}
+
+func getData(token string, keyword string) []Dto {
+	var (
+		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users?search="
+	)
+	var bearer = "Bearer " + token
+	req, err := http.NewRequest("GET", urlHost+keyword, nil)
+	req.Header.Add("Authorization", bearer)
+	// Send req using http Client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error on response.\n[ERRO] -", err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	var users []User
+	json.Unmarshal([]byte(body), &users)
+	//fmt.Print(users)
+	var userDtos []Dto
+	for i, _ := range users {
+		fmt.Println(users[i].ID)
+		detail, _ := NewRepoImpl(database.DB).GetUserDetailById(users[i].ID)
+		if detail == (UserDetail{}) {
+			fmt.Println("khong ton tai")
+			users[i].Role = PATIENT
+			payload := Payload{
+				ID:   users[i].ID,
+				Role: PATIENT,
+			}
+			err = AddUserDetailService(payload)
+			if err != nil {
+				fmt.Println(err)
+			}
+			Dto := users[i].ConvertUserToDto()
+			userDtos = append(userDtos, Dto)
+
+		} else {
+			users[i].Role = detail.Role
+			Dto := users[i].ConvertUserToDto()
+			userDtos = append(userDtos, Dto)
+		}
+	}
+	//fmt.Print(string(body))
+	return userDtos
 }

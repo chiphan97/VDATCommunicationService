@@ -48,7 +48,9 @@ export class ChatService {
 
   public sendMessage(message: string): void {
     const payload: MessagePayload = {
-      body: message
+      data: message,
+      type: null,
+      groupId: null
     };
 
     this.socket.send(JSON.stringify(payload));

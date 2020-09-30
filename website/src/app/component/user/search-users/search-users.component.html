@@ -1,0 +1,41 @@
+<nz-row nzJustify="end">
+  <nz-col nzSpan="24">
+    <form nz-form nzLayout="horizontal">
+      <nz-form-item>
+        <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="default">
+          <input type="text" nz-input
+                 id="keyword"
+                 name="keyword"
+                 [(ngModel)]="keyword"
+                 (ngModelChange)="onSearchUsers()"
+                 placeholder="Nhập tên người dùng cần thêm ..."/>
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </nz-form-item>
+    </form>
+  </nz-col>
+
+  <nz-col nzSpan="24">
+    <nz-list nzBordered
+             nzNoResult="Không tìm thấy người dùng"
+             [nzLoading]="loading"
+             [nzFooter]="footer">
+      <nz-list-item *ngFor="let user of users">
+        <nz-list-item-meta-title>
+          {{user?.fullName}}
+        </nz-list-item-meta-title>
+      </nz-list-item>
+
+      <ng-template #footer>
+        <nz-row *ngIf="usersSelected && usersSelected.length > 0">
+          <nz-col nzSpan="12"></nz-col>
+          <nz-col nzSpan="12">
+            Tổng số đã chọn:
+          </nz-col>
+        </nz-row>
+      </ng-template>
+    </nz-list>
+  </nz-col>
+</nz-row>

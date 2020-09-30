@@ -20,7 +20,9 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       return true;
     }
 
-    this.router.navigate(['/auth']);
+    console.log(this.keycloakService.authenticated);
+
+    this.router.navigate(['/auth']).then();
     return false;
   }
 
@@ -30,7 +32,9 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       return true;
     }
 
-    this.router.navigate(['/auth']);
+    console.log(this.keycloakService.authenticated);
+
+    this.router.navigate(['/auth']).then();
     return false;
   }
 }

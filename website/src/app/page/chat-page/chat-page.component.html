@@ -8,8 +8,10 @@
        [nzGridColumnCount]="24"
        [nzSpan]="colResize">
     <nz-resize-handles [nzDirections]="['right']"></nz-resize-handles>
-    <app-chat-sidebar-left [(groupSelected)]="groupSelected" (groupSelectedChange)="onGroupChange($event)"
-                           [changed]="changed"></app-chat-sidebar-left>
+    <app-chat-sidebar-left [(groupSelected)]="groupSelected"
+                           (groupSelectedChange)="onGroupChange($event)"
+                           [changed]="changed"
+                           [currentUser]="currentUser"></app-chat-sidebar-left>
   </div>
 
   <div nz-col

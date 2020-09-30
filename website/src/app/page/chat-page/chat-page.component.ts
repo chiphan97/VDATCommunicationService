@@ -2,6 +2,8 @@ import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Group} from '../../model/group.model';
 import {NzResizeEvent} from 'ng-zorro-antd/resizable';
 import {ActivatedRoute, Router} from '@angular/router';
+import {UserService} from '../../service/collector/user.service';
+import {User} from '../../model/user.model';
 
 @Component({
   selector: 'app-chat-page',
@@ -14,14 +16,19 @@ export class ChatPageComponent implements OnInit {
   public groupSelected: Group;
   public changed: boolean;
   public colResize = 5;
+  public currentUser: User;
   private idResize = -1;
 
   constructor(private route: ActivatedRoute,
-              private router: Router) {
+              private router: Router,
+              private userService: UserService) {
     this.route.queryParams
       .subscribe(params => {
         console.log(params);
       });
+
+    this.userService.getUserInfo()
+      .subscribe(userInfo => this.currentUser = userInfo);
   }
 
   ngOnInit(): void {

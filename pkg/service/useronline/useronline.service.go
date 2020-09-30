@@ -34,9 +34,9 @@ func AddUserOnlineService(payload Payload) error {
 			return err
 		}
 	}
-
 	return nil
 }
-func DeleteUserOnlineService(socketid string) error {
-	return NewRepoImpl(database.DB).DeleteUserOnline(socketid)
+
+func DeleteUserOnlineService(socketid string, hostname string) error {
+	return NewRepoImpl(database.DB).DeleteUserOnline(socketid, hostname)
 }
