@@ -3,8 +3,8 @@
     <form nz-form autocomplete="off" [formGroup]="formGroup" nzLayout="vertical">
       <nz-form-item>
         <nz-form-label nzFor="nameGroup">Tên nhóm</nz-form-label>
-        <nz-form-control>
-          <input nz-input id="nameGroup" type="text" formControlName="nameGroup">
+        <nz-form-control nzErrorTip="Vui lòng nhập tên nhóm">
+          <input nz-input id="nameGroup" type="text" formControlName="nameGroup" nzSize="large">
         </nz-form-control>
       </nz-form-item>
 
@@ -13,49 +13,21 @@
         <nz-form-control>
           <textarea
             nz-input
-            id="description" formControlName="description"
+            id="description" formControlName="description" nzSize="large"
             [nzAutosize]="{ minRows: 2, maxRows: 6 }">
           </textarea>
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label nzFor="mention">Thành viên</nz-form-label>
-        <nz-form-control nzErrorTip="More than one must be selected!">
-          <nz-select id="users"
-                     nzShowSearch
-                     nzServerSearch
-                     nzPlaceHolder="Nhập tên người dùng cần tìm ..."
-                     nzMode="multiple"
-                     nzAllowClear
-                     nzNotFoundContent="Không tìm thấy người dùng"
-                     formControlName="users"
-                     nzAutoClearSearchValue
-                     nzOptionHeightPx="120"
-                     nzSize="default"
-                     nzDropdownMatchSelectWidth
-                     [nzLoading]="loading"
-                     [(ngModel)]="selectedValue"
-                     [nzShowArrow]="false"
-                     [nzTokenSeparators]="[',']"
-                     (nzOnSearch)="onSearchChange($event)">
-            <nz-option *ngFor="let suggestion of suggestions"
-                       [nzLabel]="suggestion?.fullName"
-                       [nzValue]="suggestion?.userId" nzCustomContent>
-              <nz-avatar nzIcon="user" style="background-color:#87d068;"></nz-avatar>
-              {{suggestion?.fullName}}
-            </nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-
-      <nz-form-item nz-row>
         <nz-form-control>
           <label nz-checkbox formControlName="private">
             <span>Cho phép người lạ tham gia vào nhóm</span>
           </label>
         </nz-form-control>
       </nz-form-item>
+
+      <app-search-users></app-search-users>
     </form>
   </nz-col>
 </nz-row>

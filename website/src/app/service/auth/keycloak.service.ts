@@ -50,7 +50,19 @@ export class KeycloakService {
             this.userInfo = userInfo;
           });
 
-        setTimeout(this.updateToken, 60000);
+        setTimeout(() => {
+          this.keycloak.updateToken(60)
+            .then((refreshed) => {
+              if (refreshed) {
+                console.log('Token refreshed' + refreshed);
+              } else {
+                console.warn('Token not refreshed, valid for '
+                  + Math.round(this.keycloak.tokenParsed.exp + this.keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
+              }
+            }).catch(() => {
+            console.error('Failed to refresh token');
+          });
+        }, 60000);
       })
       .catch(() => {
         console.log('bug');
@@ -74,20 +86,6 @@ export class KeycloakService {
       realm: environment.keycloak.realm,
       clientId: environment.keycloak.clientId
     };
-  }
-
-  private updateToken(): void {
-    this.keycloak.updateToken(60)
-      .then((refreshed) => {
-        if (refreshed) {
-          console.log('Token refreshed' + refreshed);
-        } else {
-          console.warn('Token not refreshed, valid for '
-            + Math.round(this.keycloak.tokenParsed.exp + this.keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
-        }
-      }).catch(() => {
-      console.error('Failed to refresh token');
-    });
   }
 
   // region Storage

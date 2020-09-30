@@ -7,6 +7,7 @@ import {KeycloakService} from '../../../service/auth/keycloak.service';
 import {GroupService} from '../../../service/collector/group.service';
 import {User} from '../../../model/user.model';
 import {Role} from '../../../const/role.const';
+import {group} from '@angular/animations';
 
 @Component({
   selector: 'app-chat-sidebar-left',
@@ -34,6 +35,7 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
   isGroup = (type) => type === GroupType.MANY;
   isGroupPublic = (isPrivate) => isPrivate === false;
   isDoctor = (role) => role === Role.DOCTOR;
+  isSelected = (groupId: number): boolean => this.groupSelected && this.groupSelected.id === groupId;
 
   ngOnInit(): void {
   }
