@@ -1,6 +1,9 @@
 # Chat
 A service to help people communication in VDAT ecosystem
 
+## Environments
+* Production: https://vdat-mcsvc-chat.vdatlab.com
+
 ## Plans
 ### Version 0.1
 Basic functionality, including:

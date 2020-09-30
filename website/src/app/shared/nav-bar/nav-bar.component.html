@@ -1,0 +1,32 @@
+<nz-row class="container">
+  <nz-col nzSpan="8">
+    <h3>VDAT Messenger</h3>
+  </nz-col>
+
+  <nz-col style="text-align: right" nzSpan="16">
+    <nz-space>
+      <nz-space-item>
+        <ng-container *ngIf="userInfo">
+          <nz-avatar [nzText]="userInfo?.firstName"
+                     nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"
+                     style="color:#f56a00; background-color:#fde3cf; cursor: pointer">
+          </nz-avatar>
+
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+
+            <ul nz-menu>
+              <li nz-menu-item nzDisabled>
+                <span nz-typography>Xin chào {{userInfo?.fullName}} !</span>
+              </li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item nz-typography nzType="danger" (click)="onLogout()">
+                <i nz-icon nzType="logout" nzTheme="outline"></i>
+                <span nz-typography nzType="danger">Đăng xuất</span>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </ng-container>
+      </nz-space-item>
+    </nz-space>
+  </nz-col>
+</nz-row>

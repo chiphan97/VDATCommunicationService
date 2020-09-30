@@ -5,7 +5,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/openzipkin/zipkin-go"
 	"github.com/openzipkin/zipkin-go/model"
-	"gitlab.com/vdat/mcsvc/SIdM/pkg/idmservice"
+	"gitlab.com/vdat/mcsvc/sidm/pkg/idmservice"
 )
 
 type Repository interface {
