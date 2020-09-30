@@ -69,6 +69,26 @@ export class KeycloakService {
         this.clearAuth();
         console.error('Authenticated Failed');
       });
+
+    this.keycloak.onAuthSuccess = () => {
+      this.accessToken = this.keycloak.token;
+      this.refreshToken = this.keycloak.refreshToken;
+      this.idToken = this.keycloak.idToken;
+    };
+
+    this.keycloak.onAuthError = () => {
+      this.clearAuth();
+    };
+
+    this.keycloak.onAuthRefreshSuccess = () => {
+      this.accessToken = this.keycloak.token;
+      this.refreshToken = this.keycloak.refreshToken;
+      this.idToken = this.keycloak.idToken;
+    };
+
+    this.keycloak.onAuthRefreshError = () => {
+      this.clearAuth();
+    };
   }
 
   public login(options?: KeycloakLoginOptions): void {

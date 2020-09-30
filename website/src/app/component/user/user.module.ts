@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchUsersComponent } from './search-users/search-users.component';
-import {NzFormModule, NzGridModule, NzIconModule, NzInputModule, NzListModule, NzTypographyModule} from 'ng-zorro-antd';
+import {NzAvatarModule, NzFormModule, NzGridModule, NzIconModule, NzInputModule, NzListModule, NzTypographyModule} from 'ng-zorro-antd';
 import {FormsModule} from '@angular/forms';
 
 
@@ -19,7 +19,8 @@ import {FormsModule} from '@angular/forms';
     NzIconModule,
     NzListModule,
     NzTypographyModule,
-    FormsModule
+    FormsModule,
+    NzAvatarModule
   ]
 })
 export class UserModule { }

@@ -27,7 +27,7 @@ export class SearchUsersComponent implements OnInit {
       this.loading = true;
       this.userService.findUserByKeyword(this.keyword)
         .subscribe(users => {
-          console.log(users);
+          this.users = users;
         }, error => {
           this.loading = false;
         }, () => this.loading = false);

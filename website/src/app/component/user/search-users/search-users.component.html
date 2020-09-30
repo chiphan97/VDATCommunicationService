@@ -21,11 +21,11 @@
     <nz-list nzBordered
              nzNoResult="Không tìm thấy người dùng"
              [nzLoading]="loading"
-
              [nzFooter]="footer">
       <nz-list-item *ngFor="let user of users">
-        <span nz-typography><mark>[ITEM]</mark></span>
-        {{ user.fullName }}
+        <nz-list-item-meta-title>
+          {{user?.fullName}}
+        </nz-list-item-meta-title>
       </nz-list-item>
 
       <ng-template #footer>
