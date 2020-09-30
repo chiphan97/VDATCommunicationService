@@ -12,7 +12,7 @@ import (
 func RegisterUserApi(r *mux.Router) {
 	//r.HandleFunc("/api/v1/user", auth.AuthenMiddleJWT(GetUserApi)).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/v1/user/info", auth.AuthenMiddleJWT(CheckUserDetailApi)).Methods(http.MethodGet, http.MethodOptions)
-	r.HandleFunc("/api/v1/user/info", auth.AuthenMiddleJWT(UserLogOutApi)).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/api/v1/user/online", auth.AuthenMiddleJWT(UserLogOutApi)).Methods(http.MethodDelete, http.MethodOptions)
 }
 
 //API tìm kiếm người dùng filtter
