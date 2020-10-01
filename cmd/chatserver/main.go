@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
@@ -44,7 +43,7 @@ func main() {
 	//r.HandleFunc("/user-online", handler.UserOnlineHandler)
 	r.HandleFunc("/", serveHome)
 	//r.HandleFunc("/chat/{idgroup}",auth.AuthenMiddleJWT(dchat.ChatHandlr))
-	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/message/{socketId}", dchat.ChatHandlr).Methods(http.MethodGet, http.MethodOptions)
 	//api
 	groups.RegisterGroupApi(r)
 	userdetail.RegisterUserApi(r)

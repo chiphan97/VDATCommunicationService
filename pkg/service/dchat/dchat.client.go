@@ -14,6 +14,9 @@ type Client struct {
 	// user ID, this will be parse from Access Token in production
 	UserId string
 
+	// socket id
+	SocketId string
+
 	// The websocket connection.
 	Conn *websocket.Conn
 
@@ -41,7 +44,7 @@ func (c *Client) ReadPump() {
 
 		var messageJSON Message
 		_ = json.Unmarshal(message, &messageJSON)
-
+		messageJSON.Client = c.UserId
 		c.Broker.Inbound <- messageJSON
 	}
 }

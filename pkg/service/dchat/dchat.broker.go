@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
+	message_service "gitlab.com/vdat/mcsvc/chat/pkg/service/message"
 
 	"log"
 	"time"
@@ -87,12 +88,18 @@ func (b *Broker) Run() {
 			fmt.Println("Send")
 			switch message.TypeEvent {
 			case SEND:
-				dtos, err := groups.GetListUserOnlineAndOffByGroupService(message.Data.GroupId)
+				userOnAndOFfs, err := groups.GetListUserOnlineAndOffByGroupService(message.Data.GroupId)
 				if err != nil {
 					log.Fatal(err)
 				}
+				payload := message_service.PayLoad{
+					SubjectSender: message.Client,
+					Content:       message.Data.Body,
+					IdGroup:       message.Data.GroupId,
+				}
+				err = message_service.AddMessageService(payload)
 				for client := range b.Clients {
-					for _, u := range dtos {
+					for _, u := range userOnAndOFfs {
 						if u.ID == client.UserId && u.Status == groups.USERON {
 							msg, _ := json.Marshal(message)
 							select {
@@ -106,6 +113,26 @@ func (b *Broker) Run() {
 
 				}
 			case SUBCRIBE:
+				history, err := message_service.LoadMessageHistoryService(message.Data.GroupId)
+				if err != nil {
+					fmt.Println(err)
+				}
+				for client := range b.Clients {
+					if client.UserId == message.Client && client.SocketId == message.Data.SocketID {
+						for _, h := range history {
+							message.Data.Body = h.Content
+							message.Data.Sender = h.SubjectSender
+							msg, _ := json.Marshal(message)
+							select {
+							case client.Send <- msg:
+							default:
+								close(client.Send)
+								delete(b.Clients, client)
+							}
+						}
+
+					}
+				}
 			default:
 
 			}
