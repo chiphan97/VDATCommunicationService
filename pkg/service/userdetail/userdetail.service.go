@@ -154,7 +154,7 @@ func getData(token string, keyword string) []Dto {
 	return userDtos
 }
 
-func getListFromUserId(listUser []string) []Dto {
+func GetListFromUserId(listUser []string) []Dto {
 	var (
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
 	)
