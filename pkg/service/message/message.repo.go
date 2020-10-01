@@ -1,7 +1,7 @@
 package message
 
-type MessageRepo interface {
-	//GetMessagesByChatBox(idChatBox int) ([]model.MessageModel, error)
+type Repo interface {
+	GetMessagesByGroup(idChatBox int) ([]Messages, error)
 	InsertMessage(message Messages) error
 	//GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error)
 	//UpdateMessageByChatBox(idChatBox int) error

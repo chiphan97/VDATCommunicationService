@@ -20,6 +20,11 @@ const (
 	maxMessageSize = 512
 )
 
+const (
+	SUBCRIBE = "subcribe_group"
+	SEND     = "send_text"
+)
+
 var (
 	newline = []byte{'\n'}
 

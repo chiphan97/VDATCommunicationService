@@ -4,7 +4,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
@@ -86,7 +85,8 @@ func JWTparseOwner(tokenHeader string) string {
 	}
 	return tk.Subject
 }
-func JWTparseOwnerGroupWs(tokenHeader string) (string, error) {
+
+func JWTparseOwner2(tokenHeader string) string {
 
 	block, _ := pem.Decode([]byte(Jwtkey))
 	var cert *x509.Certificate
@@ -98,12 +98,8 @@ func JWTparseOwnerGroupWs(tokenHeader string) (string, error) {
 	_, err := jwt.ParseWithClaims(tokenHeader, tk, func(token *jwt.Token) (interface{}, error) {
 		return rsaPublicKey, nil
 	})
-
 	if err != nil {
-		fmt.Println(err)
-		return "", err
+		return ""
 	}
-
-	return tk.Subject, nil
-
+	return tk.Subject
 }

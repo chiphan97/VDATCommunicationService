@@ -8,32 +8,37 @@ type MessageRepoImpl struct {
 	Db *sql.DB
 }
 
-func NewMessageRepoImpl(db *sql.DB) MessageRepo {
+func RepoImpl(db *sql.DB) Repo {
 	return &MessageRepoImpl{Db: db}
 }
 
-//func (mess *MessageRepoImpl) GetMessagesByChatBox(idChatBox int) ([]model.MessageModel, error) {
-//	message := make([]model.MessageModel, 0)
-//	statement := `SELECT * FROM message WHERE id_chat = $1`
-//	rows, err := mess.Db.Query(statement, idChatBox)
-//	if err != nil {
-//		return message, err
-//	}
-//	for rows.Next() {
-//		message := model.MessageModel{}
-//		err := rows.Scan(&message.ID, &message.IdChat, &message.Content, &message.SeenAt, &message.CreatedAt, &message.UpdatedAt, &message.DeletedAt)
-//		if err != nil {
-//			return message, err
-//		}
-//		message = append(message, message)
-//	}
-//
-//	return message, nil
-//}
+func (mess *MessageRepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
+	messages := make([]Messages, 0)
+	statement := `SELECT * FROM messages WHERE id_group = $1`
+	rows, err := mess.Db.Query(statement, idChatBox)
+	if err != nil {
+		return messages, err
+	}
+	for rows.Next() {
+		m := Messages{}
+		err := rows.Scan(&m.ID,
+			&m.SubjectSender,
+			&m.Content,
+			&m.IdGroup,
+			&m.CreatedAt,
+			&m.UpdatedAt,
+			&m.DeletedAt)
+		if err != nil {
+			return messages, err
+		}
+		messages = append(messages, m)
+	}
+
+	return messages, nil
+}
 func (mess *MessageRepoImpl) InsertMessage(message Messages) error {
-	statement := `INSERT INTO message (id_chat,user_sender,content,id_group) VALUES ($1,$2,$3,$4)`
+	statement := `INSERT INTO messages (user_sender,content,id_group) VALUES ($1,$2,$3)`
 	_, err := mess.Db.Exec(statement,
-		message.ID,
 		message.SubjectSender,
 		message.Content,
 		message.IdGroup)
@@ -84,7 +89,13 @@ func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser stri
 	}
 	for rows.Next() {
 		message := Messages{}
-		err := rows.Scan(&message.ID, &message.SubjectSender, &message.Content, &message.CreatedAt, &message.UpdatedAt, &message.DeletedAt, &message.IdGroup)
+		err := rows.Scan(&message.ID,
+			&message.SubjectSender,
+			&message.Content,
+			&message.CreatedAt,
+			&message.UpdatedAt,
+			&message.DeletedAt,
+			&message.IdGroup)
 		if err != nil {
 			return messages, err
 		}
