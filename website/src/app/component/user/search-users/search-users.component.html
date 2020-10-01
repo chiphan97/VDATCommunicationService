@@ -18,24 +18,33 @@
   </nz-col>
 
   <nz-col nzSpan="24">
-    <nz-list nzBordered
-             nzNoResult="Không tìm thấy người dùng"
-             [nzLoading]="loading"
-             [nzFooter]="footer">
-      <nz-list-item *ngFor="let user of users">
-        <nz-list-item-meta-title>
-          {{user?.fullName}}
-        </nz-list-item-meta-title>
-      </nz-list-item>
+    <cdk-virtual-scroll-viewport itemSize="10" class="infinite-container">
+      <nz-list>
+        <nz-list-item *cdkVirtualFor="let user of users">
+          <nz-skeleton *ngIf="!user"
+                       [nzAvatar]="true"
+                       [nzParagraph]="{ rows: 1 }"></nz-skeleton>
 
-      <ng-template #footer>
-        <nz-row *ngIf="usersSelected && usersSelected.length > 0">
-          <nz-col nzSpan="12"></nz-col>
-          <nz-col nzSpan="12">
-            Tổng số đã chọn:
-          </nz-col>
-        </nz-row>
-      </ng-template>
-    </nz-list>
+          <label nz-checkbox>
+            <nz-list-item-meta *ngIf="user">
+              <nz-list-item-meta-title>{{user?.fullName}}</nz-list-item-meta-title>
+
+              <nz-list-item-meta-avatar>
+                <nz-avatar nzIcon="user" style="background-color:#87d068;"></nz-avatar>
+              </nz-list-item-meta-avatar>
+            </nz-list-item-meta>
+          </label>
+        </nz-list-item>
+      </nz-list>
+    </cdk-virtual-scroll-viewport>
   </nz-col>
 </nz-row>
+
+<div *nzModalFooter>
+  <button nz-button nzType="default" (click)="onCloseModal()">Đóng</button>
+  <button nz-button nzType="primary"
+          [disabled]="users && users.length > 0"
+          [nzLoading]="loading">
+    Thêm thành viên
+  </button>
+</div>

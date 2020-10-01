@@ -7,6 +7,7 @@ import {StorageService} from '../../../service/common/storage.service';
 import {GroupType} from '../../../const/group-type.const';
 import * as _ from 'lodash';
 import {AddMemberGroupComponent} from '../../group/add-member-group/add-member-group.component';
+import {SearchUsersComponent} from '../../user/search-users/search-users.component';
 
 @Component({
   selector: 'app-chat-sidebar-right',
@@ -49,9 +50,9 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
   }
 
   public onOpenModalAddMember(): void {
-    this.modal.create<AddMemberGroupComponent>({
+    this.modal.create<SearchUsersComponent>({
       nzTitle: 'Thêm thành viên',
-      nzContent: AddMemberGroupComponent,
+      nzContent: SearchUsersComponent,
       nzWidth: '40vw'
     });
   }

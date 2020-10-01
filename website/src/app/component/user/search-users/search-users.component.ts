@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../../model/user.model';
 import {UserService} from '../../../service/collector/user.service';
+import {NzModalRef} from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-search-users',
@@ -9,14 +10,16 @@ import {UserService} from '../../../service/collector/user.service';
 })
 export class SearchUsersComponent implements OnInit {
 
+  @Input() usersSelected: Array<User> = new Array<User>();
+  @Output() usersSelectedChange = new EventEmitter<Array<User>>();
+
   public users: Array<User>;
-  public usersSelected: Array<User>;
   public loading: boolean;
   public keyword: string;
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService,
+              private modalRef: NzModalRef) {
     this.users = new Array<User>();
-    this.usersSelected = new Array<User>();
   }
 
   ngOnInit(): void {
@@ -32,5 +35,9 @@ export class SearchUsersComponent implements OnInit {
           this.loading = false;
         }, () => this.loading = false);
     }
+  }
+
+  public onCloseModal(): void {
+    this.modalRef.close('Closed');
   }
 }

@@ -62,7 +62,8 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
   showModalCreateGroup(): void {
     const modalCreate = this.modalService.create({
       nzTitle: 'Tạo nhóm mới',
-      nzContent: CreateNewGroupComponent
+      nzContent: CreateNewGroupComponent,
+      nzWidth: '40vw'
     });
 
     modalCreate.afterClose
