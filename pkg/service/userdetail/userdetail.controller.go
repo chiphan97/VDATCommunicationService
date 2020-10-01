@@ -24,8 +24,18 @@ func RegisterUserApi(r *mux.Router) {
 func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	fil := r.URL.Query()["keyword"]
+	page := r.URL.Query()["page"]
+	pageSize := r.URL.Query()["pageSize"]
+
+	if page[0] == "" {
+		page[0] = "1"
+	}
+	if pageSize[0] == "" {
+		pageSize[0] = "10"
+	}
+
 	token := connect()
-	w.Write(utils.ResponseWithByte(getData(token, fil[0])))
+	w.Write(utils.ResponseWithByte(getData(token, fil[0], page[0], pageSize[0])))
 
 	//a:= []string{"b9018379-8394-4205-9104-2d85d69943db","b767e36c-e4a9-4d8c-886c-181427ec4e2c"}
 	//getListFromUserId(a)
