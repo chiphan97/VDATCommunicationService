@@ -145,17 +145,27 @@ func GetListUserOnlineAndOffByGroupService(groupId int) ([]userdetail.Dto, error
 	if err != nil {
 		return dtos, err
 	}
-	for _, u := range mapUser[USERON] {
-		var dto userdetail.Dto
-		dto = u.ConvertToDto()
-		dto.Status = USERON
-		dtos = append(dtos, dto)
+
+	var onlineStr []string
+	for _, online := range mapUser[USERON] {
+		onlineStr = append(onlineStr, online.ID)
 	}
-	for _, u := range mapUser[USEROFF] {
-		var dto userdetail.Dto
-		dto = u.ConvertToDto()
-		dto.Status = USEROFF
-		dtos = append(dtos, dto)
+	userIohON := userdetail.GetListFromUserId(onlineStr)
+
+	var offlineStr []string
+	for _, offline := range mapUser[USEROFF] {
+		offlineStr = append(offlineStr, offline.ID)
+	}
+
+	userIohOff := userdetail.GetListFromUserId(offlineStr)
+
+	for _, u := range userIohON {
+		u.Status = USERON
+		dtos = append(dtos, u)
+	}
+	for _, u := range userIohOff {
+		u.Status = USEROFF
+		dtos = append(dtos, u)
 	}
 	return dtos, nil
 }

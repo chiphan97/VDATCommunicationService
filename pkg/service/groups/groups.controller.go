@@ -327,6 +327,7 @@ func GetListUserOnlineByGroupApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	users, err := GetListUserOnlineAndOffByGroupService(groupID)
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		utils.ResponseErr(w, http.StatusInternalServerError)
