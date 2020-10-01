@@ -132,16 +132,10 @@ func getData(token string, keyword string, page string, pageSize string) []Dto {
 	if pageInt == 1 {
 		expectNum = 0
 	}
-
-	fmt.Println(num)
-	fmt.Println(expectNum)
-
 	var (
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users?search="
 	)
 	URL := fmt.Sprintf(urlHost+"%s"+"&max=%s"+"&first=%s", keyword, strconv.Itoa(num), strconv.Itoa(expectNum))
-	fmt.Println(URL)
-
 	var bearer = "Bearer " + token
 
 	req, err := http.NewRequest("GET", URL, nil)
@@ -162,7 +156,7 @@ func getData(token string, keyword string, page string, pageSize string) []Dto {
 		return empty
 	}
 	for i, _ := range users {
-		fmt.Println(users[i].ID)
+		//fmt.Println(users[i].ID)
 		detail, _ := NewRepoImpl(database.DB).GetUserDetailById(users[i].ID)
 		if detail == (UserDetail{}) {
 			fmt.Println("khong ton tai")
