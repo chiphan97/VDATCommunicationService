@@ -46,7 +46,7 @@ func (u *UserDetail) ConvertToDto() Dto {
 func (u *User) ConvertUserToDto() Dto {
 	dto := Dto{
 		ID:       u.ID,
-		FullName: u.Username,
+		FullName: u.LastName + " " + u.FirstName,
 		Username: u.Username,
 		First:    u.FirstName,
 		Last:     u.LastName,
