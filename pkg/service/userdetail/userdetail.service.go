@@ -118,7 +118,7 @@ func getData(token string, keyword string, page string, pageSize string) []Dto {
 	if size <= 0 {
 		size = 10
 	}
-	if pageInt <= 0 {
+	if pageInt <= 1 {
 		pageInt = 1
 	}
 
@@ -128,6 +128,9 @@ func getData(token string, keyword string, page string, pageSize string) []Dto {
 		expectNum = size * (pageInt - 1)
 	} else {
 		expectNum = size * pageInt
+	}
+	if pageInt == 1 {
+		expectNum = 0
 	}
 
 	fmt.Println(num)
