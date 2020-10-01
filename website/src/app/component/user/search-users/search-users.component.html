@@ -1,6 +1,6 @@
 <nz-row nzJustify="end">
   <nz-col nzSpan="24">
-    <form nz-form nzLayout="horizontal">
+    <form nz-form nzLayout="horizontal" autocomplete="off">
       <nz-form-item>
         <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="default">
           <input type="text" nz-input
@@ -19,32 +19,29 @@
 
   <nz-col nzSpan="24">
     <cdk-virtual-scroll-viewport itemSize="10" class="infinite-container">
-      <nz-list>
+      <nz-list [nzLoading]="loading"
+               [nzNoResult]="noResultTmp">
         <nz-list-item *cdkVirtualFor="let user of users">
           <nz-skeleton *ngIf="!user"
                        [nzAvatar]="true"
                        [nzParagraph]="{ rows: 1 }"></nz-skeleton>
 
-          <label nz-checkbox>
-            <nz-list-item-meta *ngIf="user">
-              <nz-list-item-meta-title>{{user?.fullName}}</nz-list-item-meta-title>
+          <nz-list-item-meta *ngIf="user">
+            <nz-list-item-meta-title>{{user?.fullName}}</nz-list-item-meta-title>
 
-              <nz-list-item-meta-avatar>
+            <nz-list-item-meta-avatar>
+              <label nz-checkbox (select)="onSelectUser(user)">
                 <nz-avatar nzIcon="user" style="background-color:#87d068;"></nz-avatar>
-              </nz-list-item-meta-avatar>
-            </nz-list-item-meta>
-          </label>
+              </label>
+            </nz-list-item-meta-avatar>
+          </nz-list-item-meta>
+
         </nz-list-item>
+
+        <ng-template #noResultTmp>
+          <span nz-typography>Danh sách rỗng</span>
+        </ng-template>
       </nz-list>
     </cdk-virtual-scroll-viewport>
   </nz-col>
 </nz-row>
-
-<div *nzModalFooter>
-  <button nz-button nzType="default" (click)="onCloseModal()">Đóng</button>
-  <button nz-button nzType="primary"
-          [disabled]="users && users.length > 0"
-          [nzLoading]="loading">
-    Thêm thành viên
-  </button>
-</div>

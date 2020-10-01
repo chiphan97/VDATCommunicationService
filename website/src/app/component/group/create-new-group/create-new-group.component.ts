@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {User} from '../../../model/user.model';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../service/collector/user.service';
@@ -19,6 +19,7 @@ export class CreateNewGroupComponent implements OnInit {
   loading: boolean;
   suggestions: Array<User>;
 
+  public usersSelected: Array<User>;
   public formGroup: FormGroup;
 
   constructor(private userService: UserService,
@@ -27,31 +28,17 @@ export class CreateNewGroupComponent implements OnInit {
               private messageService: NzMessageService) {
     this.formGroup = this.createFormGroup();
     this.suggestions = new Array<User>();
+    this.usersSelected = new Array<User>();
   }
 
   ngOnInit(): void {
   }
 
-  onSearchChange(value: string): void {
-    if (value) {
-      this.loading = true;
-      this.userService.findUserByKeyword(value)
-        .subscribe(users => {
-          this.suggestions = users;
-        }, error => {
-          console.log(error);
-        }, () => {
-          this.loading = false;
-        });
-    }
-  }
-
   private createFormGroup() {
     return new FormGroup({
       nameGroup: new FormControl('', Validators.required),
-      users: new FormControl(null),
+      description: new FormControl(''),
       private: new FormControl(false),
-      description: new FormControl('')
     });
   }
 
@@ -63,6 +50,13 @@ export class CreateNewGroupComponent implements OnInit {
       const groupPayload: GroupPayload = this.formGroup.getRawValue();
       groupPayload.type = GroupType.MANY;
       groupPayload.private = !groupPayload.private;
+
+      // mapping list user selected
+      console.log(this.usersSelected);
+      if (this.usersSelected && this.usersSelected.length > 0) {
+        const usersFilter = this.usersSelected.filter(user => !!user.userId);
+        groupPayload.users = usersFilter.map(user => user.userId);
+      }
 
       this.groupService.createGroup(groupPayload)
         .subscribe(group => {
@@ -77,7 +71,11 @@ export class CreateNewGroupComponent implements OnInit {
           this.formGroup.enable();
           this.messageService.error(error);
           this.loading = false;
-        }, () => this.loading = false);
+          this.formGroup.enable();
+        }, () => {
+          this.loading = false;
+          this.formGroup.enable();
+        });
     }
   }
 

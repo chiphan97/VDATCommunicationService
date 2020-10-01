@@ -27,7 +27,7 @@
         </nz-form-control>
       </nz-form-item>
 
-      <app-search-users></app-search-users>
+      <app-search-users [(usersSelected)]="usersSelected"></app-search-users>
     </form>
   </nz-col>
 </nz-row>
@@ -35,7 +35,6 @@
 <div *nzModalFooter>
   <button nz-button nzType="default" (click)="onClose()">Hủy</button>
   <button nz-button nzType="primary"
-          [nzLoading]="loading"
           [disabled]="formGroup.invalid"
           (click)="onSubmit()">Tạo nhóm</button>
 </div>
