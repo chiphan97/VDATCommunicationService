@@ -23,3 +23,13 @@ func (d Dto) MarshalToJsonString() string {
 	}
 	return string(b)
 }
+func (d Dto) ConvertToData() Data {
+	data := Data{
+		Name:        d.Name,
+		Owner:       d.Owner,
+		Type:        d.Type,
+		Private:     d.Private,
+		Description: d.Description,
+	}
+	return data
+}
