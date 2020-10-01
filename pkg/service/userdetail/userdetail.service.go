@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -109,12 +110,38 @@ func JWTparseUser(tokenHeader string) (Payload, error) {
 	return payload, nil
 }
 
-func getData(token string, keyword string) []Dto {
+func getData(token string, keyword string, page string, pageSize string) []Dto {
+
+	size, _ := strconv.Atoi(pageSize)
+	pageInt, _ := strconv.Atoi(page)
+
+	if size <= 0 {
+		size = 10
+	}
+	if pageInt <= 0 {
+		pageInt = 1
+	}
+
+	num := size * pageInt
+	var expectNum int
+	if pageInt > 1 {
+		expectNum = size * (pageInt - 1)
+	} else {
+		expectNum = size * pageInt
+	}
+
+	fmt.Println(num)
+	fmt.Println(expectNum)
+
 	var (
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users?search="
 	)
+	URL := fmt.Sprintf(urlHost+"%s"+"&max=%s"+"&first=%s", keyword, strconv.Itoa(num), strconv.Itoa(expectNum))
+	fmt.Println(URL)
+
 	var bearer = "Bearer " + token
-	req, err := http.NewRequest("GET", urlHost+keyword, nil)
+
+	req, err := http.NewRequest("GET", URL, nil)
 	req.Header.Add("Authorization", bearer)
 	// Send req using http Client
 	client := &http.Client{}
@@ -151,6 +178,7 @@ func getData(token string, keyword string) []Dto {
 		}
 	}
 	//fmt.Print(string(body))
+	fmt.Println(len(userDtos))
 	return userDtos
 }
 
@@ -184,5 +212,6 @@ func GetListFromUserId(listUser []string) []Dto {
 		userDtos = append(userDtos, dto)
 	}
 	//fmt.Println(userDtos)
+	fmt.Println(len(userDtos))
 	return userDtos
 }
