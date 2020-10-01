@@ -44,9 +44,9 @@ export class SearchUsersComponent implements OnInit {
     this.usersSelectedChange.emit(this.usersSelected);
   }
 
-  private fetchingUsers(keyword: string) {
+  private fetchingUsers(keyword: string, page: number = 1, pageSize: number = 10) {
     this.loading = true;
-    this.userService.findUserByKeyword(keyword)
+    this.userService.findUserByKeyword(keyword, page, pageSize)
       .subscribe(users => {
         this.users = users;
       }, error => {

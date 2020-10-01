@@ -37,9 +37,9 @@ export class UserService {
     });
   }
 
-  public findUserByKeyword(keyword: string): Observable<any> {
+  public findUserByKeyword(keyword: string, page?: number, pageSize?: number): Observable<any> {
     return new Observable<any>(observer => {
-      this.apiService.get(`${this.API_ENDPOINT}`, {keyword})
+      this.apiService.get(`${this.API_ENDPOINT}`, {keyword, page, pageSize})
         .then(res => {
           const arr = res.data;
           const users = arr.map(item => User.fromJson(item));
