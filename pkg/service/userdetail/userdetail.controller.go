@@ -3,6 +3,7 @@ package userdetail
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
@@ -35,8 +36,13 @@ func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token := connect()
-	w.Write(utils.ResponseWithByte(getData(token, fil[0], page[0], pageSize[0])))
-
+	listUser := getData(token, fil[0], page[0], pageSize[0])
+	if len(listUser) == 0 {
+		fmt.Println("duma")
+		json.NewEncoder(w).Encode(listUser)
+	} else {
+		w.Write(utils.ResponseWithByte(listUser))
+	}
 	//a:= []string{"b9018379-8394-4205-9104-2d85d69943db","b767e36c-e4a9-4d8c-886c-181427ec4e2c"}
 	//getListFromUserId(a)
 }

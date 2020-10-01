@@ -157,6 +157,10 @@ func getData(token string, keyword string, page string, pageSize string) []Dto {
 	json.Unmarshal([]byte(body), &users)
 	//fmt.Print(users)
 	var userDtos []Dto
+	if len(users) == 0 {
+		empty := make([]Dto, 0)
+		return empty
+	}
 	for i, _ := range users {
 		fmt.Println(users[i].ID)
 		detail, _ := NewRepoImpl(database.DB).GetUserDetailById(users[i].ID)
