@@ -9,37 +9,10 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 
-	"log"
 	"net/http"
 	"strconv"
 )
 
-func GroupManageWs(w http.ResponseWriter, r *http.Request) {
-	cors.SetupResponse(&w, r)
-	// authenticate
-	param := r.URL.Query()["token"][0]
-	fmt.Println(param)
-	owner, err := auth.JWTparseOwnerGroupWs(param)
-	if err != nil {
-		utils.ResponseErr(w, http.StatusUnauthorized)
-		return
-	}
-	fmt.Println(owner)
-	conn, err := Upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	client := &Client{UserID: owner, Broker: Wsbroker, Conn: conn, Send: make(chan []byte, 256)}
-	client.Broker.Register <- client
-
-	// Allow collection of memory referenced by the caller by doing all work in
-	// new goroutines.
-
-	go client.WritePump()
-	go client.ReadPump()
-}
 func RegisterGroupApi(r *mux.Router) {
 	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(GetListGroupApi)).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(CreateGroupApi)).Methods(http.MethodPost, http.MethodOptions)
