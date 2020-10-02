@@ -10,6 +10,9 @@ type Error struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
+type ResponseBool struct {
+	Result bool `json:"result"`
+}
 
 func ResponseWithByte(v interface{}) []byte {
 	reqBodyBytes := new(bytes.Buffer)
