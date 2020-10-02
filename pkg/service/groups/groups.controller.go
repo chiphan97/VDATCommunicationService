@@ -226,7 +226,7 @@ func AddUserInGroupApi(w http.ResponseWriter, r *http.Request) {
 			utils.ResponseErr(w, http.StatusInternalServerError)
 		}
 		result := utils.ResponseBool{Result: true}
-		utils.ResponseWithByte(result)
+		w.Write(utils.ResponseWithByte(result))
 	}
 }
 
@@ -263,7 +263,7 @@ func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		result := utils.ResponseBool{Result: true}
-		utils.ResponseWithByte(result)
+		w.Write(utils.ResponseWithByte(result))
 	}
 }
 
@@ -294,7 +294,8 @@ func UserOutGroupApi(w http.ResponseWriter, r *http.Request) {
 			utils.ResponseErr(w, http.StatusInternalServerError)
 			return
 		}
-		utils.ResponseOk(w, true)
+		result := utils.ResponseBool{Result: true}
+		w.Write(utils.ResponseWithByte(result))
 	}
 
 }
