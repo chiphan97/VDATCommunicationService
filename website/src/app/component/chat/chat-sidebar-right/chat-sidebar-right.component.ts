@@ -50,13 +50,13 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
   }
 
   public onOpenModalAddMember(): void {
-    this.modal.create<AddMemberGroupComponent>({
+    this.modal.create<AddMemberGroupComponent, boolean>({
       nzTitle: 'Thêm thành viên',
       nzContent: AddMemberGroupComponent,
       nzWidth: '40vw',
       nzComponentParams: {
         groupId: this.groupSelected.id,
-        usersSelected: _.cloneDeep(this.members)
+        members: _.cloneDeep(this.members)
       }
     });
   }

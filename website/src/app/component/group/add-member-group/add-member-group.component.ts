@@ -3,6 +3,7 @@ import {NzMessageService, NzModalRef} from 'ng-zorro-antd';
 import {User} from '../../../model/user.model';
 import {UserService} from '../../../service/collector/user.service';
 import {GroupService} from '../../../service/collector/group.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-add-member-group',
@@ -12,11 +13,14 @@ import {GroupService} from '../../../service/collector/group.service';
 export class AddMemberGroupComponent implements OnInit {
 
   @Input() groupId: number;
-  @Input() usersSelected: Array<User>;
+  @Input() members: Array<User>;
+
+  public usersSelected: Array<User>;
 
   constructor(private modalService: NzModalRef,
               private messageService: NzMessageService,
               private groupService: GroupService) {
+    this.usersSelected = new Array<User>();
   }
 
   ngOnInit(): void {
@@ -29,9 +33,14 @@ export class AddMemberGroupComponent implements OnInit {
     }
 
     this.groupService.addMemberOfGroup(this.groupId, this.usersSelected)
-      .subscribe(res => {
-        console.log(res);
-      });
+      .subscribe(result => {
+        if (result) {
+          this.messageService.success('Thêm thành viên thành công');
+          this.modalService.destroy('added');
+        } else {
+          this.messageService.error('Đã có lỗi xảy ra');
+        }
+      }, error => this.messageService.error(error));
   }
 
   onClose() {

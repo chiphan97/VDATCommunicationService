@@ -6,6 +6,7 @@ import {environment} from '../../../environments/environment';
 import {Group} from '../../model/group.model';
 import {User} from '../../model/user.model';
 import {on} from 'cluster';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -85,7 +86,7 @@ export class GroupService {
 
       this.apiService.patch(`${this.API_ENDPOINT}/${groupId}/members`, {users: userIds})
         .then(res => {
-          console.log(res);
+          observer.next(_.get(res.data, 'result', false));
         })
         .catch(err => observer.error(err))
         .finally(() => observer.complete());
