@@ -37,7 +37,7 @@ export class UserService {
     });
   }
 
-  public findUserByKeyword(keyword: string, page?: number, pageSize?: number): Observable<any> {
+  public findUserByKeyword(keyword: string, page?: number, pageSize?: number): Observable<Array<User>> {
     return new Observable<any>(observer => {
       this.apiService.get(`${this.API_ENDPOINT}`, {keyword, page, pageSize})
         .then(res => {

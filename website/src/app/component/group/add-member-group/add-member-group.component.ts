@@ -12,13 +12,11 @@ import {GroupService} from '../../../service/collector/group.service';
 export class AddMemberGroupComponent implements OnInit {
 
   @Input() groupId: number;
-
-  public usersSelected: Array<User>;
+  @Input() usersSelected: Array<User>;
 
   constructor(private modalService: NzModalRef,
               private messageService: NzMessageService,
               private groupService: GroupService) {
-    this.usersSelected = new Array<User>();
   }
 
   ngOnInit(): void {

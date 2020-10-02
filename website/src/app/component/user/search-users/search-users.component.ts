@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {User} from '../../../model/user.model';
 import {UserService} from '../../../service/collector/user.service';
 import {NzModalRef} from 'ng-zorro-antd';
@@ -9,7 +9,7 @@ import * as _ from 'lodash';
   templateUrl: './search-users.component.html',
   styleUrls: ['./search-users.component.sass']
 })
-export class SearchUsersComponent implements OnInit {
+export class SearchUsersComponent implements OnInit, OnChanges {
 
   @Input() usersSelected: Array<User>;
   @Output() usersSelectedChange = new EventEmitter<Array<User>>();
@@ -26,6 +26,10 @@ export class SearchUsersComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(this.usersSelected);
   }
 
   public onSearchUsers(): void {
@@ -54,7 +58,10 @@ export class SearchUsersComponent implements OnInit {
     this.loading = true;
     this.userService.findUserByKeyword(keyword, page, pageSize)
       .subscribe(users => {
-        this.users = users;
+        // filter user existed
+        this.users = users.filter(user =>
+          this.usersSelected.findIndex(iter =>
+            iter.userId === user.userId) === -1);
       }, error => {
         this.loading = false;
       }, () => this.loading = false);

@@ -55,7 +55,8 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
       nzContent: AddMemberGroupComponent,
       nzWidth: '40vw',
       nzComponentParams: {
-        groupId: this.groupSelected.id
+        groupId: this.groupSelected.id,
+        usersSelected: _.cloneDeep(this.members)
       }
     });
   }
