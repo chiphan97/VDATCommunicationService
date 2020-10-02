@@ -7,7 +7,6 @@ import {KeycloakService} from '../../../service/auth/keycloak.service';
 import {GroupService} from '../../../service/collector/group.service';
 import {User} from '../../../model/user.model';
 import {Role} from '../../../const/role.const';
-import {group} from '@angular/animations';
 
 @Component({
   selector: 'app-chat-sidebar-left',
@@ -21,8 +20,7 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
   @Input() groupSelected: Group;
   @Output() groupSelectedChange = new EventEmitter<Group>();
 
-  loading = false;
-
+  public loading = false;
   public groups: Array<Group>;
 
   constructor(private modalService: NzModalService,
@@ -32,10 +30,11 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
     this.groupSelected = null;
   }
 
-  isGroup = (type) => type === GroupType.MANY;
-  isGroupPublic = (isPrivate) => isPrivate === false;
-  isDoctor = (role) => role === Role.DOCTOR;
-  isSelected = (groupId: number): boolean => this.groupSelected && this.groupSelected.id === groupId;
+  public isGroup = (type) => type === GroupType.MANY;
+  public isGroupPublic = (isPrivate) => isPrivate === false;
+  public isDoctor = (role) => role === Role.DOCTOR;
+  public isSelected = (groupId: number): boolean => this.groupSelected && this.groupSelected.id === groupId;
+  public isOwner = (owner: string): boolean => this.currentUser && owner === this.currentUser.userId;
 
   ngOnInit(): void {
   }
@@ -76,5 +75,9 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
 
   onSelectGroup(group: Group): void {
     this.groupSelectedChange.emit(group);
+  }
+
+  onDeleteGroup(group: Group): void {
+    console.log(group);
   }
 }

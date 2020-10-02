@@ -26,11 +26,11 @@
                        [nzAvatar]="true"
                        [nzParagraph]="{ rows: 1 }"></nz-skeleton>
 
-          <nz-list-item-meta *ngIf="user">
+          <nz-list-item-meta *ngIf="user" (click)="onSelectUser(user)">
             <nz-list-item-meta-title>{{user?.fullName}}</nz-list-item-meta-title>
 
             <nz-list-item-meta-avatar>
-              <label nz-checkbox (select)="onSelectUser(user)">
+              <label nz-checkbox [nzChecked]="isSelected(user)">
                 <nz-avatar nzIcon="user" style="background-color:#87d068;"></nz-avatar>
               </label>
             </nz-list-item-meta-avatar>

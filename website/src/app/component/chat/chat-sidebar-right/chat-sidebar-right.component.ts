@@ -50,10 +50,13 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
   }
 
   public onOpenModalAddMember(): void {
-    this.modal.create<SearchUsersComponent>({
+    this.modal.create<AddMemberGroupComponent>({
       nzTitle: 'Thêm thành viên',
-      nzContent: SearchUsersComponent,
-      nzWidth: '40vw'
+      nzContent: AddMemberGroupComponent,
+      nzWidth: '40vw',
+      nzComponentParams: {
+        groupId: this.groupSelected.id
+      }
     });
   }
 

@@ -7,7 +7,7 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./layout/master/master.module').then(m => m.MasterModule),
-    canActivateChild: [AuthGuard]
+    canActivate: [AuthGuard]
   },
   {
     path: 'auth',
@@ -18,7 +18,7 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
     initialNavigation: true,
-    onSameUrlNavigation: 'reload',
+    onSameUrlNavigation: 'reload'
   })],
   exports: [RouterModule]
 })

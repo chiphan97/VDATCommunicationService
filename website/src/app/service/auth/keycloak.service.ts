@@ -15,7 +15,7 @@ export class KeycloakService {
   private readonly TIME_REFRESH = 120;
   private readonly REDIRECT_URL = environment.keycloak.redirectUrl;
 
-  private keycloak: KeycloakInstance;
+  public keycloak: KeycloakInstance;
   private readonly isBrowser: boolean;
   public authenticated: boolean;
 
@@ -46,7 +46,6 @@ export class KeycloakService {
 
         this.keycloak.loadUserInfo()
           .then(userInfo => {
-            console.log(userInfo);
             this.userInfo = userInfo;
           });
 

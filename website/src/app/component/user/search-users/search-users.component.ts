@@ -18,6 +18,8 @@ export class SearchUsersComponent implements OnInit {
   public loading: boolean;
   public keyword: string;
 
+  public isSelected = (userId: string): boolean => !!this.usersSelected.find(user => user.userId === userId);
+
   constructor(private userService: UserService,
               private modalRef: NzModalRef) {
     this.users = new Array<User>();
@@ -34,13 +36,17 @@ export class SearchUsersComponent implements OnInit {
         if (this.keyword === oldValue) {
           this.fetchingUsers(oldValue);
         }
-      }, 2000);
+      }, 1500);
     }
   }
 
   public onSelectUser(user: User): void {
-    console.log(user);
-    this.usersSelected.push(user);
+    if (!!this.usersSelected.find(iter => iter.userId === user.userId)) {
+      _.remove(this.usersSelected, iter => iter.userId === user.userId);
+    } else {
+      this.usersSelected.push(user);
+    }
+
     this.usersSelectedChange.emit(this.usersSelected);
   }
 

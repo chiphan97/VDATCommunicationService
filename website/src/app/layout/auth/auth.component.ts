@@ -1,7 +1,8 @@
-import {AfterContentInit, AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterContentInit, AfterViewChecked, AfterViewInit, Component, Inject, OnInit} from '@angular/core';
 import {KeycloakService} from '../../service/auth/keycloak.service';
 import {environment} from '../../../environments/environment';
 import {Router} from '@angular/router';
+import {DOCUMENT} from '@angular/common';
 
 @Component({
   selector: 'app-auth',
@@ -10,17 +11,16 @@ import {Router} from '@angular/router';
 })
 export class AuthComponent implements OnInit {
 
-  constructor(private keycloakService: KeycloakService,
-              private router: Router) {
+  constructor(@Inject(DOCUMENT) private document: Document,
+              private keycloakService: KeycloakService) {
+    this.keycloakService.keycloak.onReady = authenticated => {
+      if (authenticated) {
+        document.location.href = '/';
+      }
+    };
   }
 
   ngOnInit() {
-    const checkLogin = setInterval(() => {
-      if (this.keycloakService.authenticated) {
-        this.router.navigateByUrl('/').then();
-        clearInterval(checkLogin);
-      }
-    }, 1000);
   }
 
   public onLogin(): void {
