@@ -308,8 +308,8 @@ func (g *RepoImpl) GetListUserOnlineAndOfflineByGroup(idGroup int) (map[string][
 	userOnlines := make([]userdetail.UserDetail, 0)
 	userOffline := make([]userdetail.UserDetail, 0)
 
-	statement := `with userInGroup as (select u.* from groups_users as gu inner join userdetail as u on gu.user_id = u.user_id where gu.id_group = $1)
-					select distinct u.user_id,u.role from online as o inner join userInGroup as  u on u.user_id = o.user_id`
+	statement := `with userInGroup as (select distinct u.user_id from groups_users as gu inner join online as u on gu.user_id = u.user_id where gu.id_group = $1)
+select  u.user_id,u.role from userdetail as u inner join userInGroup as ug on u.user_id = ug.user_id`
 	rows, err := g.Db.Query(statement, idGroup)
 
 	if err != nil {
@@ -325,11 +325,11 @@ func (g *RepoImpl) GetListUserOnlineAndOfflineByGroup(idGroup int) (map[string][
 		userOnlines = append(userOnlines, user)
 	}
 
-	statement = `with uOn as (with userInGroup as (select u.* from groups_users as gu inner join userdetail as u on gu.user_id = u.user_id where gu.id_group = $1)
-					select distinct u.* from online as o inner join userInGroup as  u on u.user_id = o.user_id)
-					select u2.user_id,u2.role from groups_users inner join userdetail u2 on groups_users.user_id = u2.user_id
+	statement = `with uOn as (with userInGroup as (select distinct u.user_id from groups_users as gu inner join online as u on gu.user_id = u.user_id where gu.id_group = $1)
+             	select  u.user_id,u.role from userdetail as u inner join userInGroup as ug on u.user_id = ug.user_id)
+				select u2.user_id,u2.role from groups_users inner join userdetail u2 on groups_users.user_id = u2.user_id where groups_users.id_group = $1
 					except
-					select user_id,role from uOn`
+				select user_id,role from uOn`
 
 	rows, err = g.Db.Query(statement, idGroup)
 
