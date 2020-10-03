@@ -9,7 +9,7 @@ import * as _ from 'lodash';
   templateUrl: './search-users.component.html',
   styleUrls: ['./search-users.component.sass']
 })
-export class SearchUsersComponent implements OnInit, OnChanges {
+export class SearchUsersComponent implements OnInit {
 
   @Input() usersSelected: Array<User>;
   @Output() usersSelectedChange = new EventEmitter<Array<User>>();
@@ -28,10 +28,6 @@ export class SearchUsersComponent implements OnInit, OnChanges {
   ngOnInit(): void {
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    console.log(this.usersSelected);
-  }
-
   public onSearchUsers(): void {
     if (this.keyword && this.keyword.length > 0) {
       const oldValue = _.cloneDeep(this.keyword);
@@ -40,7 +36,7 @@ export class SearchUsersComponent implements OnInit, OnChanges {
         if (this.keyword === oldValue) {
           this.fetchingUsers(oldValue);
         }
-      }, 1500);
+      }, 500);
     }
   }
 
@@ -59,10 +55,13 @@ export class SearchUsersComponent implements OnInit, OnChanges {
     this.userService.findUserByKeyword(keyword, page, pageSize)
       .subscribe(users => {
         // filter user existed
-        this.users = users.filter(user =>
-          this.usersSelected.findIndex(iter =>
-            iter.userId === user.userId) === -1);
+        // this.users = users.filter(user =>
+        //   this.usersSelected.findIndex(iter =>
+        //     iter.userId === user.userId) === -1);
+
+        this.users = users;
       }, error => {
+        this.users = [];
         this.loading = false;
       }, () => this.loading = false);
   }

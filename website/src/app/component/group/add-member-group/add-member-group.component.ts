@@ -11,9 +11,7 @@ import {GroupService} from '../../../service/collector/group.service';
 export class AddMemberGroupComponent implements OnInit {
 
   @Input() groupId: number;
-  @Input() members: Array<User>;
-
-  public usersSelected: Array<User>;
+  @Input() usersSelected: Array<User>;
 
   constructor(private modalService: NzModalRef,
               private messageService: NzMessageService,

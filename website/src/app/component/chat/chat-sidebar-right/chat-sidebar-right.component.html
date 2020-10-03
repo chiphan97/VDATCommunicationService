@@ -26,9 +26,22 @@
 
             <nz-list-item *ngFor="let member of members">
               <nz-list-item-meta [nzAvatar]="avatar"
-                                 [nzTitle]="member?.fullName">
+                                 [nzTitle]="titleTmp">
                 <ng-template #avatar>
-                  <nz-avatar [nzText]="member?.lastName" [nzSrc]="member?.avatar"></nz-avatar>
+                  <nz-avatar [nzText]="member?.firstName"
+                             [style]="member?.avatar ? '' : 'background-color: ' + getColor(member?.userId)"
+                             [nzSrc]="member?.avatar"></nz-avatar>
+                </ng-template>
+
+                <ng-template #titleTmp>
+                  <nz-space>
+                    <nz-space-item>
+                      <span nz-typography>{{member?.fullName}}</span>
+                    </nz-space-item>
+                    <nz-space-item>
+                      <nz-badge [nzStatus]="isOnline(member) ? 'success' : ''"></nz-badge>
+                    </nz-space-item>
+                  </nz-space>
                 </ng-template>
               </nz-list-item-meta>
 

@@ -30,7 +30,7 @@
             <nz-list-item-meta-title>{{user?.fullName}}</nz-list-item-meta-title>
 
             <nz-list-item-meta-avatar>
-              <label nz-checkbox [nzChecked]="isSelected(user)">
+              <label nz-checkbox [nzChecked]="isSelected(user?.userId)">
                 <nz-avatar nzIcon="user" style="background-color:#87d068;"></nz-avatar>
               </label>
             </nz-list-item-meta-avatar>

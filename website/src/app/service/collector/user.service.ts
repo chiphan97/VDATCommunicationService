@@ -61,6 +61,8 @@ export class UserService {
           .then(() => observer.next())
           .catch(err => observer.error(err))
           .catch(() => observer.complete());
+      } else {
+        observer.complete();
       }
     });
   }
