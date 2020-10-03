@@ -13,24 +13,26 @@ import {
   NzSelectModule, NzTableModule
 } from 'ng-zorro-antd';
 import {ReactiveFormsModule} from '@angular/forms';
+import {UserModule} from '../user/user.module';
 
 
 
 @NgModule({
   declarations: [CreateNewGroupComponent, AddMemberGroupComponent],
-  imports: [
-    CommonModule,
-    NzGridModule,
-    NzFormModule,
-    ReactiveFormsModule,
-    NzInputModule,
-    NzSelectModule,
-    NzAvatarModule,
-    NzCheckboxModule,
-    NzButtonModule,
-    NzModalModule,
-    NzTableModule,
-    NzIconModule
-  ]
+    imports: [
+        CommonModule,
+        NzGridModule,
+        NzFormModule,
+        ReactiveFormsModule,
+        NzInputModule,
+        NzSelectModule,
+        NzAvatarModule,
+        NzCheckboxModule,
+        NzButtonModule,
+        NzModalModule,
+        NzTableModule,
+        NzIconModule,
+        UserModule
+    ]
 })
 export class GroupModule { }

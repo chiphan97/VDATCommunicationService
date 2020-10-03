@@ -261,12 +261,21 @@ func (g *RepoImpl) DeleteGroup(idGourp int) error {
 	return nil
 }
 func (g *RepoImpl) AddGroupUser(users []string, idgroup int) error {
-	statement := `INSERT INTO Groups_Users (id_group, user_id)  VALUES ($1,$2)`
+
 	for _, user := range users {
-		_, err := g.Db.Exec(statement, idgroup, user)
+		statement := `SELECT user_id FROM Groups_Users WHERE id_group=$1 AND user_id =$2`
+		rows, err := g.Db.Query(statement, idgroup, user)
 		if err != nil {
 			return err
 		}
+		if !rows.Next() {
+			statement = `INSERT INTO Groups_Users (id_group, user_id)  VALUES ($1,$2)`
+			_, err := g.Db.Exec(statement, idgroup, user)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 	return nil
 }
@@ -282,7 +291,7 @@ func (g *RepoImpl) DeleteGroupUser(users []string, idgroup int) error {
 }
 func (g *RepoImpl) GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, error) {
 	users := make([]userdetail.UserDetail, 0)
-	statement := `SELECT o.user_id,o.fullname, o.username,o.first,o.last,o.role
+	statement := `SELECT o.user_id,o.role
 					FROM Groups_Users as g 
 					INNER JOIN userdetail as o 
 					ON g.user_id = o.user_id 					 
@@ -294,10 +303,6 @@ func (g *RepoImpl) GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, err
 	for rows.Next() {
 		var user userdetail.UserDetail
 		err = rows.Scan(&user.ID,
-			&user.FullName,
-			&user.UserName,
-			&user.First,
-			&user.Last,
 			&user.Role)
 		if err != nil {
 			return users, err
@@ -305,4 +310,53 @@ func (g *RepoImpl) GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, err
 		users = append(users, user)
 	}
 	return users, nil
+}
+func (g *RepoImpl) GetListUserOnlineAndOfflineByGroup(idGroup int) (map[string][]userdetail.UserDetail, error) {
+	mapUsers := make(map[string][]userdetail.UserDetail, 0)
+
+	userOnlines := make([]userdetail.UserDetail, 0)
+	userOffline := make([]userdetail.UserDetail, 0)
+
+	statement := `with userInGroup as (select distinct u.user_id from groups_users as gu inner join online as u on gu.user_id = u.user_id where gu.id_group = $1)
+select  u.user_id,u.role from userdetail as u inner join userInGroup as ug on u.user_id = ug.user_id`
+	rows, err := g.Db.Query(statement, idGroup)
+
+	if err != nil {
+		return mapUsers, err
+	}
+	for rows.Next() {
+		var user userdetail.UserDetail
+		err = rows.Scan(&user.ID,
+			&user.Role)
+		if err != nil {
+			return mapUsers, err
+		}
+		userOnlines = append(userOnlines, user)
+	}
+
+	statement = `with uOn as (with userInGroup as (select distinct u.user_id from groups_users as gu inner join online as u on gu.user_id = u.user_id where gu.id_group = $1)
+             	select  u.user_id,u.role from userdetail as u inner join userInGroup as ug on u.user_id = ug.user_id)
+				select u2.user_id,u2.role from groups_users inner join userdetail u2 on groups_users.user_id = u2.user_id where groups_users.id_group = $1
+					except
+				select user_id,role from uOn`
+
+	rows, err = g.Db.Query(statement, idGroup)
+
+	if err != nil {
+		return mapUsers, err
+	}
+	for rows.Next() {
+		var user userdetail.UserDetail
+		err = rows.Scan(&user.ID,
+			&user.Role)
+		if err != nil {
+			return mapUsers, err
+		}
+		userOffline = append(userOffline, user)
+	}
+
+	mapUsers[USERON] = userOnlines
+	mapUsers[USEROFF] = userOffline
+
+	return mapUsers, nil
 }

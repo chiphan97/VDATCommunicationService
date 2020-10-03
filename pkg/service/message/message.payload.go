@@ -1,12 +1,16 @@
 package message
 
 type PayLoad struct {
-	ID            uint   `json:"id"`
 	SubjectSender string `json:"subjectSender"`
 	Content       string `json:"content"`
 	IdGroup       int    `json:"idGroup"`
 }
 
-func (p *PayLoad) convertToModel() {
-
+func (p *PayLoad) convertToModel() Messages {
+	model := Messages{
+		SubjectSender: p.SubjectSender,
+		Content:       p.Content,
+		IdGroup:       p.IdGroup,
+	}
+	return model
 }

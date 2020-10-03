@@ -138,3 +138,34 @@ func GetListUserByGroupService(groupId int) ([]userdetail.Dto, error) {
 	}
 	return dtos, nil
 }
+
+func GetListUserOnlineAndOffByGroupService(groupId int) ([]userdetail.Dto, error) {
+	dtos := make([]userdetail.Dto, 0)
+	mapUser, err := NewRepoImpl(database.DB).GetListUserOnlineAndOfflineByGroup(groupId)
+	if err != nil {
+		return dtos, err
+	}
+
+	var onlineStr []string
+	for _, online := range mapUser[USERON] {
+		onlineStr = append(onlineStr, online.ID)
+	}
+	userIohON := userdetail.GetListFromUserId(onlineStr)
+
+	var offlineStr []string
+	for _, offline := range mapUser[USEROFF] {
+		offlineStr = append(offlineStr, offline.ID)
+	}
+
+	userIohOff := userdetail.GetListFromUserId(offlineStr)
+
+	for _, u := range userIohON {
+		u.Status = USERON
+		dtos = append(dtos, u)
+	}
+	for _, u := range userIohOff {
+		u.Status = USEROFF
+		dtos = append(dtos, u)
+	}
+	return dtos, nil
+}

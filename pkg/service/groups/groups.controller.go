@@ -2,22 +2,50 @@ package groups
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
+
 	"net/http"
 	"strconv"
 )
 
+//func GroupManageWs(w http.ResponseWriter, r *http.Request) {
+//	cors.SetupResponse(&w, r)
+//	// authenticate
+//	param := r.URL.Query()["token"][0]
+//	fmt.Println(param)
+//	owner, err := auth.JWTparseOwnerGroupWs(param)
+//	if err != nil {
+//		utils.ResponseErr(w, http.StatusUnauthorized)
+//		return
+//	}
+//	fmt.Println(owner)
+//	conn, err := Upgrader.Upgrade(w, r, nil)
+//	if err != nil {
+//		log.Println(err)
+//		return
+//	}
+//
+//	client := &Client{UserID: owner, Broker: Wsbroker, Conn: conn, Send: make(chan []byte, 256)}
+//	client.Broker.Register <- client
+//
+//	// Allow collection of memory referenced by the caller by doing all work in
+//	// new goroutines.
+//
+//	go client.WritePump()
+//	go client.ReadPump()
+//}
 func RegisterGroupApi(r *mux.Router) {
 	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(GetListGroupApi)).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups", auth.AuthenMiddleJWT(CreateGroupApi)).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}", auth.AuthenMiddleJWT(UpdateInfoGroupApi)).Methods(http.MethodPut, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}", auth.AuthenMiddleJWT(DeleteGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
 
-	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(GetListUserByGroupApi)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(GetListUserOnlineByGroupApi)).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(AddUserInGroupApi)).Methods(http.MethodPatch, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}/members", auth.AuthenMiddleJWT(UserOutGroupApi)).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/api/v1/groups/{idGroup}/members/{userId}", auth.AuthenMiddleJWT(DeleteGroupUserApi)).Methods(http.MethodDelete, http.MethodOptions)
@@ -63,6 +91,7 @@ func CreateGroupApi(w http.ResponseWriter, r *http.Request) {
 	var groupPayLoad PayLoad
 	err := json.NewDecoder(r.Body).Decode(&groupPayLoad)
 	if err != nil {
+		fmt.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
 		utils.ResponseErr(w, http.StatusBadRequest)
 		return
@@ -73,6 +102,7 @@ func CreateGroupApi(w http.ResponseWriter, r *http.Request) {
 	if groupPayLoad.Type == ONE { //api Tạo hội thoại 1 - 1 (nhóm bí mật) ||
 		groupsDto, err := GetGroupByOwnerAndUserService(groupPayLoad, owner)
 		if err != nil {
+			fmt.Print(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			utils.ResponseErr(w, http.StatusInternalServerError)
 			return
@@ -195,7 +225,8 @@ func AddUserInGroupApi(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			utils.ResponseErr(w, http.StatusInternalServerError)
 		}
-		utils.ResponseOk(w, true)
+		result := utils.ResponseBool{Result: true}
+		w.Write(utils.ResponseWithByte(result))
 	}
 }
 
@@ -231,7 +262,8 @@ func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
 			utils.ResponseErr(w, http.StatusInternalServerError)
 			return
 		}
-		utils.ResponseOk(w, true)
+		result := utils.ResponseBool{Result: true}
+		w.Write(utils.ResponseWithByte(result))
 	}
 }
 
@@ -262,7 +294,8 @@ func UserOutGroupApi(w http.ResponseWriter, r *http.Request) {
 			utils.ResponseErr(w, http.StatusInternalServerError)
 			return
 		}
-		utils.ResponseOk(w, true)
+		result := utils.ResponseBool{Result: true}
+		w.Write(utils.ResponseWithByte(result))
 	}
 
 }
@@ -278,6 +311,31 @@ func GetListUserByGroupApi(w http.ResponseWriter, r *http.Request) {
 	}
 
 	users, err := GetListUserByGroupService(groupID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		utils.ResponseErr(w, http.StatusInternalServerError)
+		return
+	}
+	w.Write(utils.ResponseWithByte(users))
+}
+
+func GetListUserOnlineByGroupApi(w http.ResponseWriter, r *http.Request) {
+	cors.SetupResponse(&w, r)
+	params := mux.Vars(r)
+	groupID, err := strconv.Atoi(params["idGroup"])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		utils.ResponseErr(w, http.StatusBadRequest)
+		return
+	}
+	users, err := GetListUserOnlineAndOffByGroupService(groupID)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		utils.ResponseErr(w, http.StatusInternalServerError)
+		return
+	}
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		utils.ResponseErr(w, http.StatusInternalServerError)

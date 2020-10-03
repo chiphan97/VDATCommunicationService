@@ -1,9 +1,12 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {AfterContentChecked, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Group} from '../../../model/group.model';
-import {NzModalService} from 'ng-zorro-antd';
-import {GroupService} from '../../../service/collector/group.service';
+import {NzMessageService, NzModalService} from 'ng-zorro-antd';
 import {GroupType} from '../../../const/group-type.const';
 import {CreateNewGroupComponent} from '../../group/create-new-group/create-new-group.component';
+import {KeycloakService} from '../../../service/auth/keycloak.service';
+import {GroupService} from '../../../service/collector/group.service';
+import {User} from '../../../model/user.model';
+import {Role} from '../../../const/role.const';
 
 @Component({
   selector: 'app-chat-sidebar-left',
@@ -13,24 +16,28 @@ import {CreateNewGroupComponent} from '../../group/create-new-group/create-new-g
 export class ChatSidebarLeftComponent implements OnInit, OnChanges {
 
   @Input() changed: boolean;
+  @Input() currentUser: User;
   @Input() groupSelected: Group;
   @Output() groupSelectedChange = new EventEmitter<Group>();
 
-  loading = false;
-
+  public loading = false;
   public groups: Array<Group>;
 
   constructor(private modalService: NzModalService,
-              private groupService: GroupService) {
+              private messageService: NzMessageService,
+              private groupService: GroupService,
+              private keycloakService: KeycloakService) {
     this.groups = new Array<Group>();
     this.groupSelected = null;
   }
 
-  isGroup = (type) => type === GroupType.MANY;
-  isGroupPublic = (isPrivate) => isPrivate === false;
+  public isGroup = (type) => type === GroupType.MANY;
+  public isGroupPublic = (isPrivate) => isPrivate === false;
+  public isDoctor = (role) => role === Role.DOCTOR;
+  public isSelected = (groupId: number): boolean => this.groupSelected && this.groupSelected.id === groupId;
+  public isOwner = (owner: string): boolean => this.currentUser && owner === this.currentUser.userId;
 
   ngOnInit(): void {
-    this.fetchingData();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -55,7 +62,8 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
   showModalCreateGroup(): void {
     const modalCreate = this.modalService.create({
       nzTitle: 'Tạo nhóm mới',
-      nzContent: CreateNewGroupComponent
+      nzContent: CreateNewGroupComponent,
+      nzWidth: '40vw'
     });
 
     modalCreate.afterClose
@@ -68,5 +76,38 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
 
   onSelectGroup(group: Group): void {
     this.groupSelectedChange.emit(group);
+  }
+
+  onConfirmDelete(group: Group) {
+    this.modalService.confirm({
+      nzTitle: 'Cảnh báo',
+      nzContent: 'Bạn có muốn xóa cuộc hội thoại này không ?',
+      nzAutofocus: 'cancel',
+      nzOkType: 'danger',
+      nzOkText: 'Đồng ý',
+      nzCancelText: 'Hủy',
+      nzOnOk: () => this.deleteGroup(group.id)
+    });
+  }
+
+  private deleteGroup(groupId: number): void {
+    const messId = this.messageService.loading('Đang xóa cuộc hội thoại của bạn ...',
+      {nzDuration: 0}).messageId;
+
+    this.groupService.deleteGroup(groupId)
+      .subscribe(result => {
+          this.messageService.remove(messId);
+
+          if (result) {
+            this.messageService.success('Đã xóa cuộc hôi thoại.');
+            this.fetchingData();
+          } else {
+            this.messageService.error('Không thể xóa cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
+          }
+        }, error => {
+          this.messageService.remove(messId);
+          this.messageService.error(error);
+        },
+        () => this.messageService.remove(messId));
   }
 }

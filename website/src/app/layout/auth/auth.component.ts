@@ -1,35 +1,29 @@
-import {AfterViewChecked, Component, OnInit} from '@angular/core';
+import {AfterContentInit, AfterViewChecked, AfterViewInit, Component, Inject, OnInit} from '@angular/core';
 import {KeycloakService} from '../../service/auth/keycloak.service';
 import {environment} from '../../../environments/environment';
-import {StorageService} from '../../service/common/storage.service';
 import {Router} from '@angular/router';
-import * as _ from 'lodash';
+import {DOCUMENT} from '@angular/common';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.sass']
 })
-export class AuthComponent implements OnInit, AfterViewChecked {
+export class AuthComponent implements OnInit {
 
-
-  constructor(private keycloakService: KeycloakService,
-              private router: Router) {
+  constructor(@Inject(DOCUMENT) private document: Document,
+              private keycloakService: KeycloakService) {
+    this.keycloakService.keycloak.onReady = authenticated => {
+      if (authenticated) {
+        document.location.href = '/';
+      }
+    };
   }
 
-  ngOnInit(): void {
-  }
-
-  async ngAfterViewChecked() {
-    if (this.keycloakService.authenticated) {
-      await this.router.navigateByUrl('/');
-    }
+  ngOnInit() {
   }
 
   public onLogin(): void {
-    const redirectUri = environment.keycloak.redirectUrl;
-    this.keycloakService.login({
-      redirectUri
-    });
+    this.keycloakService.login();
   }
 }

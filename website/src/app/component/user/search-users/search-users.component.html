@@ -1,0 +1,47 @@
+<nz-row nzJustify="end">
+  <nz-col nzSpan="24">
+    <form nz-form nzLayout="horizontal" autocomplete="off">
+      <nz-form-item>
+        <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="default">
+          <input type="text" nz-input
+                 id="keyword"
+                 name="keyword"
+                 [(ngModel)]="keyword"
+                 (ngModelChange)="onSearchUsers()"
+                 placeholder="Nhập tên người dùng cần thêm ..."/>
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </nz-form-item>
+    </form>
+  </nz-col>
+
+  <nz-col nzSpan="24">
+    <cdk-virtual-scroll-viewport itemSize="10" class="infinite-container">
+      <nz-list [nzLoading]="loading"
+               [nzNoResult]="noResultTmp">
+        <nz-list-item *cdkVirtualFor="let user of users">
+          <nz-skeleton *ngIf="!user"
+                       [nzAvatar]="true"
+                       [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+
+          <nz-list-item-meta *ngIf="user" (click)="onSelectUser(user)">
+            <nz-list-item-meta-title>{{user?.fullName}}</nz-list-item-meta-title>
+
+            <nz-list-item-meta-avatar>
+              <label nz-checkbox [nzChecked]="isSelected(user?.userId)">
+                <nz-avatar nzIcon="user" style="background-color:#87d068;"></nz-avatar>
+              </label>
+            </nz-list-item-meta-avatar>
+          </nz-list-item-meta>
+
+        </nz-list-item>
+
+        <ng-template #noResultTmp>
+          <span nz-typography>Danh sách rỗng</span>
+        </ng-template>
+      </nz-list>
+    </cdk-virtual-scroll-viewport>
+  </nz-col>
+</nz-row>

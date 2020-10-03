@@ -16,21 +16,26 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   canActivate(next: ActivatedRouteSnapshot,
               state: RouterStateSnapshot)
     : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (this.keycloakService.authenticated) {
-      return true;
-    }
-
-    this.router.navigate(['/auth']);
-    return false;
+    return this.authentication();
   }
 
   canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot)
     : Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (this.keycloakService.authenticated) {
-      return true;
-    }
+    return this.authentication();
+  }
 
-    this.router.navigate(['/auth']);
-    return false;
+  private authentication(): Observable<boolean> {
+    return new Observable<boolean>(observer => {
+      this.keycloakService.keycloak.onReady = (authenticated) => {
+        console.log(`authenticated: ${authenticated}`);
+        if (authenticated) {
+          observer.next(true);
+          observer.complete();
+        } else {
+          observer.next(false);
+          this.router.navigateByUrl('/auth').then(() => observer.complete());
+        }
+      };
+    });
   }
 }

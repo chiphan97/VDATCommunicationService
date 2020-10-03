@@ -13,6 +13,7 @@ export const environment = {
   keycloak: {
     url: 'https://accounts.vdatlab.com/auth',
     realm: 'vdatlab.com',
-    clientId: 'chat.services.vdatlab.com'
+    clientId: 'chat.app.vdatlab.com',
+    redirectUrl: 'https://vdat-chat-srv.netlify.app/auth'
   },
 };

@@ -5,33 +5,35 @@ import (
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 func ChatHandlr(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	// authenticate
-
 	conn, err := WsUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	owner := auth.JWTparseOwner(r.Header.Get("Authorization"))
-	idgroupstr := mux.Vars(r)["idgroup"]
-	idGroup, _ := strconv.Atoi(idgroupstr)
-
-	user := useronline.UserOnline{
-		HostName: r.URL.Hostname(),
-		SocketID: owner,
-		UserID:   owner,
+	param := mux.Vars(r)
+	socketId := param["socketId"]
+	if len(socketId) <= 0 {
+		log.Println("Url Param 'socketId' is missing")
+		return
 	}
 
-	client := &Client{User: user, Broker: Wsbroker, Conn: conn, Send: make(chan []byte, 256), GroupID: idGroup}
+	v := r.URL.Query()
+	paramOwner := v.Get("token")
+	if len(paramOwner) <= 0 {
+		log.Println("Url Param 'token' is missing")
+		return
+	}
+	owner := auth.JWTparseOwner2(paramOwner)
+
+	client := &Client{UserId: owner, SocketId: socketId, Broker: Wsbroker, Conn: conn, Send: make(chan []byte, 256)}
 	client.Broker.Register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

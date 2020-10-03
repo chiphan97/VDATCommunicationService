@@ -3,12 +3,16 @@ package dchat
 import (
 	"encoding/json"
 	"fmt"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
+	message_service "gitlab.com/vdat/mcsvc/chat/pkg/service/message"
+
+	"log"
 	"time"
 )
 
 type Broker struct {
 	// 1 group va nhieu client connect toi
-	Groups map[int]map[*Client]bool
+	Clients map[*Client]bool
 
 	// Inbound messages from the Clients.
 	Inbound chan Message
@@ -26,7 +30,7 @@ type Broker struct {
 }
 
 var Wsbroker = &Broker{
-	Groups:     make(map[int]map[*Client]bool),
+	Clients:    make(map[*Client]bool),
 	Inbound:    make(chan Message),
 	Outbound:   make(chan Message),
 	Register:   make(chan *Client),
@@ -43,14 +47,14 @@ func (b *Broker) Run() {
 	go func() {
 		for {
 			for idx, m := range b.MessageRepository {
-				if m.status != "done" {
+				if m.Data.Status != "done" {
 					select {
 					case b.Outbound <- *m:
 					default:
 						close(b.Outbound)
 					}
 
-					b.MessageRepository[idx].status = "done"
+					b.MessageRepository[idx].Data.Status = "done"
 				}
 			}
 
@@ -62,25 +66,17 @@ func (b *Broker) Run() {
 		select {
 		case client := <-b.Register:
 			// khi client dang nhap thi broker se lay group dua tren idgroup cua client, neu chua co thi tao group vao broker
-			groupConnect := b.Groups[client.GroupID]
-			if groupConnect == nil {
-				groupConnect = make(map[*Client]bool)
-				b.Groups[client.GroupID] = groupConnect
-			}
-			b.Groups[client.GroupID][client] = true
-			fmt.Println("client " + client.User.UserID + " is connected")
+
+			b.Clients[client] = true
+
+			fmt.Println("client " + client.UserId + " is connected")
 		case client := <-b.Unregister:
 			// khi client dang xuat khoi group, delete client khoi group
-			groupConnect := b.Groups[client.GroupID]
-			if groupConnect != nil {
-				if _, ok := groupConnect[client]; ok {
-					delete(groupConnect, client)
-					close(client.Send)
-					//neu group do ko con client nao thi xoa luon group khoi he thong
-					if len(groupConnect) == 0 {
-						delete(b.Groups, client.GroupID)
-					}
-				}
+			if _, ok := b.Clients[client]; ok {
+				//delete in database when client off
+				//_ = useronline.DeleteUserOnlineService(client.User.SocketID)
+				delete(b.Clients, client)
+				close(client.Send)
 			}
 			//khi co tin nhan dc gui di , message se duoc day vao inbound va day vao MessageRepository
 		case message := <-b.Inbound:
@@ -90,16 +86,57 @@ func (b *Broker) Run() {
 
 		case message := <-b.Outbound:
 			fmt.Println("Send")
-			clients := b.Groups[message.GroupId]
-			for client := range clients {
-				msg, _ := json.Marshal(message)
-				select {
-				case client.Send <- msg:
-				default:
-					close(client.Send)
-					delete(b.Groups[message.GroupId], client)
+			switch message.TypeEvent {
+			case SEND:
+				userOnAndOFfs, err := groups.GetListUserOnlineAndOffByGroupService(message.Data.GroupId)
+				if err != nil {
+					log.Fatal(err)
 				}
+				payload := message_service.PayLoad{
+					SubjectSender: message.Client,
+					Content:       message.Data.Body,
+					IdGroup:       message.Data.GroupId,
+				}
+				err = message_service.AddMessageService(payload)
+				for client := range b.Clients {
+					for _, u := range userOnAndOFfs {
+						if u.ID == client.UserId && u.Status == groups.USERON {
+							msg, _ := json.Marshal(message)
+							select {
+							case client.Send <- msg:
+							default:
+								close(client.Send)
+								delete(b.Clients, client)
+							}
+						}
+					}
+
+				}
+			case SUBCRIBE:
+				history, err := message_service.LoadMessageHistoryService(message.Data.GroupId)
+				if err != nil {
+					fmt.Println(err)
+				}
+				for client := range b.Clients {
+					if client.UserId == message.Client && client.SocketId == message.Data.SocketID {
+						for _, h := range history {
+							message.Data.Body = h.Content
+							message.Data.Sender = h.SubjectSender
+							msg, _ := json.Marshal(message)
+							select {
+							case client.Send <- msg:
+							default:
+								close(client.Send)
+								delete(b.Clients, client)
+							}
+						}
+
+					}
+				}
+			default:
+
 			}
+
 		}
 
 	}

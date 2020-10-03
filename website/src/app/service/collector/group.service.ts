@@ -5,6 +5,8 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {Group} from '../../model/group.model';
 import {User} from '../../model/user.model';
+import {on} from 'cluster';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +17,7 @@ export class GroupService {
 
   constructor(private apiService: ApiService) { }
 
+  // region GROUP
   public getAllGroup(): Observable<Array<Group>> {
     return new Observable<Array<Group>>(observer => {
       const url = `${this.API_ENDPOINT}`;
@@ -73,6 +76,22 @@ export class GroupService {
         .finally(() => observer.complete());
     });
   }
+  // endregion
+
+  // region MEMBER GROUP
+  public addMemberOfGroup(groupId: number, users: Array<User>): Observable<any> {
+    return new Observable<any>(observer => {
+      const userIds = users.filter(user => !!user.userId)
+        .map(user => user.userId);
+
+      this.apiService.patch(`${this.API_ENDPOINT}/${groupId}/members`, {users: userIds})
+        .then(res => {
+          observer.next(_.get(res.data, 'result', false));
+        })
+        .catch(err => observer.error(err))
+        .finally(() => observer.complete());
+    });
+  }
 
   public getAllMemberOfGroup(groupId: number): Observable<Array<User>> {
     return new Observable<Array<User>>(observer => {
@@ -93,14 +112,11 @@ export class GroupService {
       const url = `${this.API_ENDPOINT}/${groupId}/members/${userId}`;
       this.apiService.delete(url)
         .then(res => {
-          if (res.data) {
-            observer.next(res.data === true);
-          } else {
-            observer.next(false);
-          }
+          observer.next(_.get(res.data, 'result', false));
         })
         .catch(err => observer.error(err))
         .finally(() => observer.complete());
     });
   }
+  // endregion
 }

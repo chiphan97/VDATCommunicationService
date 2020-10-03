@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import {NzModalRef} from 'ng-zorro-antd';
+import {Component, Input, OnInit} from '@angular/core';
+import {NzMessageService, NzModalRef} from 'ng-zorro-antd';
 import {User} from '../../../model/user.model';
-import {UserService} from '../../../service/collector/user.service';
+import {GroupService} from '../../../service/collector/group.service';
 
 @Component({
   selector: 'app-add-member-group',
@@ -10,21 +10,37 @@ import {UserService} from '../../../service/collector/user.service';
 })
 export class AddMemberGroupComponent implements OnInit {
 
-  public loading: boolean;
-  public listUser: Array<User>;
+  @Input() groupId: number;
+  @Input() usersSelected: Array<User>;
 
   constructor(private modalService: NzModalRef,
-              private userService: UserService) { }
+              private messageService: NzMessageService,
+              private groupService: GroupService) {
+    this.usersSelected = new Array<User>();
+  }
 
   ngOnInit(): void {
   }
 
-  onSubmit(): void {
-    console.log('submit');
+  public onAddMembers(): void {
+    if (this.usersSelected.length <= 0) {
+      this.messageService.warning('Vui lòng chọn thành viên cần thêm');
+      return;
+    }
+
+    this.groupService.addMemberOfGroup(this.groupId, this.usersSelected)
+      .subscribe(result => {
+        if (result) {
+          this.messageService.success('Thêm thành viên thành công');
+          this.modalService.destroy(true);
+        } else {
+          this.messageService.error('Đã có lỗi xảy ra');
+        }
+      }, error => this.messageService.error(error));
   }
 
   onClose() {
-    this.modalService.destroy('destroy');
+    this.modalService.destroy(false);
   }
 
 }
