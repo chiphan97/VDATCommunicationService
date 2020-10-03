@@ -5,6 +5,7 @@ import {environment} from '../../../environments/environment';
 import * as _ from 'lodash';
 import {User} from '../../model/user.model';
 import {KeycloakService} from '../auth/keycloak.service';
+import {StorageService} from '../common/storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class UserService {
   private readonly API_ENDPOINT = `${environment.service.apiUrl}${environment.service.endpoint.user}`;
 
   constructor(private apiService: ApiService,
+              private storageService: StorageService,
               private keycloakService: KeycloakService) { }
 
   public getUserInfo(): Observable<User> {
@@ -47,6 +49,19 @@ export class UserService {
         })
         .catch(err => observer.error(err))
         .finally(() => observer.complete());
+    });
+  }
+
+  public logout(): Observable<any> {
+    return new Observable<any>(observer => {
+      const user: User = this.storageService.userInfo;
+
+      if (!!user) {
+        this.apiService.delete(`${this.API_ENDPOINT}/online`, {socketId: user.socketId, hostName: user.hostName})
+          .then(() => observer.next())
+          .catch(err => observer.error(err))
+          .catch(() => observer.complete());
+      }
     });
   }
 }

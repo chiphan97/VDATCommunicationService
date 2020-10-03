@@ -112,11 +112,7 @@ export class GroupService {
       const url = `${this.API_ENDPOINT}/${groupId}/members/${userId}`;
       this.apiService.delete(url)
         .then(res => {
-          if (res.data) {
-            observer.next(res.data === true);
-          } else {
-            observer.next(false);
-          }
+          observer.next(_.get(res.data, 'result', false));
         })
         .catch(err => observer.error(err))
         .finally(() => observer.complete());

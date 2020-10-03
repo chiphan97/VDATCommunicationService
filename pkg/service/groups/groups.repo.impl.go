@@ -261,12 +261,21 @@ func (g *RepoImpl) DeleteGroup(idGourp int) error {
 	return nil
 }
 func (g *RepoImpl) AddGroupUser(users []string, idgroup int) error {
-	statement := `INSERT INTO Groups_Users (id_group, user_id)  VALUES ($1,$2)`
+
 	for _, user := range users {
-		_, err := g.Db.Exec(statement, idgroup, user)
+		statement := `SELECT user_id FROM Groups_Users WHERE id_group=$1 AND user_id =$2`
+		rows, err := g.Db.Query(statement, idgroup, user)
 		if err != nil {
 			return err
 		}
+		if !rows.Next() {
+			statement = `INSERT INTO Groups_Users (id_group, user_id)  VALUES ($1,$2)`
+			_, err := g.Db.Exec(statement, idgroup, user)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 	return nil
 }

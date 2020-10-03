@@ -59,9 +59,13 @@ export class ApiService {
   /**
    * DELETE Method
    * @param url
+   * @param params
    */
-  public delete(url: string): Promise<AxiosResponse<any>> {
-    return axios.delete(url);
+  public delete(url: string, params?: any): Promise<AxiosResponse<any>> {
+    const requestConfig: AxiosRequestConfig = {
+      params
+    };
+    return axios.delete(url, requestConfig);
   }
 
   /**

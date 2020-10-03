@@ -61,7 +61,8 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dto.HostName = utils.GetLocalIP()
+	//dto.HostName = utils.GetLocalIP()
+	dto.HostName = payload.ID
 	dto.SocketID = utils.ArraySocketId[0]
 	utils.ArraySocketId = utils.DeleteItemInArray(utils.ArraySocketId)
 	utils.WriteLines(utils.ArraySocketId, "socketid.data")
