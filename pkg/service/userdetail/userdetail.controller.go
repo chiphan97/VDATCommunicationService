@@ -33,9 +33,7 @@ func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	if pageSize[0] == "" {
 		pageSize[0] = "10"
 	}
-
-	token := connect()
-	listUser := getData(token, fil[0], page[0], pageSize[0])
+	listUser := getData(fil[0], page[0], pageSize[0])
 	if len(listUser) == 0 {
 		json.NewEncoder(w).Encode(listUser)
 	} else {
