@@ -115,7 +115,9 @@ func JWTparseUser(tokenHeader string) (Payload, error) {
 
 func getData(keyword string, page string, pageSize string) []Dto {
 
-	utils.CheckTokenExp(globalToken)
+	if !utils.CheckTokenExp(globalToken) {
+		globalToken = connect()
+	}
 	//fmt.Println(time)
 
 	size, _ := strconv.Atoi(pageSize)
@@ -190,6 +192,9 @@ func getData(keyword string, page string, pageSize string) []Dto {
 }
 
 func GetListFromUserId(listUser []string) []Dto {
+	if !utils.CheckTokenExp(globalToken) {
+		globalToken = connect()
+	}
 	var (
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
 	)

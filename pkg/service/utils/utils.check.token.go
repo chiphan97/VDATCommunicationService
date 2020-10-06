@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -24,15 +23,17 @@ func CheckTokenExp(tokenStr string) bool {
 	}
 
 	var tm time.Time
-	switch iat := claims["exp"].(type) {
+	switch iat := claims["iat"].(type) {
 	case float64:
 		tm = time.Unix(int64(iat), 0)
 	case json.Number:
 		v, _ := iat.Int64()
 		tm = time.Unix(v, 0)
 	}
-
-	fmt.Println(tm)
-	//return tm
+	now := time.Now()
+	diff := now.Sub(tm)
+	if diff >= time.Duration(3500)*time.Second {
+		return false
+	}
 	return true
 }
