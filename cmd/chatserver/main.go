@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	httpSwagger "github.com/swaggo/http-swagger"
+	_ "gitlab.com/vdat/mcsvc/chat/docs"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
@@ -26,6 +28,17 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	}
 	http.ServeFile(w, r, "index.html")
 }
+
+// @title vdatchat API
+// @version 1.0
+// @description This is a sample serice for managing orders
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email soberkoder@swagger.io
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:5000
+// @BasePath /
 func main() {
 	//go metrics()
 
@@ -67,6 +80,7 @@ func main() {
 	//		os.Exit(1)
 	//	}
 	//}()
+	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 
 	err := http.ListenAndServe(":5000", r)
 	if err != nil {
