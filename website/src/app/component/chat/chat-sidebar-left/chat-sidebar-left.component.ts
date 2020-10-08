@@ -1,6 +1,6 @@
 import {AfterContentChecked, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Group} from '../../../model/group.model';
-import {NzModalService} from 'ng-zorro-antd';
+import {NzMessageService, NzModalService} from 'ng-zorro-antd';
 import {GroupType} from '../../../const/group-type.const';
 import {CreateNewGroupComponent} from '../../group/create-new-group/create-new-group.component';
 import {KeycloakService} from '../../../service/auth/keycloak.service';
@@ -24,6 +24,7 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
   public groups: Array<Group>;
 
   constructor(private modalService: NzModalService,
+              private messageService: NzMessageService,
               private groupService: GroupService,
               private keycloakService: KeycloakService) {
     this.groups = new Array<Group>();
@@ -77,7 +78,36 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
     this.groupSelectedChange.emit(group);
   }
 
-  onDeleteGroup(group: Group): void {
-    console.log(group);
+  onConfirmDelete(group: Group) {
+    this.modalService.confirm({
+      nzTitle: 'Cảnh báo',
+      nzContent: 'Bạn có muốn xóa cuộc hội thoại này không ?',
+      nzAutofocus: 'cancel',
+      nzOkType: 'danger',
+      nzOkText: 'Đồng ý',
+      nzCancelText: 'Hủy',
+      nzOnOk: () => this.deleteGroup(group.id)
+    });
+  }
+
+  private deleteGroup(groupId: number): void {
+    const messId = this.messageService.loading('Đang xóa cuộc hội thoại của bạn ...',
+      {nzDuration: 0}).messageId;
+
+    this.groupService.deleteGroup(groupId)
+      .subscribe(result => {
+          this.messageService.remove(messId);
+
+          if (result) {
+            this.messageService.success('Đã xóa cuộc hôi thoại.');
+            this.fetchingData();
+          } else {
+            this.messageService.error('Không thể xóa cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
+          }
+        }, error => {
+          this.messageService.remove(messId);
+          this.messageService.error(error);
+        },
+        () => this.messageService.remove(messId));
   }
 }

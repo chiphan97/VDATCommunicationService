@@ -7,6 +7,8 @@ import {StorageService} from '../../../service/common/storage.service';
 import {GroupType} from '../../../const/group-type.const';
 import * as _ from 'lodash';
 import {AddMemberGroupComponent} from '../../group/add-member-group/add-member-group.component';
+import {GenerateColorService} from '../../../service/common/generate-color.service';
+import {UserStatus} from '../../../const/user-status.enum';
 
 @Component({
   selector: 'app-chat-sidebar-right',
@@ -19,28 +21,33 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
   @Output() changeGroup = new EventEmitter<boolean>();
   public members: Array<User>;
   public isOwner: boolean;
+  public colors: {[userId: string]: string} = {};
 
   width = 256;
   id = -1;
   memberCollapse = true;
   optionsCollapse = true;
 
-  loading = false;
+  public loading = false;
+  public groupClone: Group;
 
   constructor(private modal: NzModalService,
               private messageService: NzMessageService,
               private groupService: GroupService,
-              private storageService: StorageService) {
+              private storageService: StorageService,
+              private generateColorService: GenerateColorService) {
     this.members = new Array<User>();
   }
 
   isGroup = (type) => type === GroupType.MANY;
+  isOnline = (user: User) => user.status === UserStatus.ONLINE;
 
   ngOnInit(): void {
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.groupSelected) {
+      this.groupClone = _.cloneDeep(this.groupSelected);
       this.fetchingData();
 
       const userInfo = this.storageService.userInfo;
@@ -55,7 +62,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
       nzWidth: '40vw',
       nzComponentParams: {
         groupId: this.groupSelected.id,
-        members: _.cloneDeep(this.members)
+        usersSelected: _.cloneDeep(this.members)
       }
     });
 
@@ -73,6 +80,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
         .subscribe(members => {
           this.members = members;
           this.loading = false;
+          this.generateColorForUserAvatar();
         }, error => this.members = []);
     }
   }
@@ -86,6 +94,18 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
       nzOkText: 'Đồng ý',
       nzCancelText: 'Hủy',
       nzOnOk: () => this.deleteGroup(this.groupSelected.id)
+    });
+  }
+
+  public getColor(userId: string): string {
+    return this.colors[userId];
+  }
+
+  private generateColorForUserAvatar(): void {
+    this.members.forEach(member => {
+      const color = this.generateColorService.generate();
+      const userId = member.userId;
+      this.colors[userId] = color;
     });
   }
 
@@ -133,7 +153,11 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
     return _.get(userInfo, 'userId', '') === userId;
   }
 
-  onChangeGroupName() {
+  public onChangeGroupName(): void {
+    if (this.groupSelected.nameGroup === this.groupClone.nameGroup) {
+      return;
+    }
+
     this.groupService.updateNameGroup(this.groupSelected.id, this.groupSelected.nameGroup)
       .subscribe(group => {
         if (group) {
