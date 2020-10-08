@@ -1,0 +1,1 @@
+INSERT INTO public.userdetail (user_id, role) VALUES ('moi them', 'doctor');
