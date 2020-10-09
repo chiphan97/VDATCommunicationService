@@ -14,7 +14,7 @@ export const environment = {
   keycloak: {
     url: 'https://accounts.vdatlab.com/auth',
     realm: 'vdatlab.com',
-    clientId: 'chat.services.vdatlab.com',
+    clientId: 'chat.app.vdatlab.com',
     redirectUrl: 'http://localhost:4200/auth'
   }
 };
