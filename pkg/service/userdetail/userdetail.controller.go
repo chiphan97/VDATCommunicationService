@@ -42,6 +42,15 @@ func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	//a:= []string{"b9018379-8394-4205-9104-2d85d69943db","b767e36c-e4a9-4d8c-886c-181427ec4e2c"}
 	//getListFromUserId(a)
 }
+
+// checkUser godoc
+// @Summary check user api
+// @Description check user api
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} Dto
+// @Router /api/v1/user/info [get]
 func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 

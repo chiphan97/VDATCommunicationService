@@ -157,6 +157,131 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/api/v1/groups/{idGroup}/members": {
+            "get": {
+                "description": "Get all member groups",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groupUser"
+                ],
+                "summary": "Get all member groups",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the group to be updated",
+                        "name": "idGroup",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/groups.Dto"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "add user to group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groupUser"
+                ],
+                "summary": "add user to group",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the group to be add user",
+                        "name": "idGroup",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {}
+                }
+            },
+            "patch": {
+                "description": "add user to group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groupUser"
+                ],
+                "summary": "add user to group",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the group to be updated",
+                        "name": "idGroup",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "add user to group",
+                        "name": "groupPayLoad",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/groups.PayLoad"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/groups.Dto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/info": {
+            "get": {
+                "description": "check user api",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "check user api",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userdetail.Dto"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -206,6 +331,38 @@ var doc = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "userdetail.Dto": {
+            "type": "object",
+            "properties": {
+                "first": {
+                    "type": "string"
+                },
+                "fullName": {
+                    "type": "string"
+                },
+                "hostName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "socketId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
                 }
             }
         }

@@ -32,6 +32,27 @@ definitions:
           type: string
         type: array
     type: object
+  userdetail.Dto:
+    properties:
+      first:
+        type: string
+      fullName:
+        type: string
+      hostName:
+        type: string
+      id:
+        type: string
+      last:
+        type: string
+      role:
+        type: string
+      socketId:
+        type: string
+      status:
+        type: string
+      userName:
+        type: string
+    type: object
 host: localhost:5000
 info:
   contact:
@@ -128,4 +149,87 @@ paths:
       summary: Update group identified by the given orderId
       tags:
       - groups
+  /api/v1/groups/{idGroup}/members:
+    delete:
+      consumes:
+      - application/json
+      description: add user to group
+      parameters:
+      - description: ID of the group to be add user
+        in: path
+        name: idGroup
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200": {}
+      summary: add user to group
+      tags:
+      - groupUser
+    get:
+      consumes:
+      - application/json
+      description: Get all member groups
+      parameters:
+      - description: ID of the group to be updated
+        in: path
+        name: idGroup
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/groups.Dto'
+            type: array
+      summary: Get all member groups
+      tags:
+      - groupUser
+    patch:
+      consumes:
+      - application/json
+      description: add user to group
+      parameters:
+      - description: ID of the group to be updated
+        in: path
+        name: idGroup
+        required: true
+        type: integer
+      - description: add user to group
+        in: body
+        name: groupPayLoad
+        required: true
+        schema:
+          $ref: '#/definitions/groups.PayLoad'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/groups.Dto'
+            type: array
+      summary: add user to group
+      tags:
+      - groupUser
+  /api/v1/user/info:
+    get:
+      consumes:
+      - application/json
+      description: check user api
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userdetail.Dto'
+      summary: check user api
+      tags:
+      - user
 swagger: "2.0"

@@ -235,6 +235,17 @@ func DeleteGroupApi(w http.ResponseWriter, r *http.Request) {
 }
 
 //API thêm thành viên vào 1 nhóm va chi owner moi dc them
+
+// add user to group godoc
+// @Summary add user to group
+// @Description add user to group
+// @Tags groupUser
+// @Accept  json
+// @Produce  json
+// @Param idGroup path int true "ID of the group to be updated"
+// @Param groupPayLoad body PayLoad true "add user to group"
+// @Success 200 {array} Dto
+// @Router /api/v1/groups/{idGroup}/members [patch]
 func AddUserInGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
@@ -308,6 +319,16 @@ func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
 }
 
 //API user outgroup nhung owner ko dc out
+
+// add user to group godoc
+// @Summary add user to group
+// @Description add user to group
+// @Tags groupUser
+// @Accept  json
+// @Produce  json
+// @Param idGroup path int true "ID of the group to be add user"
+// @Success 200
+// @Router /api/v1/groups/{idGroup}/members [delete]
 func UserOutGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
@@ -359,6 +380,15 @@ func GetListUserByGroupApi(w http.ResponseWriter, r *http.Request) {
 	w.Write(utils.ResponseWithByte(users))
 }
 
+// GetListMemberGroupApi godoc
+// @Summary Get all member groups
+// @Description Get all member groups
+// @Tags groupUser
+// @Accept  json
+// @Produce  json
+// @Param idGroup path int true "ID of the group to be updated"
+// @Success 200 {array} Dto
+// @Router /api/v1/groups/{idGroup}/members [get]
 func GetListUserOnlineByGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	params := mux.Vars(r)
