@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 export class ChatService {
   private socket: WebSocket;
   private listener: EventEmitter<Message> = new EventEmitter();
-  private readonly WS_ENDPOINT = `${environment.service.wsUrl}${environment.service.endpoint.chat}`;
+  private readonly WS_ENDPOINT = `${environment.service.wsUrl}${environment.service.endpoint.message}`;
 
   constructor(private keycloakService: KeycloakService) { }
 
@@ -56,3 +56,5 @@ export class ChatService {
     this.socket.send(JSON.stringify(payload));
   }
 }
+
+
