@@ -16,5 +16,183 @@
     },
     "host": "localhost:5000",
     "basePath": "/",
-    "paths": {}
+    "paths": {
+        "/api/v1/groups": {
+            "get": {
+                "description": "Get all groups",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groups"
+                ],
+                "summary": "Get all groups",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/groups.Dto"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create a new groups",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groups"
+                ],
+                "summary": "Create a new groups",
+                "parameters": [
+                    {
+                        "description": "Create groups",
+                        "name": "groupPayLoad",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/groups.PayLoad"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/groups.Dto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/groups/{idGroup}": {
+            "put": {
+                "description": "Update the group corresponding to the input groupId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groups"
+                ],
+                "summary": "Update group identified by the given orderId",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the group to be updated",
+                        "name": "idGroup",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "update groups",
+                        "name": "groupPayLoad",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/groups.PayLoad"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/groups.Dto"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete the group corresponding to the input idGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groups"
+                ],
+                "summary": "Delete group identified by the given idGroup",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the group to be updated",
+                        "name": "idGroup",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "groups.Dto": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nameGroup": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "private": {
+                    "type": "boolean"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "groups.PayLoad": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "nameGroup": {
+                    "type": "string"
+                },
+                "private": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
 }

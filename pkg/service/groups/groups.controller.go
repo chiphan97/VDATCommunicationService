@@ -53,6 +53,15 @@ func RegisterGroupApi(r *mux.Router) {
 }
 
 //API load danh sách groups theo patient hoac theo doctor
+
+// GetListGroupApi godoc
+// @Summary Get all groups
+// @Description Get all groups
+// @Tags groups
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} Dto
+// @Router /api/v1/groups [get]
 func GetListGroupApi(w http.ResponseWriter, r *http.Request) {
 
 	cors.SetupResponse(&w, r)
@@ -85,6 +94,16 @@ func GetListGroupApi(w http.ResponseWriter, r *http.Request) {
 }
 
 // api tao group n - n chi doctor dc tao va tao chat 1 1
+
+// CreateOrder godoc
+// @Summary Create a new groups
+// @Description create a new groups
+// @Tags groups
+// @Accept  json
+// @Produce  json
+// @Param groupPayLoad body PayLoad true "Create groups"
+// @Success 200 {object} Dto
+// @Router /api/v1/groups [post]
 func CreateGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
@@ -127,6 +146,17 @@ func CreateGroupApi(w http.ResponseWriter, r *http.Request) {
 }
 
 // api update ten nhom
+
+// Updategroups godoc
+// @Summary Update group identified by the given orderId
+// @Description Update the group corresponding to the input groupId
+// @Tags groups
+// @Accept  json
+// @Produce  json
+// @Param idGroup path int true "ID of the group to be updated"
+// @Param groupPayLoad body PayLoad true "update groups"
+// @Success 200 {object} Dto
+// @Router /api/v1/groups/{idGroup} [put]
 func UpdateInfoGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
@@ -167,6 +197,16 @@ func UpdateInfoGroupApi(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+// DeleteOrder godoc
+// @Summary Delete group identified by the given idGroup
+// @Description Delete the group corresponding to the input idGroup
+// @Tags groups
+// @Accept  json
+// @Produce  json
+// @Param idGroup path int true "ID of the group to be updated"
+// @Success 204 "No Content"
+// @Router /api/v1/groups/{idGroup} [delete]
 func DeleteGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 

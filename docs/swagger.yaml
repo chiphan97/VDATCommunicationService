@@ -1,4 +1,37 @@
 basePath: /
+definitions:
+  groups.Dto:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      nameGroup:
+        type: string
+      owner:
+        type: string
+      private:
+        type: boolean
+      thumbnail:
+        type: string
+      type:
+        type: string
+    type: object
+  groups.PayLoad:
+    properties:
+      description:
+        type: string
+      nameGroup:
+        type: string
+      private:
+        type: boolean
+      type:
+        type: string
+      users:
+        items:
+          type: string
+        type: array
+    type: object
 host: localhost:5000
 info:
   contact:
@@ -11,5 +44,88 @@ info:
   termsOfService: http://swagger.io/terms/
   title: vdatchat API
   version: "1.0"
-paths: {}
+paths:
+  /api/v1/groups:
+    get:
+      consumes:
+      - application/json
+      description: Get all groups
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/groups.Dto'
+            type: array
+      summary: Get all groups
+      tags:
+      - groups
+    post:
+      consumes:
+      - application/json
+      description: create a new groups
+      parameters:
+      - description: Create groups
+        in: body
+        name: groupPayLoad
+        required: true
+        schema:
+          $ref: '#/definitions/groups.PayLoad'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/groups.Dto'
+      summary: Create a new groups
+      tags:
+      - groups
+  /api/v1/groups/{idGroup}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the group corresponding to the input idGroup
+      parameters:
+      - description: ID of the group to be updated
+        in: path
+        name: idGroup
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Delete group identified by the given idGroup
+      tags:
+      - groups
+    put:
+      consumes:
+      - application/json
+      description: Update the group corresponding to the input groupId
+      parameters:
+      - description: ID of the group to be updated
+        in: path
+        name: idGroup
+        required: true
+        type: integer
+      - description: update groups
+        in: body
+        name: groupPayLoad
+        required: true
+        schema:
+          $ref: '#/definitions/groups.PayLoad'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/groups.Dto'
+      summary: Update group identified by the given orderId
+      tags:
+      - groups
 swagger: "2.0"
