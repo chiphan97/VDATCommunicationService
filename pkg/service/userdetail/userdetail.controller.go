@@ -21,6 +21,18 @@ func RegisterUserApi(r *mux.Router) {
 }
 
 //API tìm kiếm người dùng filtter
+
+// find user by keyword godoc
+// @Summary find user by keyword
+// @Description find user by keyword
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param keyword query string false "name search by keyword"
+// @Param page query int false "page"
+// @Param pageSize query int false "pageSize"
+// @Success 200 {array} Dto
+// @Router /api/v1/user [get]
 func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	fil := r.URL.Query()["keyword"]
@@ -33,9 +45,7 @@ func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	if pageSize[0] == "" {
 		pageSize[0] = "10"
 	}
-
-	token := connect()
-	listUser := getData(token, fil[0], page[0], pageSize[0])
+	listUser := getData(fil[0], page[0], pageSize[0])
 	if len(listUser) == 0 {
 		json.NewEncoder(w).Encode(listUser)
 	} else {
@@ -44,6 +54,15 @@ func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	//a:= []string{"b9018379-8394-4205-9104-2d85d69943db","b767e36c-e4a9-4d8c-886c-181427ec4e2c"}
 	//getListFromUserId(a)
 }
+
+// checkUser godoc
+// @Summary check user api
+// @Description check user api
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} Dto
+// @Router /api/v1/user/info [get]
 func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
@@ -84,6 +103,17 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 	// check user he thong neu login chua ton tai thong tin trong he thong thi ghi vao database
 
 }
+
+// user logout godoc
+// @Summary user logout
+// @Description user logout api
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param hostName query string false "hostName"
+// @Param socketId query string false "socketId"
+// @Success 200 {object} boolean
+// @Router /api/v1/user/online [delete]
 func UserLogOutApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	hostname := r.URL.Query()["hostName"][0]

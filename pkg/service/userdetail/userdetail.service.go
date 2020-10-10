@@ -9,12 +9,15 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 )
+
+var globalToken string = connect()
 
 func AddUserDetailService(payload Payload) error {
 	detail := payload.convertToModel()
@@ -110,7 +113,12 @@ func JWTparseUser(tokenHeader string) (Payload, error) {
 	return payload, nil
 }
 
-func getData(token string, keyword string, page string, pageSize string) []Dto {
+func getData(keyword string, page string, pageSize string) []Dto {
+
+	if !utils.CheckTokenExp(globalToken) {
+		globalToken = connect()
+	}
+	//fmt.Println(time)
 
 	size, _ := strconv.Atoi(pageSize)
 	pageInt, _ := strconv.Atoi(page)
@@ -136,7 +144,7 @@ func getData(token string, keyword string, page string, pageSize string) []Dto {
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users?search="
 	)
 	URL := fmt.Sprintf(urlHost+"%s"+"&max=%s"+"&first=%s", keyword, strconv.Itoa(num), strconv.Itoa(expectNum))
-	var bearer = "Bearer " + token
+	var bearer = "Bearer " + globalToken
 
 	req, err := http.NewRequest("GET", URL, nil)
 	req.Header.Add("Authorization", bearer)
@@ -184,11 +192,14 @@ func getData(token string, keyword string, page string, pageSize string) []Dto {
 }
 
 func GetListFromUserId(listUser []string) []Dto {
+	if !utils.CheckTokenExp(globalToken) {
+		globalToken = connect()
+	}
 	var (
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
 	)
-	token := connect()
-	var bearer = "Bearer " + token
+	//token := connect()
+	var bearer = "Bearer " + globalToken
 	var userDtos []Dto
 	for i, _ := range listUser {
 		fmt.Println(listUser[i])

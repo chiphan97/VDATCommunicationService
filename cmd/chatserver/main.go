@@ -5,6 +5,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
+	httpSwagger "github.com/swaggo/http-swagger"
+	_ "gitlab.com/vdat/mcsvc/chat/docs"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
@@ -62,6 +64,16 @@ func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	http.FileServer(http.Dir(h.staticPath)).ServeHTTP(w, r)
 }
 
+// @title vdatchat API
+// @version 1.0
+// @description This is a sample serice for managing orders
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email soberkoder@swagger.io
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:5000
+// @BasePath /
 func main() {
 	//go metrics()
 	database.Connect()
@@ -85,6 +97,8 @@ func main() {
 	//api
 	groups.RegisterGroupApi(r)
 	userdetail.RegisterUserApi(r)
+
+	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 
 	r.Use(mux.CORSMethodMiddleware(r))
 
