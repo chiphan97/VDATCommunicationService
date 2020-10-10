@@ -95,7 +95,7 @@ var doc = `{
                 "tags": [
                     "groups"
                 ],
-                "summary": "Update group identified by the given orderId",
+                "summary": "Update group by groupId",
                 "parameters": [
                     {
                         "type": "integer",
@@ -186,7 +186,7 @@ var doc = `{
                 }
             },
             "delete": {
-                "description": "add user to group",
+                "description": "delete user to group",
                 "consumes": [
                     "application/json"
                 ],
@@ -196,7 +196,7 @@ var doc = `{
                 "tags": [
                     "groupUser"
                 ],
-                "summary": "add user to group",
+                "summary": "delete user to group",
                 "parameters": [
                     {
                         "type": "integer",
@@ -250,6 +250,40 @@ var doc = `{
                             }
                         }
                     }
+                }
+            }
+        },
+        "/api/v1/groups/{idGroup}/members/{userId}": {
+            "delete": {
+                "description": "delete user to group by admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groupUser"
+                ],
+                "summary": "delete user to group by admin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID group",
+                        "name": "idGroup",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID user want delete",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {}
                 }
             }
         },

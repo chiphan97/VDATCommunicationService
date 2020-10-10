@@ -148,7 +148,7 @@ func CreateGroupApi(w http.ResponseWriter, r *http.Request) {
 // api update ten nhom
 
 // Updategroups godoc
-// @Summary Update group identified by the given orderId
+// @Summary Update group by groupId
 // @Description Update the group corresponding to the input groupId
 // @Tags groups
 // @Accept  json
@@ -282,6 +282,17 @@ func AddUserInGroupApi(w http.ResponseWriter, r *http.Request) {
 }
 
 //API xoa thành viên khoi 1 nhóm va chi owner moi dc xoa
+
+// delete user to group by admin godoc
+// @Summary delete user to group by admin
+// @Description delete user to group by admin
+// @Tags groupUser
+// @Accept  json
+// @Produce  json
+// @Param idGroup path int true "ID group"
+// @Param userId path int true "ID user want delete"
+// @Success 200
+// @Router /api/v1/groups/{idGroup}/members/{userId} [delete]
 func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 
@@ -320,9 +331,9 @@ func DeleteGroupUserApi(w http.ResponseWriter, r *http.Request) {
 
 //API user outgroup nhung owner ko dc out
 
-// add user to group godoc
-// @Summary add user to group
-// @Description add user to group
+// delete user to group godoc
+// @Summary delete user to group
+// @Description delete user to group
 // @Tags groupUser
 // @Accept  json
 // @Produce  json

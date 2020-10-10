@@ -136,14 +136,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/groups.Dto'
-      summary: Update group identified by the given orderId
+      summary: Update group by groupId
       tags:
       - groups
   /api/v1/groups/{idGroup}/members:
     delete:
       consumes:
       - application/json
-      description: add user to group
+      description: delete user to group
       parameters:
       - description: ID of the group to be add user
         in: path
@@ -154,7 +154,7 @@ paths:
       - application/json
       responses:
         "200": {}
-      summary: add user to group
+      summary: delete user to group
       tags:
       - groupUser
     get:
@@ -205,6 +205,29 @@ paths:
               $ref: '#/definitions/groups.Dto'
             type: array
       summary: add user to group
+      tags:
+      - groupUser
+  /api/v1/groups/{idGroup}/members/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: delete user to group by admin
+      parameters:
+      - description: ID group
+        in: path
+        name: idGroup
+        required: true
+        type: integer
+      - description: ID user want delete
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200": {}
+      summary: delete user to group by admin
       tags:
       - groupUser
   /api/v1/user:
