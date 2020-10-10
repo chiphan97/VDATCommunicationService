@@ -21,6 +21,18 @@ func RegisterUserApi(r *mux.Router) {
 }
 
 //API tìm kiếm người dùng filtter
+
+// find user by keyword godoc
+// @Summary find user by keyword
+// @Description find user by keyword
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param keyword query string false "name search by keyword"
+// @Param page query int false "page"
+// @Param pageSize query int false "pageSize"
+// @Success 200 {array} Dto
+// @Router /api/v1/user [get]
 func GetUserApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	fil := r.URL.Query()["keyword"]
@@ -91,6 +103,17 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 	// check user he thong neu login chua ton tai thong tin trong he thong thi ghi vao database
 
 }
+
+// user logout godoc
+// @Summary user logout
+// @Description user logout api
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param hostName query string false "hostName"
+// @Param socketId query string false "socketId"
+// @Success 200 {object} boolean
+// @Router /api/v1/user/online [delete]
 func UserLogOutApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	hostname := r.URL.Query()["hostName"][0]

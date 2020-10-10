@@ -18,15 +18,8 @@ var doc = `{
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "email": "soberkoder@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -260,6 +253,52 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/user": {
+            "get": {
+                "description": "find user by keyword",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "find user by keyword",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "name search by keyword",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "pageSize",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/userdetail.Dto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/info": {
             "get": {
                 "description": "check user api",
@@ -278,6 +317,43 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/userdetail.Dto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/online": {
+            "delete": {
+                "description": "user logout api",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "user logout",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hostName",
+                        "name": "hostName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "socketId",
+                        "name": "socketId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "boolean"
                         }
                     }
                 }
@@ -380,12 +456,12 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "1.0",
-	Host:        "localhost:5000",
-	BasePath:    "/",
+	Version:     "",
+	Host:        "",
+	BasePath:    "",
 	Schemes:     []string{},
-	Title:       "vdatchat API",
-	Description: "This is a sample serice for managing orders",
+	Title:       "",
+	Description: "",
 }
 
 type s struct{}
