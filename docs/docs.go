@@ -247,10 +247,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/groups.Dto"
-                            }
+                            "type": "boolean"
                         }
                     }
                 }
