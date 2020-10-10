@@ -179,7 +179,10 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/groups.Dto"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/userdetail.Dto"
+                                }
                             }
                         }
                     }

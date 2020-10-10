@@ -174,7 +174,9 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/groups.Dto'
+              items:
+                $ref: '#/definitions/userdetail.Dto'
+              type: array
             type: array
       summary: Get all member groups
       tags:

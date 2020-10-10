@@ -244,7 +244,7 @@ func DeleteGroupApi(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Param idGroup path int true "ID of the group to be updated"
 // @Param groupPayLoad body PayLoad true "add user to group"
-// @Success 200 {array} Dto
+// @Success 200 {object} boolean
 // @Router /api/v1/groups/{idGroup}/members [patch]
 func AddUserInGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
@@ -398,7 +398,7 @@ func GetListUserByGroupApi(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 // @Param idGroup path int true "ID of the group to be updated"
-// @Success 200 {array} Dto
+// @Success 200 {array} []userdetail.Dto
 // @Router /api/v1/groups/{idGroup}/members [get]
 func GetListUserOnlineByGroupApi(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
