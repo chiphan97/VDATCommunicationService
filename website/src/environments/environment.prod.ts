@@ -1,19 +1,21 @@
 const SERVER_URL = 'vdat-mcsvc-chat.vdatlab.com';
 
 export const environment = {
-  production: true,
+  production: false,
   service: {
-    apiUrl: `http://${SERVER_URL}`,
+    apiUrl: `https://${SERVER_URL}`,
     wsUrl: `wss://${SERVER_URL}`,
     endpoint: {
       groups: '/api/v1/groups',
-      user: '/api/v1/users'
+      user: '/api/v1/user',
+      chat: '/chat'
     }
   },
   keycloak: {
     url: 'https://accounts.vdatlab.com/auth',
     realm: 'vdatlab.com',
-    clientId: 'chat.app.vdatlab.com',
-    redirectUrl: 'https://vdat-chat-srv.netlify.app/auth'
-  },
+    clientId: 'chat.apps.vdatlab.com',
+    redirectUrl: 'https://vdat-mcsvc-chat.vdatlab.com/auth'
+  }
 };
+

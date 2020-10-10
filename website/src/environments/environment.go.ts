@@ -2,7 +2,7 @@ const SERVER_URL = 'localhost:5000';
 
 export const environment = {
   production: false,
-  service: {  
+  service: {
     apiUrl: `http://${SERVER_URL}`,
     wsUrl: `ws://${SERVER_URL}`,
     endpoint: {
@@ -15,6 +15,6 @@ export const environment = {
     url: 'https://accounts.vdatlab.com/auth',
     realm: 'vdatlab.com',
     clientId: 'chat.apps.vdatlab.com',
-    redirectUrl: 'http://localhost:4200/auth'
+    redirectUrl: 'http://localhost:5000/auth'
   }
 };
