@@ -1,7 +1,7 @@
 const SERVER_URL = 'vdat-mcsvc-chat.vdatlab.com';
 
 export const environment = {
-  production: false,
+  production: true,
   service: {
     apiUrl: `https://${SERVER_URL}`,
     wsUrl: `wss://${SERVER_URL}`,
@@ -18,4 +18,3 @@ export const environment = {
     redirectUrl: 'https://vdat-mcsvc-chat.vdatlab.com/auth'
   }
 };
-

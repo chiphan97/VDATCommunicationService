@@ -2,7 +2,7 @@ const SERVER_URL = 'localhost:5000';
 
 export const environment = {
   production: false,
-  service: {  
+  service: {
     apiUrl: `http://${SERVER_URL}`,
     wsUrl: `ws://${SERVER_URL}`,
     endpoint: {

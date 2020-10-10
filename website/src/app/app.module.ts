@@ -9,6 +9,8 @@ import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {SocketService} from './service/socket.service';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,8 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
     ),
     NzIconModule,
     AppRouting,
-    NzGridModule
+    NzGridModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     SocketService,
