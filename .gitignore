@@ -107,3 +107,4 @@ fabric.properties
 .idea/dataSources.xml
 .idea/sqldialects.xml
 test.sql
+/public/
