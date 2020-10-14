@@ -18,6 +18,7 @@ import (
 )
 
 var globalToken string = connect()
+var listUserGlobal = make(map[string]User)
 
 func AddUserDetailService(payload Payload) error {
 	detail := payload.convertToModel()
@@ -203,25 +204,42 @@ func GetListFromUserId(listUser []string) []Dto {
 	var userDtos []Dto
 	for i, _ := range listUser {
 		fmt.Println(listUser[i])
-		req, err := http.NewRequest("GET", urlHost+listUser[i], nil)
-		req.Header.Add("Authorization", bearer)
-		// Send req using http Client
-		client := &http.Client{}
-		resp, err := client.Do(req)
-		if err != nil {
-			log.Println("Error on response.\n[ERRO] -", err)
-		}
-		body, _ := ioutil.ReadAll(resp.Body)
-		var user User
-		json.Unmarshal(body, &user)
-		detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
-		if detail == (UserDetail{}) {
-			user.Role = ""
+
+		value, ok := listUserGlobal[listUser[i]]
+		if ok == true {
+			detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
+			if detail == (UserDetail{}) {
+				value.Role = ""
+			} else {
+				value.Role = detail.Role
+			}
+			dto := value.ConvertUserToDto()
+			userDtos = append(userDtos, dto)
 		} else {
-			user.Role = detail.Role
+			req, err := http.NewRequest("GET", urlHost+listUser[i], nil)
+			req.Header.Add("Authorization", bearer)
+			// Send req using http Client
+			client := &http.Client{}
+			resp, err := client.Do(req)
+			if err != nil {
+				log.Println("Error on response.\n[ERRO] -", err)
+			}
+			body, _ := ioutil.ReadAll(resp.Body)
+			var user User
+			json.Unmarshal(body, &user)
+
+			listUserGlobal[listUser[i]] = user
+
+			detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
+			if detail == (UserDetail{}) {
+				user.Role = ""
+			} else {
+				user.Role = detail.Role
+			}
+			dto := user.ConvertUserToDto()
+			userDtos = append(userDtos, dto)
 		}
-		dto := user.ConvertUserToDto()
-		userDtos = append(userDtos, dto)
+
 	}
 	//fmt.Println(userDtos)
 	fmt.Println(len(userDtos))
