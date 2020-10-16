@@ -9,6 +9,15 @@ import (
 	"net/http"
 )
 
+// Chat WebSocket godoc
+// @Summary Chat websocket
+// @Description chat group by websocket
+// @Tags dchat
+// @Param socketId path string true "socketId to know client"
+// @Param token query string true "token to be join chat"
+// @Accept  json
+// @Produce  json
+// @Router /message/{socketId} [get]
 func ChatHandlr(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	// authenticate
