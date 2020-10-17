@@ -86,10 +86,6 @@ func main() {
 
 	r := mux.NewRouter()
 
-	// Handler web app
-	//spa := spaHandler{staticPath: "public", indexPath: "index.html"}
-	//r.PathPrefix("/").Handler(spa)
-
 	//r.HandleFunc("/chat/{idgroup}",auth.AuthenMiddleJWT(dchat.ChatHandlr))
 	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
 	// handler
@@ -99,6 +95,10 @@ func main() {
 	userdetail.RegisterUserApi(r)
 
 	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
+
+	// Handler web app
+	spa := spaHandler{staticPath: "public", indexPath: "index.html"}
+	r.PathPrefix("/").Handler(spa)
 
 	r.Use(mux.CORSMethodMiddleware(r))
 
