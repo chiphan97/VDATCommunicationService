@@ -50,10 +50,10 @@ export class KeycloakService {
           });
 
         setTimeout(() => {
-          this.keycloak.updateToken(60)
+          this.keycloak.updateToken(600)
             .then((refreshed) => {
               if (refreshed) {
-                console.log('Token refreshed' + refreshed);
+                console.log('Token refreshed ' + refreshed);
               } else {
                 console.warn('Token not refreshed, valid for '
                   + Math.round(this.keycloak.tokenParsed.exp + this.keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');

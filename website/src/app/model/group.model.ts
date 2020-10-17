@@ -1,4 +1,5 @@
 import {Message} from './message.model';
+import {User} from './user.model';
 import {GroupType} from '../const/group-type.const';
 import * as _ from 'lodash';
 
@@ -11,6 +12,9 @@ export class Group {
   description: string;
   owner: string;
   lastMessage: Message;
+
+  historyMessages: Array<Message>;
+  members: Array<User>;
 
 
   constructor(id: number, nameGroup: string, type: GroupType,
