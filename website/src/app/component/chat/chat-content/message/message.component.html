@@ -1,10 +1,10 @@
 <ng-template #messageTemplateRef let-message="message">
-    <container-element [ngSwitch]="message.sender.userId === currentUser.userId"
+    <container-element [ngSwitch]="message.sender.userId == user.userId" 
         [style]="{'padding': '0px', 'margin': '0px'}">
-        <nz-comment *ngSwitchCase="true" [style]="{'text-align': 'right', 'padding': '0px 0px', 'margin': '0px'}"
-            class="my-comment">
+        <nz-comment *ngSwitchCase="true" [style]="{'float': 'right'} "
+            class="my-comment comment-right">
             <nz-comment-content class="rcorners2">
-                <p>{{ message.content }}</p>
+                <p>{{ message.content }} </p>
             </nz-comment-content>
             <nz-comment-action>
                 <i nz-tooltip nzTitle="Like" nz-icon nzType="like" [nzTheme]="likes > 0 ? 'twotone' : 'outline'"
@@ -49,4 +49,4 @@
 </ng-template>
 
 <!-- <ng-container [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ message: messageInput}"> </ng-container> -->
-<ng-container *ngTemplateOutlet="messageTemplateRef; context: myContext"></ng-container>
+<ng-container [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ message: messageInput}"></ng-container>

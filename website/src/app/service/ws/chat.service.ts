@@ -21,6 +21,7 @@ export class ChatService {
 
   public initWebSocket(socketId: string) {
     const accessToken = this.keycloakService.accessToken;
+    console.log(`url: ${this.WS_ENDPOINT}/${socketId}?token=${accessToken}`);
     this.socket = new WebSocket(`${this.WS_ENDPOINT}/${socketId}?token=${accessToken}`);
  
     this.socket.onopen = event => {

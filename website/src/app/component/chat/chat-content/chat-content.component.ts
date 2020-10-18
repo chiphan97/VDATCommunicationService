@@ -100,7 +100,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
           this.groupSelected.members = users;
 
            //get history chat
-          this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
+          //this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
         })
 
         this.chatService.getChatEventListener()
@@ -152,23 +152,6 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
     const content = message;
 
     setTimeout(() => {
-      this.submitting = false;
-      this.data = [
-        ...this.data,
-        {
-          ...this.user,
-          content,
-          displayTime: formatDistance(new Date(), new Date()),
-          children: []
-        }
-      ].map(e => {
-        return {
-          ...e,
-        };
-      });
-    }, 500);
-
-    setTimeout(() => {
       this.historyMessages = [
         ...this.historyMessages,
         {
@@ -184,8 +167,9 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
           ...e,
         };
       });
-    }, 500);
       this.scrollToBottom();
+    }, 500);
+      
   }
 
   formatDistanceTime(date: Date = new Date()): string {
