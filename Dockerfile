@@ -25,7 +25,7 @@ COPY ./website .
 RUN npm run build:prod
 
 # Target image
-FROM scratch
+FROM gcr.io/distroless/base-debian10
 WORKDIR /go/src/app
 COPY --from=build /go/bin/chatserver ./
 COPY --from=angular-build /usr/src/app/dist ./public
