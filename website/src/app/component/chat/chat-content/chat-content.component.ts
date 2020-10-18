@@ -24,59 +24,8 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
   public messages: Array<Message>;
   public formGroup: FormGroup;
   public currentUser: User;
-
-  /*mock data for users*/
-  public patient1User: User = new User('34', 'Hoang', 'Hong', 'Hoang Thi Hong', null, 'patient', 'username', null, null, null);
-  public patientUnknown: User = new User('45', 'Anonymous', 'Patient', 'Hoang Thi Hong', null, 'patient', 'username', null, null, null);
-  public data = [{
-    author: 'Chi Phan',
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    content:
-      'We supply a series of design principles, practical patterns and high quality design resources' +
-      '(Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-    children: [
-      {
-        author: 'Han Solo',
-        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-        content:
-          'We supply a series of design principles, practical patterns and high quality design resources' +
-          '(Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-      }
-    ]
-  }];
-  public historyMessages: Message[] = [
-    {
-      id: 3,
-      groupId: 22,
-      sender: this.patient1User,
-      content:
-        'I have an enquiry about my current health condition...',
-      createdAt: new Date(),
-      children: [{
-        id: 3,
-        groupId: 22,
-        sender: this.patient1User,
-        content:
-          'also a sub comment',
-        createdAt: new Date(),
-        children: []
-      }]
-    },
-    {
-      id: 3,
-      groupId: 22,
-      sender: this.patient1User,
-      content:
-        'I do not feel well',
-      createdAt: new Date(),
-      children: []
-    }
-  ];
-
-  public user = {
-    author: 'Han Solo',
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-  };
+  public patientUnknown: User = new User('45', 'Anonymous', 'Patient', '', null, 'patient', 'username', null, null, null);
+  public historyMessages: Message[] = [];
 
   submitting = false;
   /* end of mock data for users*/
@@ -93,36 +42,34 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       if (changes.groupSelected && this.groupSelected) {
         this.chatService.initWebSocket(this.currentUser.socketId);
 
-       
-
         //get list of group members
         this.groupService.getAllMemberOfGroup(this.groupSelected.id).subscribe((users: Array<User>) => {
           this.groupSelected.members = users;
-
-           //get history chat
-          //this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
+          //get history chat
+          this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
         })
 
         this.chatService.getChatEventListener()
           .subscribe((messageDto: MessageDto) => {
-            if (messageDto.payload.type.trim() === WsEvent.SEND_TEXT) { 
+            if (messageDto.payload.type.trim() === WsEvent.SEND_TEXT) {
               const message: Message = this.getMessage(this.groupSelected, messageDto);
 
               if (message.sender.userId !== this.currentUser.userId) {
                 this.historyMessages = [...this.historyMessages, message];
-              }      
+              }
             }
             else {
               console.log('not yet supported type ');
             }
           });
 
-          //todo: seperate 2 methods, return boolean 
+        //todo: seperate 2 methods, return boolean 
         this.chatService.getChatHistoryListener().subscribe((messageDtos: Array<MessageDto>) => {
           const pastMessages: Array<Message> = messageDtos.map((messageDto: MessageDto) => {
             return this.getMessage(this.groupSelected, messageDto);
           })
           this.historyMessages = pastMessages;
+          this.scrollToBottom();
         });
       }
     }
@@ -149,7 +96,6 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
 
   private mockupUISendMessage(message: string, groupId: number): void {
     this.submitting = true;
-    const content = message;
 
     setTimeout(() => {
       this.historyMessages = [
@@ -158,7 +104,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
           id: 1,
           groupId: groupId,
           sender: this.currentUser,
-          content: content,
+          content: message,
           createdAt: new Date(),
           children: [],
         }
@@ -168,8 +114,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
         };
       });
       this.scrollToBottom();
-    }, 500);
-      
+    }, 200);
   }
 
   formatDistanceTime(date: Date = new Date()): string {
@@ -187,13 +132,13 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       message: new FormControl('', [Validators.required])
     });
   }
-  
+
   private getMessage(group: Group, messageDto: MessageDto): Message {
     const message: Message = {
       id: -1,
       content: _.get(messageDto.payload.data, 'body', ''),
       createdAt: new Date(),
-      sender: this.getUserById(group, messageDto.senderId),
+      sender: this.groupService.getUserById(group, messageDto.senderId),
       groupId: _.get(messageDto.payload.data, 'groupId', -1),
       children: null
     }
@@ -201,9 +146,5 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       message.sender = this.patientUnknown;
     }
     return message;
-  }
-
-  private getUserById(group: Group, senderId: string): User {
-    return group.members.find(user => user.userId === senderId);
   }
 }

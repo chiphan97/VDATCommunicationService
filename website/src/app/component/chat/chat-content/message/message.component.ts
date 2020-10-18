@@ -22,11 +22,6 @@ export class MessageComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.currentUser;
-    console.log('this messageInput');
-    console.log(this.messageInput);
-    console.log('this user '+ this.user.userId);
-    console.log('sender: '+ this.messageInput.sender.userId);
-    console.log(this.messageInput.sender.userId.trim() == this.user.userId.trim());
   }
 
   public getFirstname(user: User): string {
