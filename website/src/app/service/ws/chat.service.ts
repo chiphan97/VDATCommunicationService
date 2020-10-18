@@ -5,14 +5,15 @@ import {MessagePayload} from '../../model/payload/message.payload';
 import {MessageDto} from '../../model/messageDto.model';
 import {WsEvent} from '../../const/ws.event';
 import * as _ from 'lodash';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
   private socket: WebSocket;
-  private listener: EventEmitter<MessageDto> = new EventEmitter();
+  private messageListener: EventEmitter<MessageDto> = new EventEmitter();
+  private chatHistoryListener: EventEmitter<Array<MessageDto>> = new EventEmitter();
   private readonly WS_ENDPOINT = `${environment.service.wsUrl}/${environment.service.endpoint.message}`;
 
   constructor(private keycloakService: KeycloakService) { 
@@ -22,8 +23,6 @@ export class ChatService {
     const accessToken = this.keycloakService.accessToken;
     this.socket = new WebSocket(`${this.WS_ENDPOINT}/${socketId}?token=${accessToken}`);
  
-    //this.socket = new WebSocket(`${this.WS_ENDPOINT}/${groupId.toString()}?token=${accessToken}`);
-    //this.socket = new WebSocket(`${this.WS_ENDPOINT}/${groupId.toString()}`);
     this.socket.onopen = event => {
       console.log('opened ws');
     };
@@ -31,22 +30,27 @@ export class ChatService {
       console.log('closed ws');
     };
     this.socket.onmessage = event => {
-      console.log('on message');
-      const message = JSON.parse(event.data);
-      const messageDto : MessageDto = {
-        payload: message,
-        senderId: message.Client
+      console.log('on message, event:');
+      console.log(event);
+      const mssgData = JSON.parse(event.data.trim());
+
+      if (mssgData.Client){
+        const messageDto: MessageDto  = {
+          payload: mssgData,
+          senderId: mssgData.Client
+        }   
+        this.messageListener.emit(messageDto);
       }
-        
-      this.listener.emit(messageDto);
-      // this.listener.emit({
-      //   id: -1,
-      //   content: _.get(message.data, 'body', ''),
-      //   createdAt: new Date(),
-      //   sender: null,
-      //   groupId: _.get(message.data, 'groupId', -1),
-      //   children: null
-      // });
+      else {
+        console.log(mssgData.split(/\r\n|\r|\n/));
+        const messageDtos: Array<MessageDto> = mssgData.split(/\r\n|\r|\n/).map(message => {         
+          return {
+            payload: message,
+            senderId: message.Client
+          }   
+        });
+        this.chatHistoryListener.emit(messageDtos);
+      }         
     };
 
     this.socket.onerror = event => {
@@ -58,8 +62,12 @@ export class ChatService {
     this.socket.close();
   }
 
-  public getEventListener(): EventEmitter<any> {
-    return this.listener;
+  public getChatEventListener(): EventEmitter<any> {
+    return this.messageListener;
+  }
+
+  public getChatHistoryListener(): EventEmitter<any> {
+    return this.chatHistoryListener;
   }
 
   public sendMessage(message: string, groupId: number, socketId: string): void {
@@ -73,6 +81,18 @@ export class ChatService {
       groupId: groupId
     };
 
+    this.socket.send(JSON.stringify(payload));
+  }
+
+  public sendGroupChatHistoryRequest(groupId: number, socketId: string): void {
+    const payload: MessagePayload = {
+      data: {
+        'groupId' : groupId,
+        'body' : '',
+        "socketId": socketId
+      },
+      type: WsEvent.SUBCRIBE_GROUP,
+    }
     this.socket.send(JSON.stringify(payload));
   }
 }

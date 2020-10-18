@@ -1,0 +1,97 @@
+<ng-template #messageTemplateRef1 let-message="message">
+  <nz-comment [nzAuthor]="message.title"
+              [nzDatetime]="formatDistanceTime(message.createdAt)"
+              style="width: 40vw">
+    <nz-avatar nz-comment-avatar nzIcon="user"
+               [nzSrc]="message?.sender?.avatar">
+    </nz-avatar>
+
+    <nz-comment-content>
+      <p>{{ message.content }}</p>
+    </nz-comment-content>
+
+    <nz-comment-action>Trả lời</nz-comment-action>
+
+    <ng-container *ngIf="message.children && message.children.length">
+      <ng-template ngFor let-child [ngForOf]="message.children">
+        <ng-template [ngTemplateOutlet]="messageTemplateRef"
+                     [ngTemplateOutletContext]="{ message: child }">
+        </ng-template>
+      </ng-template>
+    </ng-container>
+  </nz-comment>
+</ng-template>
+
+<ng-template #messageTemplateRef let-comment="comment">
+  <container-element [ngSwitch]="comment.sender.userId === currentUser.userId" [style]="{'padding': '0px', 'margin': '0px'}">
+    <nz-comment *ngSwitchCase="true" [style]="{'text-align': 'right', 'padding': '0px 0px', 'margin': '0px'}" class="my-comment">
+      <nz-comment-content class="rcorners2">
+        <p>{{ comment.content }}</p>
+      </nz-comment-content>
+    </nz-comment>
+
+    <nz-comment *ngSwitchDefault  
+    [nzAuthor]="getFirstname(comment.sender)" [style]="{'padding': '0px 0px', 'margin': '0px'}" class="my-comment">
+    <!-- <nz-avatar nz-comment-avatar nzIcon="user" [nzSrc]="comment.avatar"></nz-avatar>          [style]="comment?.avatar ? '' : 'background-color: ' + getColor(member?.userId)" 
+                         [nzSrc]="member?.avatar" -->
+    <nz-avatar nz-comment-avatar [nzText]="getFirstname(comment.sender)" nzIcon="user"></nz-avatar>
+    <nz-comment-content class="rcorners1">
+      <p>{{ comment.content }}</p>
+    </nz-comment-content>
+    <nz-comment-action>
+      <i nz-tooltip nzTitle="Like" nz-icon nzType="like" [nzTheme]="likes > 0 ? 'twotone' : 'outline'" (click)="like()"></i>
+      <span class="count like">{{ likes }}</span>
+    </nz-comment-action>
+    <nz-comment-action>
+      <i nz-tooltip nzTitle="Dislike" nz-icon nzType="dislike" [nzTheme]="dislikes > 0 ? 'twotone' : 'outline'" (click)="dislike()"></i>
+      <span class="count dislike">{{ dislikes }}</span>
+    </nz-comment-action>
+    <nz-comment-action>Trả lời</nz-comment-action> 
+    <ng-container *ngIf="comment.children && comment.children.length">
+      <ng-template ngFor let-child [ngForOf]="comment.children">
+        <ng-template [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ comment: child }"> </ng-template>
+      </ng-template>
+    </ng-container>
+  </nz-comment>
+  </container-element>
+</ng-template>
+
+<nz-row>
+  <nz-col class="message-container" nzSpan="24">
+    <!-- <div class="message-content" *ngFor="let message of messages">
+      <ng-template [ngTemplateOutlet]="messageTemplateRef"
+                   [ngTemplateOutletContext]="{ message: message }">
+      </ng-template>
+    </div> -->
+    <div class="message-content">
+      <nz-list *ngIf="data.length" [nzDataSource]="historyMessages" [nzRenderItem]="item" [nzItemLayout]="'horizontal'"  [style]="{'padding': '5px', 'margin-right': '0px'}">
+        <ng-template #item let-item>  
+          <ng-template [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ comment: item}"> </ng-template>
+        </ng-template>
+      </nz-list>
+    </div>
+  </nz-col>
+
+  <nz-col class="message-input-container" nzSpan="24">
+    <form nz-form [formGroup]="formGroup" (ngSubmit)="onSubmit()" autocomplete="off">
+      <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large">
+        <input type="text" nz-input name="message" id="message" formControlName="message"
+               placeholder="Nhập tin nhắn ..."/>
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <nz-space>
+          <nz-space-item>
+            <a nz-button nzType="link">
+              <i nz-icon nzType="link" nzTheme="outline"></i>
+            </a>
+          </nz-space-item>
+          <nz-space-item>
+            <a nz-button nzType="link">
+              <i nz-icon nzType="send" nzTheme="outline"></i>
+            </a>
+          </nz-space-item>
+        </nz-space>
+      </ng-template>
+    </form>
+  </nz-col>
+</nz-row>

@@ -4,6 +4,7 @@ import {NzResizeEvent} from 'ng-zorro-antd/resizable';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../service/collector/user.service';
 import {User} from '../../model/user.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-chat-page',
@@ -24,7 +25,6 @@ export class ChatPageComponent implements OnInit {
               private userService: UserService) {
     this.route.queryParams
       .subscribe(params => {
-        console.log(params);
       });
 
     this.userService.getUserInfo()

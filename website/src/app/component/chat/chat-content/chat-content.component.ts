@@ -1,14 +1,15 @@
-import {AfterViewChecked, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {Group} from '../../../model/group.model';
-import {Message} from '../../../model/message.model';
-import {MessageDto} from '../../../model/messageDto.model'
-import {formatDistance} from 'date-fns';
-import {StorageService} from '../../../service/common/storage.service';
-import {User} from '../../../model/user.model';
-import {ChatService} from '../../../service/ws/chat.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import { AfterViewChecked, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Group } from '../../../model/group.model';
+import { Message } from '../../../model/message.model';
+import { MessageDto } from '../../../model/messageDto.model'
+import { formatDistance } from 'date-fns';
+import { StorageService } from '../../../service/common/storage.service';
+import { User } from '../../../model/user.model';
+import { ChatService } from '../../../service/ws/chat.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as _ from 'lodash';
 import { GroupService } from 'src/app/service/collector/group.service';
+import { WsEvent } from 'src/app/const/ws.event';
 
 @Component({
   selector: 'app-chat-content',
@@ -25,8 +26,8 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
   public currentUser: User;
 
   /*mock data for users*/
-  public patient1User: User = new User ('34', 'Hoang', 'Hong', 'Hoang Thi Hong', null, 'patient', 'username', null, null, null);
-  public patientUnknown: User = new User ('45', 'Anonymous', 'Patient', 'Hoang Thi Hong', null, 'patient', 'username', null, null, null);
+  public patient1User: User = new User('34', 'Hoang', 'Hong', 'Hoang Thi Hong', null, 'patient', 'username', null, null, null);
+  public patientUnknown: User = new User('45', 'Anonymous', 'Patient', 'Hoang Thi Hong', null, 'patient', 'username', null, null, null);
   public data = [{
     author: 'Chi Phan',
     avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
@@ -49,14 +50,14 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       groupId: 22,
       sender: this.patient1User,
       content:
-      'I have an enquiry about my current health condition...',
+        'I have an enquiry about my current health condition...',
       createdAt: new Date(),
       children: [{
         id: 3,
         groupId: 22,
         sender: this.patient1User,
         content:
-        'also a sub comment',
+          'also a sub comment',
         createdAt: new Date(),
         children: []
       }]
@@ -66,7 +67,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       groupId: 22,
       sender: this.patient1User,
       content:
-      'I do not feel well',
+        'I do not feel well',
       createdAt: new Date(),
       children: []
     }
@@ -75,13 +76,13 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
   public user = {
     author: 'Han Solo',
     avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-  }; 
+  };
 
   submitting = false;
   /* end of mock data for users*/
   constructor(private storageService: StorageService,
-              private chatService: ChatService,
-              private groupService: GroupService) {
+    private chatService: ChatService,
+    private groupService: GroupService) {
     this.currentUser = this.storageService.userInfo;
     this.formGroup = this.createFormGroup();
     this.messages = new Array<Message>();
@@ -89,34 +90,40 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes) {
-      if (changes.groupSelected && this.groupSelected ) {
+      if (changes.groupSelected && this.groupSelected) {
         this.chatService.initWebSocket(this.currentUser.socketId);
+
+       
 
         //get list of group members
         this.groupService.getAllMemberOfGroup(this.groupSelected.id).subscribe((users: Array<User>) => {
           this.groupSelected.members = users;
+
+           //get history chat
+          this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
         })
 
-        //get list of group messages
-        this.chatService.getEventListener()
+        this.chatService.getChatEventListener()
           .subscribe((messageDto: MessageDto) => {
-            const message: Message = {
-              id: -1,
-              content: _.get(messageDto.payload.data, 'body', ''),
-              createdAt: new Date(),
-              sender: this.getUserById(this.groupSelected, messageDto.senderId),
-              groupId: _.get(messageDto.payload.data, 'groupId', -1),
-              children: null
-            }
+            if (messageDto.payload.type.trim() === WsEvent.SEND_TEXT) { 
+              const message: Message = this.getMessage(this.groupSelected, messageDto);
 
-            if (!message.sender){
-              message.sender = this.patientUnknown;
+              if (message.sender.userId !== this.currentUser.userId) {
+                this.historyMessages = [...this.historyMessages, message];
+              }      
             }
-
-            if (message.sender.userId !== this.currentUser.userId){
-              this.historyMessages = [...this.historyMessages, message];
+            else {
+              console.log('not yet supported type ');
             }
           });
+
+          //todo: seperate 2 methods, return boolean 
+        this.chatService.getChatHistoryListener().subscribe((messageDtos: Array<MessageDto>) => {
+          const pastMessages: Array<Message> = messageDtos.map((messageDto: MessageDto) => {
+            return this.getMessage(this.groupSelected, messageDto);
+          })
+          this.historyMessages = pastMessages;
+        });
       }
     }
   }
@@ -133,18 +140,17 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
     if (this.formGroup.valid) {
       const rawValue = this.formGroup.getRawValue();
       const message = _.get(rawValue, 'message', '');
-      //todo: parse to Message
       this.chatService.sendMessage(message, this.groupSelected.id, this.currentUser.socketId);
-      this.formGroup.patchValue({message: ''});
+      this.formGroup.patchValue({ message: '' });
 
       this.mockupUISendMessage(message, this.groupSelected.id);
-    }    
+    }
   }
 
   private mockupUISendMessage(message: string, groupId: number): void {
     this.submitting = true;
     const content = message;
-    
+
     setTimeout(() => {
       this.submitting = false;
       this.data = [
@@ -163,23 +169,23 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
     }, 500);
 
     setTimeout(() => {
-    this.historyMessages = [
-      ...this.historyMessages,
-      {
-        id: 1,
-        groupId: groupId,
-        sender: this.currentUser,
-        content: content,
-        createdAt: new Date(),
-        children: [],
-      }
-    ].map(e => {
-      return {
-        ...e,
-      };
-    });
-  }, 500);
-
+      this.historyMessages = [
+        ...this.historyMessages,
+        {
+          id: 1,
+          groupId: groupId,
+          sender: this.currentUser,
+          content: content,
+          createdAt: new Date(),
+          children: [],
+        }
+      ].map(e => {
+        return {
+          ...e,
+        };
+      });
+    }, 500);
+      this.scrollToBottom();
   }
 
   formatDistanceTime(date: Date = new Date()): string {
@@ -197,9 +203,20 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       message: new FormControl('', [Validators.required])
     });
   }
-
-  public getFirstname(user: User): string {
-    return user.firstName;
+  
+  private getMessage(group: Group, messageDto: MessageDto): Message {
+    const message: Message = {
+      id: -1,
+      content: _.get(messageDto.payload.data, 'body', ''),
+      createdAt: new Date(),
+      sender: this.getUserById(group, messageDto.senderId),
+      groupId: _.get(messageDto.payload.data, 'groupId', -1),
+      children: null
+    }
+    if (!message.sender) {
+      message.sender = this.patientUnknown;
+    }
+    return message;
   }
 
   private getUserById(group: Group, senderId: string): User {

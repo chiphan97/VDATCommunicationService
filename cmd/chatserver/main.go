@@ -2,23 +2,23 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net"
+	"net/http"
+	"os"
+	"path/filepath"
+	"time"
+
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	httpSwagger "github.com/swaggo/http-swagger"
 	_ "gitlab.com/vdat/mcsvc/chat/docs"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
-	"log"
-	"net"
-	"net/http"
-	"os"
-	_ "path"
-	"path/filepath"
-	"time"
 )
 
 // spaHandler implements the http.Handler interface, so we can use it
@@ -87,8 +87,8 @@ func main() {
 	r := mux.NewRouter()
 
 	// Handler web app
-	spa := spaHandler{staticPath: "public", indexPath: "index.html"}
-	r.PathPrefix("/").Handler(spa)
+	//spa := spaHandler{staticPath: "public", indexPath: "index.html"}
+	//r.PathPrefix("/").Handler(spa)
 
 	//r.HandleFunc("/chat/{idgroup}",auth.AuthenMiddleJWT(dchat.ChatHandlr))
 	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
