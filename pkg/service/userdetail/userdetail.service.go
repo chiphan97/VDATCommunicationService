@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var globalToken string = connect()
@@ -218,14 +219,17 @@ func GetListFromUserId(listUser []string) []Dto {
 			dto := value.ConvertUserToDto()
 			userDtos = append(userDtos, dto)
 		} else {
+
 			req, err := http.NewRequest("GET", urlHost+listUser[i], nil)
 			req.Header.Add("Authorization", bearer)
 			// Send req using http Client
-			client := &http.Client{}
+			client := http.Client{
+				Timeout: 5 * time.Second,
+			}
 			resp, err := client.Do(req)
-
 			if err != nil {
 				log.Println("Error on response.\n[ERRO] -", err)
+				return nil
 			}
 			body, _ := ioutil.ReadAll(resp.Body)
 
