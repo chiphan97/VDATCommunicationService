@@ -202,12 +202,13 @@ func GetListFromUserId(listUser []string) []Dto {
 	//token := connect()
 	var bearer = "Bearer " + globalToken
 	var userDtos []Dto
+
+	fmt.Println("danh sách id người dùng")
 	for i, _ := range listUser {
 		fmt.Println(listUser[i])
 
 		value, ok := listUserGlobal[listUser[i]]
 		if ok == true {
-			fmt.Println(value)
 			detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
 			if detail == (UserDetail{}) {
 				value.Role = ""
@@ -230,7 +231,6 @@ func GetListFromUserId(listUser []string) []Dto {
 
 			var user User
 			json.Unmarshal(body, &user)
-			fmt.Println(user)
 			if !(user == (User{})) {
 				listUserGlobal[listUser[i]] = user
 
@@ -243,7 +243,7 @@ func GetListFromUserId(listUser []string) []Dto {
 				dto := user.ConvertUserToDto()
 				userDtos = append(userDtos, dto)
 			} else {
-				fmt.Println("Rong")
+				fmt.Printf("-- user có id: %s ko tồn tại (ko add vào danh sách trả về)\n", listUser[i])
 			}
 		}
 	}
