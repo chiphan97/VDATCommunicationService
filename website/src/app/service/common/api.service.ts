@@ -8,7 +8,7 @@ import {StorageConst} from '../../const/storage.const';
 })
 export class ApiService {
 
-  private DEFAULT_TIMEOUT = 5000;
+  private DEFAULT_TIMEOUT = 10000;
   private TOKEN_KEY = StorageConst.KC_ACCESS_TOKEN;
   private readonly isBrowser: boolean;
 

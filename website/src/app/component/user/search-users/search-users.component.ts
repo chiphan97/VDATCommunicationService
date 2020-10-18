@@ -41,6 +41,7 @@ export class SearchUsersComponent implements OnInit {
   }
 
   public onSelectUser(user: User): void {
+    console.log(user);
     if (!!this.usersSelected.find(iter => iter.userId === user.userId)) {
       _.remove(this.usersSelected, iter => iter.userId === user.userId);
     } else {

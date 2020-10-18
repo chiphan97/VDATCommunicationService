@@ -1,7 +1,7 @@
 import {AfterViewChecked, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {Group} from '../../../model/group.model';
 import {Message} from '../../../model/message.model';
-import {MessageDto} from '../../../model/messageDto.model'
+import {MessageDto} from '../../../model/messageDto.model';
 import {formatDistance} from 'date-fns';
 import {StorageService} from '../../../service/common/storage.service';
 import {User} from '../../../model/user.model';
@@ -92,12 +92,12 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       if (changes.groupSelected && this.groupSelected ) {
         this.chatService.initWebSocket(this.currentUser.socketId);
 
-        //get list of group members
+        // get list of group members
         this.groupService.getAllMemberOfGroup(this.groupSelected.id).subscribe((users: Array<User>) => {
           this.groupSelected.members = users;
-        })
+        });
 
-        //get list of group messages
+        // get list of group messages
         this.chatService.getEventListener()
           .subscribe((messageDto: MessageDto) => {
             const message: Message = {
@@ -107,7 +107,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
               sender: this.getUserById(this.groupSelected, messageDto.senderId),
               groupId: _.get(messageDto.payload.data, 'groupId', -1),
               children: null
-            }
+            };
 
             if (!message.sender){
               message.sender = this.patientUnknown;
@@ -133,7 +133,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
     if (this.formGroup.valid) {
       const rawValue = this.formGroup.getRawValue();
       const message = _.get(rawValue, 'message', '');
-      //todo: parse to Message
+      // todo: parse to Message
       this.chatService.sendMessage(message, this.groupSelected.id, this.currentUser.socketId);
       this.formGroup.patchValue({message: ''});
 
@@ -167,9 +167,9 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       ...this.historyMessages,
       {
         id: 1,
-        groupId: groupId,
+        groupId,
         sender: this.currentUser,
-        content: content,
+        content,
         createdAt: new Date(),
         children: [],
       }
