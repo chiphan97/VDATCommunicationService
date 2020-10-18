@@ -16,6 +16,11 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
           -ldflags='-w -s -extldflags "-static"' -a \
           -o /go/bin/chatserver ./cmd/chatserver
 
+## Build migration
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+          -ldflags='-w -s -extldflags "-static"' -a \
+          -o /go/bin/migration ./migration
+
 ## BUILD ANGULAR WEBAPP
 FROM node:12-alpine AS angular-build
 WORKDIR /usr/src/app
@@ -28,5 +33,6 @@ RUN npm run build:prod
 FROM gcr.io/distroless/base-debian10
 WORKDIR /go/src/app
 COPY --from=build /go/bin/chatserver ./
+COPY --from=build /go/bin/migration ./
 COPY --from=angular-build /usr/src/app/dist ./public
-CMD ["./chatserver"]
+CMD ["./migration", "&&", "./chatserver"]

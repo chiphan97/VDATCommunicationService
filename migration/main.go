@@ -5,10 +5,17 @@ import (
 	"database/sql"
 	_ "github.com/lib/pq"
 	"log"
+	"os"
 )
 
+var conn = `postgres://postgres:postgres@localhost:5432?sslmode=disable`
+
 func main() {
-	conn := `postgres://postgres:postgres@localhost:5432?sslmode=disable`
+	connectionStr := os.Getenv("DATABASE_URL")
+	if len(connectionStr) > 0 {
+		conn = connectionStr
+	}
+
 	statement := `SELECT 1 from pg_database WHERE datname='dchat'`
 	db, err := sql.Open("postgres", conn)
 	rows, err := db.Query(statement)
