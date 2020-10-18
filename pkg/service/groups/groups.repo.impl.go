@@ -72,6 +72,8 @@ func (g *RepoImpl) GetGroupByOwnerAndUserAndTypeOne(owner string, user string) (
 		}
 		groups = append(groups, group)
 	}
+	defer rows.Close()
+
 	return groups, nil
 }
 func (g *RepoImpl) GetGroupByUser(user string) ([]Groups, error) {
@@ -104,6 +106,7 @@ func (g *RepoImpl) GetGroupByUser(user string) ([]Groups, error) {
 		}
 		groups = append(groups, group)
 	}
+	defer rows.Close()
 	return groups, nil
 }
 func (g *RepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]Groups, error) {
@@ -138,6 +141,7 @@ func (g *RepoImpl) GetGroupByPrivateAndUser(private bool, user string) ([]Groups
 		}
 		groups = append(groups, group)
 	}
+	defer rows.Close()
 	return groups, nil
 }
 func (g *RepoImpl) GetGroupByType(typeGroup string, user string) ([]Groups, error) {
@@ -169,6 +173,7 @@ func (g *RepoImpl) GetGroupByType(typeGroup string, user string) ([]Groups, erro
 		}
 		groups = append(groups, group)
 	}
+	defer rows.Close()
 	return groups, nil
 }
 func (g *RepoImpl) GetOwnerByGroupAndOwner(owner string, groupId int) (bool, error) {
@@ -180,6 +185,7 @@ func (g *RepoImpl) GetOwnerByGroupAndOwner(owner string, groupId int) (bool, err
 	if rows.Next() {
 		return true, nil
 	}
+	defer rows.Close()
 	return false, nil
 }
 func (g *RepoImpl) AddGroupType(group Groups) (Groups, error) {
@@ -217,6 +223,7 @@ func (g *RepoImpl) AddGroupType(group Groups) (Groups, error) {
 			return group, err
 		}
 	}
+	defer rows.Close()
 	return group, nil
 }
 func (g *RepoImpl) UpdateGroup(group Groups) (Groups, error) {
@@ -245,6 +252,7 @@ func (g *RepoImpl) UpdateGroup(group Groups) (Groups, error) {
 			return newgroup, err
 		}
 	}
+	defer rows.Close()
 	return newgroup, nil
 }
 func (g *RepoImpl) DeleteGroup(idGourp int) error {
@@ -274,6 +282,7 @@ func (g *RepoImpl) AddGroupUser(users []string, idgroup int) error {
 			if err != nil {
 				return err
 			}
+			rows.Close()
 		}
 
 	}
@@ -309,6 +318,7 @@ func (g *RepoImpl) GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, err
 		}
 		users = append(users, user)
 	}
+	defer rows.Close()
 	return users, nil
 }
 func (g *RepoImpl) GetListUserOnlineAndOfflineByGroup(idGroup int) (map[string][]userdetail.UserDetail, error) {
@@ -333,7 +343,7 @@ select  u.user_id,u.role from userdetail as u inner join userInGroup as ug on u.
 		}
 		userOnlines = append(userOnlines, user)
 	}
-
+	rows.Close()
 	statement = `with uOn as (with userInGroup as (select distinct u.user_id from groups_users as gu inner join online as u on gu.user_id = u.user_id where gu.id_group = $1)
              	select  u.user_id,u.role from userdetail as u inner join userInGroup as ug on u.user_id = ug.user_id)
 				select u2.user_id,u2.role from groups_users inner join userdetail u2 on groups_users.user_id = u2.user_id where groups_users.id_group = $1
@@ -357,6 +367,6 @@ select  u.user_id,u.role from userdetail as u inner join userInGroup as ug on u.
 
 	mapUsers[USERON] = userOnlines
 	mapUsers[USEROFF] = userOffline
-
+	defer rows.Close()
 	return mapUsers, nil
 }

@@ -19,7 +19,6 @@ var doc = `{
         "description": "{{.Description}}",
         "title": "{{.Title}}",
         "contact": {},
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -392,9 +391,125 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/message/{socketId}": {
+            "get": {
+                "description": "chat group by websocket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dchat"
+                ],
+                "summary": "Chat websocket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "socketId to know client",
+                        "name": "socketId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "token to be join chat",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    }
+                ]
+            },
+            "post": {
+                "description": "NOTE\nEvent For Send Message\n\n\"type\":\"subcribe_group\" - to open the group the person has joined\n\n\"type\":\"send_text\" - to send text from current client to users in that group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dchat"
+                ],
+                "summary": "Chat websocket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "socketId to know client",
+                        "name": "socketId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "token to be join chat",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Works based on field event type (read NOTE)",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dchat.Message"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dchat.Message"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "dchat.Data": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string",
+                    "example": "tin nhan moi"
+                },
+                "groupId": {
+                    "type": "integer"
+                },
+                "sender": {
+                    "type": "string",
+                    "example": "null"
+                },
+                "socketId": {
+                    "type": "string",
+                    "example": "9999"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "null"
+                }
+            }
+        },
+        "dchat.Message": {
+            "type": "object",
+            "properties": {
+                "client": {
+                    "type": "string"
+                },
+                "data": {
+                    "$ref": "#/definitions/dchat.Data"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "send_text"
+                }
+            }
+        },
         "groups.Dto": {
             "type": "object",
             "properties": {

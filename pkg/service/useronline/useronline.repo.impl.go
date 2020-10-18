@@ -28,7 +28,7 @@ func (u *RepoImpl) GetListUSerOnline() ([]UserOnline, error) {
 		}
 		users = append(users, user)
 	}
-
+	defer rows.Close()
 	return users, nil
 }
 
@@ -68,5 +68,6 @@ func (u *RepoImpl) GetUserOnlineBySocketIdAndHostId(socketID string, hostname st
 			return user, err
 		}
 	}
+	rows.Close()
 	return user, nil
 }

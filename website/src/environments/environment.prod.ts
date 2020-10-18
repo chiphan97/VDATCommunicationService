@@ -8,7 +8,8 @@ export const environment = {
     endpoint: {
       groups: '/api/v1/groups',
       user: '/api/v1/user',
-      chat: '/chat'
+      chat: '/chat',
+      message: '/message'
     }
   },
   keycloak: {
