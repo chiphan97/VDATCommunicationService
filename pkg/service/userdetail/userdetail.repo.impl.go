@@ -32,6 +32,7 @@ func (u *RepoImpl) GetListUser() ([]UserDetail, error) {
 		}
 		details = append(details, user)
 	}
+	defer rows.Close()
 	return details, nil
 }
 func (u *RepoImpl) AddUserDetail(detail UserDetail) error {
@@ -60,6 +61,7 @@ func (u *RepoImpl) GetUserDetailById(id string) (UserDetail, error) {
 			return detail, err
 		}
 	}
+	defer rows.Close()
 	return detail, nil
 }
 func (u *RepoImpl) UpdateUserDetail(detail UserDetail) error {

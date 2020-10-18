@@ -37,6 +37,7 @@ export class ChatPageComponent implements OnInit {
 
   onEventChange(isChange: boolean) {
     this.changed = isChange;
+    this.groupSelected = null;
   }
 
   onGroupChange(group: Group) {

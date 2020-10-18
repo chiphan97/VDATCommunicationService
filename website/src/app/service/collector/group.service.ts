@@ -119,6 +119,18 @@ export class GroupService {
     });
   }
 
+  public memberOutGroup(groupId: number): Observable<boolean> {
+    return new Observable<boolean>(observer => {
+      const url = `${this.API_ENDPOINT}/${groupId}/members`;
+      this.apiService.delete(url)
+        .then(res => {
+          observer.next(_.get(res.data, 'result', false));
+        })
+        .catch(err => observer.error(err))
+        .finally(() => observer.complete());
+    });
+  }
+
   public getCurrentSelectedGroup(): string{
     return this.currentSelectedGroupId;
   }
