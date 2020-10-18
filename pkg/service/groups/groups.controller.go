@@ -385,6 +385,12 @@ func GetListUserOnlineByGroupApi(w http.ResponseWriter, r *http.Request) {
 	}
 	users, err := GetListUserOnlineAndOffByGroupService(groupID)
 
+	if users == nil {
+		w.WriteHeader(http.StatusGatewayTimeout)
+		utils.ResponseErr(w, http.StatusGatewayTimeout)
+		return
+	}
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		utils.ResponseErr(w, http.StatusInternalServerError)
