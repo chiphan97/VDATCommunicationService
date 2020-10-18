@@ -3,6 +3,7 @@ import {environment} from '../../../environments/environment';
 import {KeycloakInstance, KeycloakLoginOptions, KeycloakInitOptions, KeycloakLogoutOptions} from 'keycloak-js';
 import {StorageConst} from '../../const/storage.const';
 import * as Keycloak from 'keycloak-js';
+import {Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class KeycloakService {
   public keycloak: KeycloakInstance;
   private readonly isBrowser: boolean;
   public authenticated: boolean;
+  public tokenListener: Subject<string> = new Subject<string>();
 
   public initKeycloak(): void {
     this.keycloak = Keycloak(this.getKeycloakConfig());
@@ -40,20 +42,11 @@ export class KeycloakService {
           return;
         }
 
-        this.accessToken = this.keycloak.token;
-        this.refreshToken = this.keycloak.refreshToken;
-        this.idToken = this.keycloak.idToken;
-
-        this.keycloak.loadUserInfo()
-          .then(userInfo => {
-            this.userInfo = userInfo;
-          });
-
         setTimeout(() => {
-          this.keycloak.updateToken(60)
+          this.keycloak.updateToken(600)
             .then((refreshed) => {
               if (refreshed) {
-                console.log('Token refreshed' + refreshed);
+                console.log('Token refreshed ' + refreshed);
               } else {
                 console.warn('Token not refreshed, valid for '
                   + Math.round(this.keycloak.tokenParsed.exp + this.keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
@@ -69,25 +62,36 @@ export class KeycloakService {
         console.error('Authenticated Failed');
       });
 
-    this.keycloak.onAuthSuccess = () => {
-      this.accessToken = this.keycloak.token;
-      this.refreshToken = this.keycloak.refreshToken;
-      this.idToken = this.keycloak.idToken;
-    };
+    this.keycloak.onReady = this.onReady;
+    this.keycloak.onAuthSuccess = this.onAuthSuccess;
+    this.keycloak.onAuthError = this.onAuthError;
+    this.keycloak.onAuthRefreshSuccess = this.onAuthSuccess;
+    this.keycloak.onAuthRefreshError = this.onAuthError;
+  }
 
-    this.keycloak.onAuthError = () => {
-      this.clearAuth();
-    };
+  public onReady = (authenticated: boolean) => {
+    if (authenticated) {
+      this.onAuthSuccess();
+    }
+  }
 
-    this.keycloak.onAuthRefreshSuccess = () => {
-      this.accessToken = this.keycloak.token;
-      this.refreshToken = this.keycloak.refreshToken;
-      this.idToken = this.keycloak.idToken;
-    };
+  public onAuthSuccess = () => {
+    this.accessToken = this.keycloak.token;
+    this.refreshToken = this.keycloak.refreshToken;
+    this.idToken = this.keycloak.idToken;
 
-    this.keycloak.onAuthRefreshError = () => {
-      this.clearAuth();
-    };
+    this.keycloak.loadUserInfo()
+      .then(userInfo => {
+        this.userInfo = userInfo;
+      });
+
+    this.tokenListener.next(this.accessToken);
+  }
+
+  public onAuthError = () => {
+    this.clearAuth();
+
+    this.tokenListener.next(null);
   }
 
   public login(options?: KeycloakLoginOptions): void {

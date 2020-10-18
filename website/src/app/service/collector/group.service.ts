@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 export class GroupService {
 
   private readonly API_ENDPOINT = `${environment.service.apiUrl}${environment.service.endpoint.groups}`;
-
+  private currentSelectedGroupId: string;
   constructor(private apiService: ApiService) { }
 
   // region GROUP
@@ -117,6 +117,10 @@ export class GroupService {
         .catch(err => observer.error(err))
         .finally(() => observer.complete());
     });
+  }
+
+  public getCurrentSelectedGroup(): string{
+    return this.currentSelectedGroupId;
   }
   // endregion
 }

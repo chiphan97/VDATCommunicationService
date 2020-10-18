@@ -3,8 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB
@@ -12,7 +13,7 @@ var DB *sql.DB
 func Connect() *sql.DB {
 	conn := "postgres://postgres:postgres@localhost:5432/dchat?sslmode=disable"
 
-	connectionStr := os.Getenv("DB_ADDRESS")
+	connectionStr := os.Getenv("DATABASE_URL")
 	if len(connectionStr) > 0 {
 		conn = connectionStr
 	}

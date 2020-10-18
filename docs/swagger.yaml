@@ -1,4 +1,31 @@
 definitions:
+  dchat.Data:
+    properties:
+      body:
+        example: tin nhan moi
+        type: string
+      groupId:
+        type: integer
+      sender:
+        example: "null"
+        type: string
+      socketId:
+        example: "9999"
+        type: string
+      status:
+        example: "null"
+        type: string
+    type: object
+  dchat.Message:
+    properties:
+      client:
+        type: string
+      data:
+        $ref: '#/definitions/dchat.Data'
+      type:
+        example: send_text
+        type: string
+    type: object
   groups.Dto:
     properties:
       description:
@@ -54,7 +81,6 @@ definitions:
     type: object
 info:
   contact: {}
-  license: {}
 paths:
   /api/v1/groups:
     get:
@@ -299,4 +325,62 @@ paths:
       summary: user logout
       tags:
       - user
+  /message/{socketId}:
+    get:
+      consumes:
+      - application/json
+      description: chat group by websocket
+      parameters:
+      - description: socketId to know client
+        in: path
+        name: socketId
+        required: true
+        type: string
+      - description: token to be join chat
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      summary: Chat websocket
+      tags:
+      - dchat
+    post:
+      consumes:
+      - application/json
+      description: |-
+        NOTE
+        Event For Send Message
+
+        "type":"subcribe_group" - to open the group the person has joined
+
+        "type":"send_text" - to send text from current client to users in that group
+      parameters:
+      - description: socketId to know client
+        in: path
+        name: socketId
+        required: true
+        type: string
+      - description: token to be join chat
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Works based on field event type (read NOTE)
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/dchat.Message'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dchat.Message'
+      summary: Chat websocket
+      tags:
+      - dchat
 swagger: "2.0"

@@ -13,7 +13,7 @@ import (
 
 var (
 	tableName = "migrations"
-	location  = "script/"
+	location  = "migration/script/"
 )
 
 type Migrator struct {
@@ -63,6 +63,7 @@ func (m Migrator) migrate() error {
 	for {
 		path := strconv.Itoa(i) + "_description.sql"
 		loPath := location + path
+		print(Exists(loPath))
 		if Exists(loPath) {
 			m.Statements, err = ReadLines(loPath)
 			if err != nil {
