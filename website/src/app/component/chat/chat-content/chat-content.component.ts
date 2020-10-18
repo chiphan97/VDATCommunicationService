@@ -1,7 +1,7 @@
 import { AfterViewChecked, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Group } from '../../../model/group.model';
 import { Message } from '../../../model/message.model';
-import { MessageDto } from '../../../model/messageDto.model'
+import { MessageDto } from '../../../model/messageDto.model';
 import { formatDistance } from 'date-fns';
 import { StorageService } from '../../../service/common/storage.service';
 import { User } from '../../../model/user.model';
@@ -81,8 +81,8 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
   submitting = false;
   /* end of mock data for users*/
   constructor(private storageService: StorageService,
-    private chatService: ChatService,
-    private groupService: GroupService) {
+              private chatService: ChatService,
+              private groupService: GroupService) {
     this.currentUser = this.storageService.userInfo;
     this.formGroup = this.createFormGroup();
     this.messages = new Array<Message>();
@@ -93,35 +93,35 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       if (changes.groupSelected && this.groupSelected) {
         this.chatService.initWebSocket(this.currentUser.socketId);
 
-       
 
-        //get list of group members
+
+        // get list of group members
         this.groupService.getAllMemberOfGroup(this.groupSelected.id).subscribe((users: Array<User>) => {
           this.groupSelected.members = users;
 
-           //get history chat
+           // get history chat
           this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
-        })
+        });
 
         this.chatService.getChatEventListener()
           .subscribe((messageDto: MessageDto) => {
-            if (messageDto.payload.type.trim() === WsEvent.SEND_TEXT) { 
+            if (messageDto.payload.type.trim() === WsEvent.SEND_TEXT) {
               const message: Message = this.getMessage(this.groupSelected, messageDto);
 
               if (message.sender.userId !== this.currentUser.userId) {
                 this.historyMessages = [...this.historyMessages, message];
-              }      
+              }
             }
             else {
               console.log('not yet supported type ');
             }
           });
 
-          //todo: seperate 2 methods, return boolean 
+          // todo: seperate 2 methods, return boolean
         this.chatService.getChatHistoryListener().subscribe((messageDtos: Array<MessageDto>) => {
           const pastMessages: Array<Message> = messageDtos.map((messageDto: MessageDto) => {
             return this.getMessage(this.groupSelected, messageDto);
-          })
+          });
           this.historyMessages = pastMessages;
         });
       }
@@ -173,9 +173,9 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
         ...this.historyMessages,
         {
           id: 1,
-          groupId: groupId,
+          groupId,
           sender: this.currentUser,
-          content: content,
+          content,
           createdAt: new Date(),
           children: [],
         }
@@ -185,7 +185,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
         };
       });
     }, 500);
-      this.scrollToBottom();
+    this.scrollToBottom();
   }
 
   formatDistanceTime(date: Date = new Date()): string {
@@ -203,7 +203,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       message: new FormControl('', [Validators.required])
     });
   }
-  
+
   private getMessage(group: Group, messageDto: MessageDto): Message {
     const message: Message = {
       id: -1,
@@ -212,7 +212,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       sender: this.getUserById(group, messageDto.senderId),
       groupId: _.get(messageDto.payload.data, 'groupId', -1),
       children: null
-    }
+    };
     if (!message.sender) {
       message.sender = this.patientUnknown;
     }
