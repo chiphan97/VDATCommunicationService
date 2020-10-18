@@ -26,8 +26,6 @@ type Migrator struct {
 func (m Migrator) migrate() error {
 	i := 0
 
-	if 
-
 	s := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id serial, name varchar(255),date timestamp default now(),PRIMARY KEY (id));`, m.TableName)
 	tx, err := m.Db.BeginTx(m.ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
