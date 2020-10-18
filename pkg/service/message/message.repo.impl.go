@@ -33,7 +33,7 @@ func (mess *MessageRepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, erro
 		}
 		messages = append(messages, m)
 	}
-
+	defer rows.Close()
 	return messages, nil
 }
 func (mess *MessageRepoImpl) InsertMessage(message Messages) error {

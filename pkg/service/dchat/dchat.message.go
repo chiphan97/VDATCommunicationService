@@ -12,3 +12,6 @@ type Data struct {
 	SocketID string `json:"socketId" example:"9999"`
 	Status   string `example:"null"`
 }
+type ResponseHistoryMess struct {
+	Historys []Message `json:"historys"`
+}

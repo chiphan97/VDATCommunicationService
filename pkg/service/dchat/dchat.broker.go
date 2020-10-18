@@ -102,7 +102,6 @@ func (b *Broker) Run() {
 			fmt.Printf("%+v, %d\n", message, len(b.MessageRepository))
 
 		case message := <-b.Outbound:
-			fmt.Println("Send")
 			switch message.TypeEvent {
 			case SEND:
 				userOnAndOFfs, err := groups.GetListUserOnlineAndOffByGroupService(message.Data.GroupId)
@@ -131,21 +130,45 @@ func (b *Broker) Run() {
 				}
 			case SUBCRIBE:
 				history, err := message_service.LoadMessageHistoryService(message.Data.GroupId)
+
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
 				}
+				arrayResponse := make([]Message, 0)
+				for _, h := range history {
+					newMess := Message{
+						TypeEvent: message.TypeEvent,
+						Data: Data{
+							GroupId: message.Data.GroupId,
+							Body:    h.Content,
+							Sender:  h.SubjectSender,
+						},
+					}
+					arrayResponse = append(arrayResponse, newMess)
+				}
+				fmt.Println(arrayResponse)
+				response := ResponseHistoryMess{Historys: arrayResponse}
+				fmt.Println(response.Historys)
 				for client := range b.Clients {
 					if client.UserId == message.Client && client.SocketId == message.Data.SocketID {
-						for _, h := range history {
-							message.Data.Body = h.Content
-							message.Data.Sender = h.SubjectSender
-							msg, _ := json.Marshal(message)
-							select {
-							case client.Send <- msg:
-							default:
-								close(client.Send)
-								delete(b.Clients, client)
-							}
+						//for _, h := range history {
+						//	message.Data.Body = h.Content
+						//	message.Data.Sender = h.SubjectSender
+						//	msg, _ := json.Marshal(message)
+						//	select {
+						//	case client.Send <- msg:
+						//	default:
+						//		close(client.Send)
+						//		delete(b.Clients, client)
+						//	}
+						//}
+						msg, _ := json.Marshal(response)
+
+						select {
+						case client.Send <- msg:
+						default:
+							close(client.Send)
+							delete(b.Clients, client)
 						}
 
 					}
