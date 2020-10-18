@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	message_service "gitlab.com/vdat/mcsvc/chat/pkg/service/message"
-
 	"log"
 	"time"
 )
@@ -63,19 +62,20 @@ func (b *Broker) Run() {
 	// finally, marked message that sent to Outbound channel as "done"
 	go func() {
 		for {
+
 			for idx, m := range b.MessageRepository {
 				if m.Data.Status != "done" {
 					select {
 					case b.Outbound <- *m:
 					default:
-						close(b.Outbound)
+						//close(b.Outbound)
 					}
 
 					b.MessageRepository[idx].Data.Status = "done"
 				}
 			}
-
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(1 * time.Millisecond)
+			//time.Sleep(200 * time.Millisecond)
 		}
 	}()
 
