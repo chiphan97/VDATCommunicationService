@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ApiService} from '../common/api.service';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
@@ -16,7 +16,8 @@ export class UserService {
 
   constructor(private apiService: ApiService,
               private storageService: StorageService,
-              private keycloakService: KeycloakService) { }
+              private keycloakService: KeycloakService) {
+  }
 
   public getUserInfo(): Observable<User> {
     return new Observable<User>(observer => {

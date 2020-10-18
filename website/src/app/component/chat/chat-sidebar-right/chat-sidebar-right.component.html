@@ -28,7 +28,7 @@
               <nz-list-item-meta [nzAvatar]="avatar"
                                  [nzTitle]="titleTmp">
                 <ng-template #avatar>
-                  <nz-avatar [nzText]="member?.firstName"
+                  <nz-avatar nzIcon="user"
                              [style]="member?.avatar ? '' : 'background-color: ' + getColor(member?.userId)"
                              [nzSrc]="member?.avatar"></nz-avatar>
                 </ng-template>
