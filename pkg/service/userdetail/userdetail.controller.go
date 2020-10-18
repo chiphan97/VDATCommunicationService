@@ -77,6 +77,7 @@ func CheckUserDetailApi(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.ResponseErr(w, http.StatusInternalServerError)
 		w.WriteHeader(http.StatusInternalServerError)
+		log.Fatalln(err)
 		return
 	}
 
