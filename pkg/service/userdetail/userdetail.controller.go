@@ -34,25 +34,28 @@ func RegisterUserApi(r *mux.Router) {
 // @Success 200 {array} Dto
 // @Router /api/v1/user [get]
 func GetUserApi(w http.ResponseWriter, r *http.Request) {
-	cors.SetupResponse(&w, r)
-	fil := r.URL.Query()["keyword"]
-	page := r.URL.Query()["page"]
-	pageSize := r.URL.Query()["pageSize"]
+	//cors.SetupResponse(&w, r)
+	//fil := r.URL.Query()["keyword"]
+	//page := r.URL.Query()["page"]
+	//pageSize := r.URL.Query()["pageSize"]
+	//
+	//if page[0] == "" {
+	//	page[0] = "1"
+	//}
+	//if pageSize[0] == "" {
+	//	pageSize[0] = "10"
+	//}
+	//listUser := getData(fil[0], page[0], pageSize[0])
+	//if len(listUser) == 0 {
+	//	json.NewEncoder(w).Encode(listUser)
+	//} else {
+	//	w.Write(utils.ResponseWithByte(listUser))
+	//}
+	//a:= []string{"b9018379-8394-4205-9104-2d85d69943db","b767e36c-e4a9-4d8c-886c-181427ec4e2c","f51ae747-9ab1-446b-bc66-62c49ec307df","0bc77b02-ecba-43f5-82b0-f846f721984b","cefcb41e-bf21-4bc0-97d2-4981ab946a2b","9ea08917-bbfc-49f3-bc8f-158f745f0ff7","8ba1f1ca-b72f-4cbc-8562-36e174376694","5614020d-5322-4c9d-b1ce-80297b05f83f","c98f749f-f45c-485c-aba2-256f1bdc7440","425feec0-dd5c-4ce7-b1a7-9ac0223a9b14","9d1cf0d5-8d35-40d5-9cfa-29b0f1a90f15","718f2d59-d841-4f84-845b-b697c8af4a76","91c153ad-2fcf-4a53-9766-c4f4564d94d6","ffb63922-8f99-46ba-9648-d07f3ac14757","d84ffce0-f9a6-43ef-953f-b56debc6bc6f","5a56852a-ba09-4e5f-aae1-4769301688c3","c772f9bf-4128-4898-bdbe-f7edf5fa5b3c"}
+	a := []string{"a", "b767e36c-e4a9-4d8c-886c-181427ec4e2c", "f51ae747-9ab1-446b-bc66-62c49ec307df", "0bc77b02-ecba-43f5-82b0-f846f721984b"}
 
-	if page[0] == "" {
-		page[0] = "1"
-	}
-	if pageSize[0] == "" {
-		pageSize[0] = "10"
-	}
-	listUser := getData(fil[0], page[0], pageSize[0])
-	if len(listUser) == 0 {
-		json.NewEncoder(w).Encode(listUser)
-	} else {
-		w.Write(utils.ResponseWithByte(listUser))
-	}
-	//a:= []string{"b9018379-8394-4205-9104-2d85d69943db","b767e36c-e4a9-4d8c-886c-181427ec4e2c"}
-	//getListFromUserId(a)
+	user := GetListFromUserId(a)
+	w.Write(utils.ResponseWithByte(user))
 }
 
 // checkUser godoc

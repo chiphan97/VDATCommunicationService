@@ -207,6 +207,7 @@ func GetListFromUserId(listUser []string) []Dto {
 
 		value, ok := listUserGlobal[listUser[i]]
 		if ok == true {
+			fmt.Println(value)
 			detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
 			if detail == (UserDetail{}) {
 				value.Role = ""
@@ -221,25 +222,30 @@ func GetListFromUserId(listUser []string) []Dto {
 			// Send req using http Client
 			client := &http.Client{}
 			resp, err := client.Do(req)
+
 			if err != nil {
 				log.Println("Error on response.\n[ERRO] -", err)
 			}
 			body, _ := ioutil.ReadAll(resp.Body)
+
 			var user User
 			json.Unmarshal(body, &user)
+			fmt.Println(user)
+			if !(user == (User{})) {
+				listUserGlobal[listUser[i]] = user
 
-			listUserGlobal[listUser[i]] = user
-
-			detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
-			if detail == (UserDetail{}) {
-				user.Role = ""
+				detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
+				if detail == (UserDetail{}) {
+					user.Role = ""
+				} else {
+					user.Role = detail.Role
+				}
+				dto := user.ConvertUserToDto()
+				userDtos = append(userDtos, dto)
 			} else {
-				user.Role = detail.Role
+				fmt.Println("Rong")
 			}
-			dto := user.ConvertUserToDto()
-			userDtos = append(userDtos, dto)
 		}
-
 	}
 	//fmt.Println(userDtos)
 	fmt.Println(len(userDtos))
