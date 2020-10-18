@@ -86,7 +86,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	//r.HandleFunc("/chat/{idgroup}",auth.AuthenMiddleJWT(dchat.ChatHandlr))
+	r.HandleFunc("/healthcheck", auth.AuthenMiddleJWT(dchat.ChatHandlr))
 	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
 	// handler
 	r.HandleFunc("/message/{socketId}", dchat.ChatHandlr).Methods(http.MethodGet, http.MethodOptions)
