@@ -88,12 +88,12 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
   onConfirmDelete() {
     this.modal.confirm({
       nzTitle: 'Cảnh báo',
-      nzContent: 'Bạn có muốn xóa cuộc hội thoại này không ?',
+      nzContent: `Bạn có muốn ${this.isOwner ? 'xóa' : 'rời khỏi'} cuộc hội thoại này không ?`,
       nzAutofocus: 'cancel',
       nzOkType: 'danger',
       nzOkText: 'Đồng ý',
       nzCancelText: 'Hủy',
-      nzOnOk: () => this.deleteGroup(this.groupSelected.id)
+      nzOnOk: () => this.isOwner ? this.deleteGroup(this.groupSelected.id) : this.outGroup(this.groupSelected.id)
     });
   }
 
@@ -122,6 +122,27 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
             this.messageService.success('Đã xóa cuộc hôi thoại.');
           } else {
             this.messageService.error('Không thể xóa cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
+          }
+        }, error => {
+          this.messageService.remove(messId);
+          this.messageService.error(error);
+        },
+        () => this.messageService.remove(messId));
+  }
+
+  private outGroup(groupId: number): void {
+    const messId = this.messageService.loading('Đang rời khỏi cuộc hội thoại của này ...',
+      {nzDuration: 0}).messageId;
+
+    this.groupService.memberOutGroup(groupId)
+      .subscribe(result => {
+          this.messageService.remove(messId);
+
+          if (result) {
+            this.changeGroup.emit(true);
+            this.messageService.success('Đã rời khỏi cuộc hôi thoại.');
+          } else {
+            this.messageService.error('Không thể rời khỏi cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
           }
         }, error => {
           this.messageService.remove(messId);
