@@ -11,6 +11,7 @@ type Repo interface {
 	GetOwnerByGroupAndOwner(owner string, groupId int) (bool, error)
 	GetListUserByGroup(idGourp int) ([]userdetail.UserDetail, error)
 	GetListUserOnlineAndOfflineByGroup(idGroup int) (map[string][]userdetail.UserDetail, error)
+	GetGroupPublicByDoctor(user string) ([]Groups, error)
 	AddGroupType(group Groups) (Groups, error)
 	AddGroupUser(users []string, idgroup int) error
 	UpdateGroup(group Groups) (Groups, error)
