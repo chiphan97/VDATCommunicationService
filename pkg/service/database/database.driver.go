@@ -11,12 +11,13 @@ import (
 var DB *sql.DB
 
 func Connect() *sql.DB {
-	conn := "postgres://postgres:postgres@localhost:5432/dchat?sslmode=disable"
+	conn := "postgres://postgres:postgres@localhost:5432/dchat"
 
 	connectionStr := os.Getenv("DATABASE_URL")
 	if len(connectionStr) > 0 {
 		conn = connectionStr
 	}
+	conn = conn + "?sslmode=disable"
 
 	db, err := sql.Open("postgres", conn)
 

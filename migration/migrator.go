@@ -13,7 +13,7 @@ import (
 
 var (
 	tableName = "migrations"
-	location  = "migration/script/"
+	location  = "migration/"
 )
 
 type Migrator struct {

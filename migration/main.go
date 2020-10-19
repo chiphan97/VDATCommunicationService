@@ -5,10 +5,18 @@ import (
 	"database/sql"
 	_ "github.com/lib/pq"
 	"log"
+	"os"
 )
 
+var conn = `postgres://postgres:postgres@localhost:5432`
+
 func main() {
-	conn := `postgres://postgres:postgres@localhost:5432?sslmode=disable`
+	connectionStr := os.Getenv("DATABASE_URL")
+	if len(connectionStr) > 0 {
+		conn = connectionStr
+	}
+	conn = conn + "?sslmode=disable"
+
 	statement := `SELECT 1 from pg_database WHERE datname='dchat'`
 	db, err := sql.Open("postgres", conn)
 	rows, err := db.Query(statement)
@@ -16,8 +24,9 @@ func main() {
 		log.Println(err)
 		return
 	}
+
 	if rows.Next() {
-		conn := `postgres://postgres:postgres@localhost:5432/dchat?sslmode=disable`
+		//conn := `postgres://postgres:postgres@localhost:5432/dchat?sslmode=disable`
 		db, err = sql.Open("postgres", conn)
 		if err != nil {
 			log.Printf("Fail to openDB: %v \n", err)
@@ -31,7 +40,7 @@ func main() {
 			return
 		}
 		log.Println(statement)
-		conn = `postgres://postgres:postgres@localhost:5432/dchat?sslmode=disable`
+		//conn = `postgres://postgres:postgres@localhost:5432/dchat?sslmode=disable`
 		db, err = sql.Open("postgres", conn)
 		if err != nil {
 			log.Printf("Fail to openDB: %v \n", err)
