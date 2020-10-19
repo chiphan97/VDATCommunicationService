@@ -71,7 +71,7 @@ func GetGroupByDoctorService(user string) ([]Dto, error) {
 	if err != nil {
 		return nil, err
 	}
-	pubGroups, err := NewRepoImpl(database.DB).GetGroupByType(MANY, user)
+	pubGroups, err := NewRepoImpl(database.DB).GetGroupPublicByDoctor(user)
 	if err != nil {
 		return nil, err
 	}
