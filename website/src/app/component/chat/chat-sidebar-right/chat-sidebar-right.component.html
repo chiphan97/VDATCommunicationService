@@ -35,7 +35,7 @@
                            style="background-color: white; padding-left: 0"
                            [nzActive]="memberCollapse">
           <nz-list nzItemLayout="horizontal" [nzLoading]="loading">
-            <nz-list-header style="text-align: center; padding-top: 0">
+            <nz-list-header *ngIf="isOwner" style="text-align: center; padding-top: 0">
               <a nz-button nzType="link" style="width: 100%" (click)="onOpenModalAddMember()">Thêm thành viên</a>
             </nz-list-header>
 
@@ -61,8 +61,9 @@
               </nz-list-item-meta>
 
               <ul nz-list-item-actions>
-                <nz-list-item-action *ngIf="!checkOwner(member.userId)">
+                <nz-list-item-action *ngIf="isOwner && !checkOwner(member.userId)">
                   <a nz-button nzType="link" nzDanger
+                     nz-popover nzPopoverPlacement="topRight" nzPopoverContent="Xóa thành viên"
                      nz-popconfirm
                      [nzPopconfirmTitle]="'Bạn có chắc muốn xóa ' + member?.fullName + ' ra khỏi nhóm không ?'"
                      nzOkText="Đồng ý" nzCancelText="Hủy" (nzOnConfirm)="onDeleteUser(member?.userId)">
@@ -71,8 +72,16 @@
                 </nz-list-item-action>
 
                 <nz-list-item-action *ngIf="checkOwner(member.userId)">
-                  <a nz-button nzType="link">
+                  <a nz-button nzType="link"
+                     nz-popover nzPopoverPlacement="topRight" nzPopoverContent="Trưởng nhóm">
                     <i nz-icon nzType="crown" nzTheme="outline"></i>
+                  </a>
+                </nz-list-item-action>
+
+                <nz-list-item-action>
+                  <a nz-button nzType="link"
+                     nz-popover nzPopoverPlacement="topRight" nzPopoverContent="Nhắn tin">
+                    <i nz-icon nzType="comment" nzTheme="outline"></i>
                   </a>
                 </nz-list-item-action>
               </ul>
@@ -95,8 +104,8 @@
             <a nz-button nzType="link" style="width: 100%"
                (click)="onConfirmDelete()">
               <nz-list-item>
-                <span *ngIf="isOwner" nz-typography nzType="danger">Xóa hội thoại</span>
-                <span *ngIf="!isOwner" nz-typography nzType="danger">Rời khỏi nhóm</span>
+                <span *ngIf="isOwner" nz-typography nzType="danger">Xóa {{isGroup(groupSelected.type) ? 'nhóm' : 'hội thoại'}}</span>
+                <span *ngIf="!isOwner && isGroup(groupSelected.type)" nz-typography nzType="danger">Rời khỏi nhóm</span>
               </nz-list-item>
             </a>
           </nz-list>

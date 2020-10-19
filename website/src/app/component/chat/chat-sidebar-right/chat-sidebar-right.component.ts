@@ -27,7 +27,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
 
   public members: Array<User>;
   public isOwner: boolean;
-  public colors: {[userId: string]: string} = {};
+  public colors: { [userId: string]: string } = {};
 
   width = 256;
   id = -1;
@@ -79,6 +79,63 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
     });
   }
 
+  public onConfirmDelete() {
+    this.modal.confirm({
+      nzTitle: 'Cảnh báo',
+      nzContent: `Bạn có muốn ${this.isOwner ? 'xóa' : 'rời khỏi'} cuộc hội thoại này không ?`,
+      nzAutofocus: 'cancel',
+      nzOkType: 'danger',
+      nzOkText: 'Đồng ý',
+      nzCancelText: 'Hủy',
+      nzOnOk: () => this.isOwner ? this.deleteGroup(this.groupSelected.id) : this.outGroup(this.groupSelected.id)
+    });
+  }
+
+  public onDeleteUser(userId: string) {
+    this.loading = true;
+
+    this.groupService.deleteMemberOfGroup(this.groupSelected.id, userId)
+      .subscribe(result => {
+          if (result) {
+            this.messageService.success('Đã xóa thành viên ra khỏi cuộc hội thoại.');
+            this.fetchingData();
+          } else {
+            this.messageService.error('Không thể xóa thành viên vào lúc này. Vui lòng thử lại sau');
+          }
+        }, error => {
+          this.messageService.error(error);
+          this.loading = false;
+        },
+        () => this.loading = false);
+  }
+
+  public onChangeGroupName(): void {
+    if (this.groupSelected.nameGroup === this.groupClone.nameGroup) {
+      return;
+    }
+
+    this.groupService.updateNameGroup(this.groupSelected.id, this.groupSelected.nameGroup)
+      .subscribe(group => {
+        if (group) {
+          this.changeGroup.emit(true);
+          this.messageService.success('Cập nhật thông tin nhóm thành công');
+        } else {
+          this.messageService.error('Không thể cập nhật thông tin nhóm vào lúc này. Vui lòng thử lại sau');
+        }
+      }, error => {
+        this.messageService.error(error);
+      });
+  }
+
+  public getColor(userId: string): string {
+    return this.colors[userId];
+  }
+
+  public checkOwner(userId: string): boolean {
+    const userInfo = this.storageService.userInfo;
+    return _.get(userInfo, 'userId', '') === userId;
+  }
+
   private fetchingData() {
     this.loading = true;
     if (this.groupSelected && this.groupSelected.id) {
@@ -92,22 +149,6 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
           this.isMemberChange.emit(this.isMember);
         }, error => this.members = []);
     }
-  }
-
-  onConfirmDelete() {
-    this.modal.confirm({
-      nzTitle: 'Cảnh báo',
-      nzContent: `Bạn có muốn ${this.isOwner ? 'xóa' : 'rời khỏi'} cuộc hội thoại này không ?`,
-      nzAutofocus: 'cancel',
-      nzOkType: 'danger',
-      nzOkText: 'Đồng ý',
-      nzCancelText: 'Hủy',
-      nzOnOk: () => this.isOwner ? this.deleteGroup(this.groupSelected.id) : this.outGroup(this.groupSelected.id)
-    });
-  }
-
-  public getColor(userId: string): string {
-    return this.colors[userId];
   }
 
   private generateColorForUserAvatar(): void {
@@ -158,46 +199,5 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
           this.messageService.error(error);
         },
         () => this.messageService.remove(messId));
-  }
-
-  onDeleteUser(userId: string) {
-    this.loading = true;
-
-    this.groupService.deleteMemberOfGroup(this.groupSelected.id, userId)
-      .subscribe(result => {
-          if (result) {
-            this.messageService.success('Đã xóa thành viên ra khỏi cuộc hội thoại.');
-            this.fetchingData();
-          } else {
-            this.messageService.error('Không thể xóa thành viên vào lúc này. Vui lòng thử lại sau');
-          }
-        }, error => {
-          this.messageService.error(error);
-          this.loading = false;
-        },
-        () => this.loading = false);
-  }
-
-  checkOwner(userId: string): boolean {
-    const userInfo = this.storageService.userInfo;
-    return _.get(userInfo, 'userId', '') === userId;
-  }
-
-  public onChangeGroupName(): void {
-    if (this.groupSelected.nameGroup === this.groupClone.nameGroup) {
-      return;
-    }
-
-    this.groupService.updateNameGroup(this.groupSelected.id, this.groupSelected.nameGroup)
-      .subscribe(group => {
-        if (group) {
-          this.changeGroup.emit(true);
-          this.messageService.success('Cập nhật thông tin nhóm thành công');
-        } else {
-          this.messageService.error('Không thể cập nhật thông tin nhóm vào lúc này. Vui lòng thử lại sau');
-        }
-      }, error => {
-        this.messageService.error(error);
-      });
   }
 }

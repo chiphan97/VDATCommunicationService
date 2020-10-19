@@ -18,6 +18,7 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
   @Input() changed: boolean;
   @Input() currentUser: User;
   @Input() groupSelected: Group;
+  @Input() isMember: boolean;
   @Output() groupSelectedChange = new EventEmitter<Group>();
 
   public loading = false;
