@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var globalToken string = connect()
@@ -202,6 +203,8 @@ func GetListFromUserId(listUser []string) []Dto {
 	//token := connect()
 	var bearer = "Bearer " + globalToken
 	var userDtos []Dto
+
+	fmt.Println("danh sách id người dùng")
 	for i, _ := range listUser {
 		fmt.Println(listUser[i])
 
@@ -216,30 +219,37 @@ func GetListFromUserId(listUser []string) []Dto {
 			dto := value.ConvertUserToDto()
 			userDtos = append(userDtos, dto)
 		} else {
+
 			req, err := http.NewRequest("GET", urlHost+listUser[i], nil)
 			req.Header.Add("Authorization", bearer)
 			// Send req using http Client
-			client := &http.Client{}
+			client := http.Client{
+				Timeout: 5 * time.Second,
+			}
 			resp, err := client.Do(req)
 			if err != nil {
 				log.Println("Error on response.\n[ERRO] -", err)
+				return nil
 			}
 			body, _ := ioutil.ReadAll(resp.Body)
+
 			var user User
 			json.Unmarshal(body, &user)
+			if !(user == (User{})) {
+				listUserGlobal[listUser[i]] = user
 
-			listUserGlobal[listUser[i]] = user
-
-			detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
-			if detail == (UserDetail{}) {
-				user.Role = ""
+				detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
+				if detail == (UserDetail{}) {
+					user.Role = ""
+				} else {
+					user.Role = detail.Role
+				}
+				dto := user.ConvertUserToDto()
+				userDtos = append(userDtos, dto)
 			} else {
-				user.Role = detail.Role
+				fmt.Printf("-- user có id: %s ko tồn tại (ko add vào danh sách trả về)\n", listUser[i])
 			}
-			dto := user.ConvertUserToDto()
-			userDtos = append(userDtos, dto)
 		}
-
 	}
 	//fmt.Println(userDtos)
 	fmt.Println(len(userDtos))
