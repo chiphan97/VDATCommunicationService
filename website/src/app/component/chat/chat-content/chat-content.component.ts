@@ -1,15 +1,15 @@
-import { AfterViewChecked, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { Group } from '../../../model/group.model';
-import { Message } from '../../../model/message.model';
-import { MessageDto } from '../../../model/messageDto.model'
-import { formatDistance } from 'date-fns';
-import { StorageService } from '../../../service/common/storage.service';
-import { User } from '../../../model/user.model';
-import { ChatService } from '../../../service/ws/chat.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {AfterViewChecked, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Group} from '../../../model/group.model';
+import {Message} from '../../../model/message.model';
+import {MessageDto} from '../../../model/messageDto.model';
+import {formatDistance} from 'date-fns';
+import {StorageService} from '../../../service/common/storage.service';
+import {User} from '../../../model/user.model';
+import {ChatService} from '../../../service/ws/chat.service';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash';
-import { GroupService } from 'src/app/service/collector/group.service';
-import { WsEvent } from 'src/app/const/ws.event';
+import {GroupService} from 'src/app/service/collector/group.service';
+import {WsEvent} from 'src/app/const/ws.event';
 
 @Component({
   selector: 'app-chat-content',
@@ -19,6 +19,8 @@ import { WsEvent } from 'src/app/const/ws.event';
 export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges {
 
   @Input() groupSelected: Group;
+  @Input() isMember: boolean;
+
   @ViewChild('message-content') private myScrollContainer: ElementRef;
 
   public messages: Array<Message>;
@@ -28,10 +30,11 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
   public historyMessages: Message[] = [];
 
   submitting = false;
+
   /* end of mock data for users*/
   constructor(private storageService: StorageService,
-    private chatService: ChatService,
-    private groupService: GroupService) {
+              private chatService: ChatService,
+              private groupService: GroupService) {
     this.currentUser = this.storageService.userInfo;
     this.formGroup = this.createFormGroup();
     this.messages = new Array<Message>();
@@ -42,12 +45,12 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       if (changes.groupSelected && this.groupSelected) {
         this.chatService.initWebSocket(this.currentUser.socketId);
 
-        //get list of group members
+        // get list of group members
         this.groupService.getAllMemberOfGroup(this.groupSelected.id).subscribe((users: Array<User>) => {
           this.groupSelected.members = users;
-          //get history chat
+          // get history chat
           this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
-        })
+        });
 
         this.chatService.getChatEventListener()
           .subscribe((messageDto: MessageDto) => {
@@ -57,17 +60,16 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
               if (message.sender.userId !== this.currentUser.userId) {
                 this.historyMessages = [...this.historyMessages, message];
               }
-            }
-            else {
+            } else {
               console.log('not yet supported type ');
             }
           });
 
-        //todo: seperate 2 methods, return boolean 
+        // todo: seperate 2 methods, return boolean
         this.chatService.getChatHistoryListener().subscribe((messageDtos: Array<MessageDto>) => {
           const pastMessages: Array<Message> = messageDtos.map((messageDto: MessageDto) => {
             return this.getMessage(this.groupSelected, messageDto);
-          })
+          });
           this.historyMessages = pastMessages;
           this.scrollToBottom();
         });
@@ -88,7 +90,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       const rawValue = this.formGroup.getRawValue();
       const message = _.get(rawValue, 'message', '');
       this.chatService.sendMessage(message, this.groupSelected.id, this.currentUser.socketId);
-      this.formGroup.patchValue({ message: '' });
+      this.formGroup.patchValue({message: ''});
 
       this.mockupUISendMessage(message, this.groupSelected.id);
     }
@@ -102,7 +104,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
         ...this.historyMessages,
         {
           id: 1,
-          groupId: groupId,
+          groupId,
           sender: this.currentUser,
           content: message,
           createdAt: new Date(),
@@ -124,7 +126,8 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
   scrollToBottom(): void {
     try {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-    } catch (err) { }
+    } catch (err) {
+    }
   }
 
   private createFormGroup(): FormGroup {
@@ -141,7 +144,7 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
       sender: this.groupService.getUserById(group, messageDto.senderId),
       groupId: _.get(messageDto.payload.data, 'groupId', -1),
       children: null
-    }
+    };
     if (!message.sender) {
       message.sender = this.patientUnknown;
     }

@@ -19,6 +19,7 @@ export class ChatPageComponent implements OnInit {
   public changed: boolean;
   public colResize = 5;
   public currentUser: User;
+  public isMember: boolean;
   private idResize = -1;
 
   constructor(private route: ActivatedRoute,

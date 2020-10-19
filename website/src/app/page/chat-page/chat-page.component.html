@@ -22,7 +22,7 @@
                          [(collapseSidebar)]="collapseSidebar"></app-chat-header>
       </nz-col>
       <nz-col nzSpan="24">
-        <app-chat-content [groupSelected]="groupSelected"></app-chat-content>
+        <app-chat-content [groupSelected]="groupSelected" [isMember]="isMember"></app-chat-content>
       </nz-col>
     </nz-row>
 
@@ -31,8 +31,11 @@
     </nz-result>
   </div>
 
-  <div nz-col *ngIf="groupSelected" [nzSpan]="collapseSidebar ? 5 : 0">
+  <div nz-col *ngIf="groupSelected"
+       [nzSpan]="collapseSidebar ? 5 : 0">
     <app-chat-sidebar-right [groupSelected]="groupSelected"
+                            [currentUser]="currentUser"
+                            [(isMember)]="isMember"
                             (changeGroup)="onEventChange($event)"></app-chat-sidebar-right>
   </div>
 </div>

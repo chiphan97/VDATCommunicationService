@@ -7,14 +7,29 @@
       </nz-avatar>
 
       <h4 style="margin: 5px 0 0 28px;"
-          nz-typography nzEditable
+          nz-typography [nzEditable]="isOwner"
           [(nzContent)]="groupSelected.nameGroup"
           (nzContentChange)="onChangeGroupName()">
         {{groupSelected?.nameGroup}}
       </h4>
     </nz-col>
 
-    <nz-col nzSpan="24">
+    <nz-col nzSpan="24"
+            class="text-center"
+            style="padding-top: 32px"
+            *ngIf="!isMember">
+      <nz-space nzDirection="vertical" [nzSize]="16">
+        <nz-space-item>
+          <span nz-typography
+                nzType="secondary">Bạn chưa là thành viên của nhóm</span>
+        </nz-space-item>
+        <nz-space-item>
+          <button nz-button nzType="primary">Xin vào nhóm</button>
+        </nz-space-item>
+      </nz-space>
+    </nz-col>
+
+    <nz-col nzSpan="24" *ngIf="isMember">
       <nz-collapse [nzBordered]="false" nzExpandIconPosition="right">
         <nz-collapse-panel nzHeader="Thành viên"
                            style="background-color: white; padding-left: 0"
@@ -71,7 +86,7 @@
       </nz-collapse>
     </nz-col>
 
-    <nz-col nzSpan="24">
+    <nz-col nzSpan="24" *ngIf="isMember">
       <nz-collapse [nzBordered]="false" nzExpandIconPosition="right">
         <nz-collapse-panel nzHeader="Tùy chọn"
                            style="background-color: white; padding-left: 0"

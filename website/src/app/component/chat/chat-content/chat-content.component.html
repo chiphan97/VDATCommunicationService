@@ -1,8 +1,8 @@
-<nz-row>
+<nz-row *ngIf="isMember">
   <nz-col class="message-container" nzSpan="24">
-    <div class="message-content">      
+    <div class="message-content">
       <nz-list *ngIf="historyMessages.length" [nzDataSource]="historyMessages" [nzRenderItem]="item" [nzItemLayout]="'horizontal'"  [style]="{'padding': '5px'}">
-        <ng-template #item let-item>  
+        <ng-template #item let-item>
           <app-message [messageInput]="item" [currentUser]="currentUser"></app-message>
         </ng-template>
       </nz-list>
@@ -37,3 +37,10 @@
     </form>
   </nz-col>
 </nz-row>
+
+<nz-result nzStatus="403" *ngIf="!isMember"
+           nzSubTitle="Xin lỗi, bạn chưa là thành viên của nhóm">
+  <div nz-result-extra>
+    <button nz-button nzType="primary">Xin vào nhóm</button>
+  </div>
+</nz-result>

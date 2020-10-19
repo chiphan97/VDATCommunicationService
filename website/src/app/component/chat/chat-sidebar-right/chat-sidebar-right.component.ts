@@ -19,6 +19,12 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
 
   @Input() groupSelected: Group;
   @Output() changeGroup = new EventEmitter<boolean>();
+
+  @Input() isMember: boolean;
+  @Output() isMemberChange = new EventEmitter<boolean>();
+
+  @Input() currentUser: User;
+
   public members: Array<User>;
   public isOwner: boolean;
   public colors: {[userId: string]: string} = {};
@@ -81,6 +87,9 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
           this.members = members;
           this.loading = false;
           this.generateColorForUserAvatar();
+
+          this.isMember = !!members.find(member => member.userId === this.currentUser.userId);
+          this.isMemberChange.emit(this.isMember);
         }, error => this.members = []);
     }
   }
