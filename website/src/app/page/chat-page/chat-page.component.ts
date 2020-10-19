@@ -20,14 +20,12 @@ export class ChatPageComponent implements OnInit {
   public colResize = 5;
   public currentUser: User;
   public isMember: boolean;
+  public refreshGroup: boolean;
   private idResize = -1;
 
-  constructor(private route: ActivatedRoute,
-              private router: Router,
+  constructor(private router: Router,
               private userService: UserService) {
-    this.route.queryParams
-      .subscribe(params => {
-      });
+
 
     this.userService.getUserInfo()
       .subscribe(userInfo => this.currentUser = userInfo);

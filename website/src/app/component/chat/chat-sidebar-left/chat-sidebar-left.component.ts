@@ -7,6 +7,8 @@ import {KeycloakService} from '../../../service/auth/keycloak.service';
 import {GroupService} from '../../../service/collector/group.service';
 import {User} from '../../../model/user.model';
 import {Role} from '../../../const/role.const';
+import {ActivatedRoute} from '@angular/router';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-chat-sidebar-left',
@@ -19,15 +21,24 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
   @Input() currentUser: User;
   @Input() groupSelected: Group;
   @Input() isMember: boolean;
+
+  @Input() refreshGroup: boolean;
   @Output() groupSelectedChange = new EventEmitter<Group>();
 
   public loading = false;
   public groups: Array<Group>;
+  private currentGroupId: number;
 
-  constructor(private modalService: NzModalService,
+  constructor(private route: ActivatedRoute,
+              private modalService: NzModalService,
               private messageService: NzMessageService,
               private groupService: GroupService,
               private keycloakService: KeycloakService) {
+    this.route.params
+      .subscribe(params => {
+        this.currentGroupId = _.get(params, 'groupId', null);
+      });
+
     this.groups = new Array<Group>();
     this.groupSelected = null;
   }
@@ -39,10 +50,11 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
   public isOwner = (owner: string): boolean => this.currentUser && owner === this.currentUser.userId;
 
   ngOnInit(): void {
+    this.fetchingData();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.changed) {
+    if (changes.refreshGroup) {
       this.fetchingData();
     }
   }

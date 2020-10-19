@@ -80,7 +80,9 @@
 
                 <nz-list-item-action>
                   <a nz-button nzType="link"
-                     nz-popover nzPopoverPlacement="topRight" nzPopoverContent="Nhắn tin">
+                     *ngIf="isCurrentUser(member.userId)"
+                     nz-popover nzPopoverPlacement="topRight" nzPopoverContent="Nhắn tin"
+                     (click)="onCreateMessenger(member.userId)">
                     <i nz-icon nzType="comment" nzTheme="outline"></i>
                   </a>
                 </nz-list-item-action>
@@ -104,7 +106,8 @@
             <a nz-button nzType="link" style="width: 100%"
                (click)="onConfirmDelete()">
               <nz-list-item>
-                <span *ngIf="isOwner" nz-typography nzType="danger">Xóa {{isGroup(groupSelected.type) ? 'nhóm' : 'hội thoại'}}</span>
+                <span *ngIf="isOwner" nz-typography
+                      nzType="danger">Xóa {{isGroup(groupSelected.type) ? 'nhóm' : 'hội thoại'}}</span>
                 <span *ngIf="!isOwner && isGroup(groupSelected.type)" nz-typography nzType="danger">Rời khỏi nhóm</span>
               </nz-list-item>
             </a>

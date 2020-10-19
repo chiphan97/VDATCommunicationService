@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import {AddMemberGroupComponent} from '../../group/add-member-group/add-member-group.component';
 import {GenerateColorService} from '../../../service/common/generate-color.service';
 import {UserStatus} from '../../../const/user-status.enum';
+import {GroupPayload} from '../../../model/payload/group.payload';
 
 @Component({
   selector: 'app-chat-sidebar-right',
@@ -19,6 +20,9 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
 
   @Input() groupSelected: Group;
   @Output() changeGroup = new EventEmitter<boolean>();
+
+  @Input() refreshGroup: boolean;
+  @Output() refreshGroupChange = new EventEmitter<boolean>();
 
   @Input() isMember: boolean;
   @Output() isMemberChange = new EventEmitter<boolean>();
@@ -47,6 +51,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
 
   isGroup = (type) => type === GroupType.MANY;
   isOnline = (user: User) => user.status === UserStatus.ONLINE;
+  isCurrentUser = (userId: string) => this.currentUser.userId === userId;
 
   ngOnInit(): void {
   }
@@ -59,6 +64,23 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
       const userInfo = this.storageService.userInfo;
       this.isOwner = _.get(userInfo, 'userId', '') === this.groupSelected.owner;
     }
+  }
+
+  public onCreateMessenger(userId: string): void {
+    const groupPayload: GroupPayload = {
+      type: GroupType.ONE,
+      private: true,
+      users: [userId],
+      description: null,
+      nameGroup: null
+    };
+
+    this.groupService.createGroup(groupPayload)
+      .subscribe(group => {
+        if (group && group.id) {
+          this.refreshGroupChange.emit(true);
+        }
+      });
   }
 
   public onOpenModalAddMember(): void {
@@ -168,7 +190,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
           this.messageService.remove(messId);
 
           if (result) {
-            this.changeGroup.emit(true);
+            this.refreshGroupChange.emit(true);
             this.messageService.success('Đã xóa cuộc hôi thoại.');
           } else {
             this.messageService.error('Không thể xóa cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
@@ -189,7 +211,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
           this.messageService.remove(messId);
 
           if (result) {
-            this.changeGroup.emit(true);
+            this.refreshGroupChange.emit(true);
             this.messageService.success('Đã rời khỏi cuộc hôi thoại.');
           } else {
             this.messageService.error('Không thể rời khỏi cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
