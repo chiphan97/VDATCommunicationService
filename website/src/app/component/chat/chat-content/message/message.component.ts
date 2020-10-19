@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { User } from '../../../../model/user.model';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
+import { Message } from '../../../../model/message.model';
 
 @Component({
   selector: 'app-message',
@@ -11,15 +11,17 @@ export class MessageComponent implements OnInit {
 
   @Input() currentUser: User;
   @Input() messageInput: Message;
+
+  public user: User;
   public likes = 0;
   public dislikes = 0;
 
-  public myContext = {$implicit: 'World', message: this.messageInput};
+  public myContext = {message: this.messageInput};
 
   constructor() { }
 
   ngOnInit(): void {
-
+    this.user = this.currentUser;
   }
 
   public getFirstname(user: User): string {

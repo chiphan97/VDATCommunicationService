@@ -24,7 +24,7 @@ export class ChatHeaderComponent implements OnInit, OnChanges {
     }
   }
 
-  isGroup = (type) => type === GroupType.MANY;
+  isGroup = (type:GroupType) => type === GroupType.MANY;
 
   switchCollapseSidebar() {
     this.collapseSidebar = !this.collapseSidebar;

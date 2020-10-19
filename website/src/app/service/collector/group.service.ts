@@ -135,4 +135,7 @@ export class GroupService {
     return this.currentSelectedGroupId;
   }
   // endregion
+  public getUserById(group: Group, senderId: string): User {
+    return group.members.find(user => user.userId === senderId);
+  }
 }

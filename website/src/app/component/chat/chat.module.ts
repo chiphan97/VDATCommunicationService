@@ -19,12 +19,15 @@ import {NzResizableModule} from 'ng-zorro-antd/resizable';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NzSpaceModule} from 'ng-zorro-antd/space';
 import {GroupModule} from '../group/group.module';
+import {MessageComponent} from './chat-content/message/message.component';
+
 @NgModule({
   declarations: [
     ChatSidebarLeftComponent,
     ChatSidebarRightComponent,
     ChatContentComponent,
-    ChatHeaderComponent
+    ChatHeaderComponent,
+    MessageComponent
   ],
   exports: [
     ChatSidebarLeftComponent,
