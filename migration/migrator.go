@@ -95,7 +95,7 @@ func (m Migrator) migrate() error {
 			log.Println(s)
 			i++
 		} else {
-			log.Fatal("File not exist")
+			log.Println("File not exist")
 			m.Db.Close()
 			return nil
 		}

@@ -54,4 +54,6 @@ func main() {
 		Db:        db,
 	}
 	m.migrate()
+
+	return
 }
