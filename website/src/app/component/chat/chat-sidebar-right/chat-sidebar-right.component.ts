@@ -10,6 +10,7 @@ import {AddMemberGroupComponent} from '../../group/add-member-group/add-member-g
 import {GenerateColorService} from '../../../service/common/generate-color.service';
 import {UserStatus} from '../../../const/user-status.enum';
 import {GroupPayload} from '../../../model/payload/group.payload';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-chat-sidebar-right',
@@ -45,11 +46,12 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
               private messageService: NzMessageService,
               private groupService: GroupService,
               private storageService: StorageService,
-              private generateColorService: GenerateColorService) {
+              private generateColorService: GenerateColorService,
+              private router: Router) {
     this.members = new Array<User>();
   }
 
-  isGroup = (type) => type === GroupType.MANY;
+  isGroup = () => this.groupSelected.type === GroupType.MANY;
   isOnline = (user: User) => user.status === UserStatus.ONLINE;
   isCurrentUser = (userId: string) => this.currentUser.userId === userId;
 
@@ -61,8 +63,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
       this.groupClone = _.cloneDeep(this.groupSelected);
       this.fetchingData();
 
-      const userInfo = this.storageService.userInfo;
-      this.isOwner = _.get(userInfo, 'userId', '') === this.groupSelected.owner;
+      this.isOwner = this.currentUser.userId === this.groupSelected.owner;
     }
   }
 
@@ -79,6 +80,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
       .subscribe(group => {
         if (group && group.id) {
           this.refreshGroupChange.emit(true);
+          this.router.navigate(['messages', group.id]);
         }
       });
   }
@@ -159,8 +161,12 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
   }
 
   private fetchingData() {
-    this.loading = true;
-    if (this.groupSelected && this.groupSelected.id) {
+    if (!this.groupSelected || !this.groupSelected.id) {
+      return;
+    }
+
+    if (this.groupSelected.type === GroupType.MANY) {
+      this.loading = true;
       this.groupService.getAllMemberOfGroup(this.groupSelected.id)
         .subscribe(members => {
           this.members = members;
@@ -170,6 +176,8 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
           this.isMember = !!members.find(member => member.userId === this.currentUser.userId);
           this.isMemberChange.emit(this.isMember);
         }, error => this.members = []);
+    } else {
+      this.isMemberChange.emit(true);
     }
   }
 

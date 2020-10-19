@@ -10,6 +10,7 @@
     <nz-resize-handles [nzDirections]="['right']"></nz-resize-handles>
     <app-chat-sidebar-left [(groupSelected)]="groupSelected"
                            (groupSelectedChange)="onGroupChange($event)"
+                           [refreshGroup]="refreshGroup"
                            [changed]="changed"
                            [isMember]="isMember"
                            [currentUser]="currentUser"></app-chat-sidebar-left>

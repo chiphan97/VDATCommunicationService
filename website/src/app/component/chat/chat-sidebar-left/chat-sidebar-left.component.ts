@@ -37,6 +37,10 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
     this.route.params
       .subscribe(params => {
         this.currentGroupId = _.get(params, 'groupId', null);
+
+        if (!!this.currentGroupId) {
+          this.fetchingData();
+        }
       });
 
     this.groups = new Array<Group>();
@@ -65,10 +69,18 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
       .subscribe(groups => {
           this.groups = groups;
 
-          if (groups.length > 0 && !this.groupSelected) {
-            this.groupSelectedChange.emit(groups[0]);
+          if (groups.length > 0) {
+            const groupServe = this.groups.find(group => group.id === this.currentGroupId);
+            if (!!groupServe) {
+              this.groupSelectedChange.emit(groupServe);
+            } else if (!this.groupSelected) {
+              this.groupSelectedChange.emit(groups[0]);
+            }
           }
-        }, error => this.groups = [],
+        }, error => {
+          this.groups = [];
+          this.groupSelectedChange.emit(null);
+        },
         () => this.loading = false);
   }
 

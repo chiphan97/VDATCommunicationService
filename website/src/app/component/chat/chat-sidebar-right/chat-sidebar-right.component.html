@@ -3,11 +3,11 @@
     <nz-col nzSpan="23" class="text-center user-info">
       <nz-avatar nzIcon="team" style="background-color:#87d068;"
                  [nzSize]="128"
-                 [nzSrc]="isGroup(groupSelected?.type) ? '' : groupSelected?.thumbnail">
+                 [nzSrc]="isGroup() ? '' : groupSelected?.thumbnail">
       </nz-avatar>
 
       <h4 style="margin: 5px 0 0 28px;"
-          nz-typography [nzEditable]="isOwner"
+          nz-typography [nzEditable]="isOwner && isGroup()"
           [(nzContent)]="groupSelected.nameGroup"
           (nzContentChange)="onChangeGroupName()">
         {{groupSelected?.nameGroup}}
@@ -17,7 +17,7 @@
     <nz-col nzSpan="24"
             class="text-center"
             style="padding-top: 32px"
-            *ngIf="!isMember">
+            *ngIf="!isMember && isGroup()">
       <nz-space nzDirection="vertical" [nzSize]="16">
         <nz-space-item>
           <span nz-typography
@@ -29,7 +29,7 @@
       </nz-space>
     </nz-col>
 
-    <nz-col nzSpan="24" *ngIf="isMember">
+    <nz-col nzSpan="24" *ngIf="isMember && isGroup()">
       <nz-collapse [nzBordered]="false" nzExpandIconPosition="right">
         <nz-collapse-panel nzHeader="Thành viên"
                            style="background-color: white; padding-left: 0"
@@ -78,9 +78,8 @@
                   </a>
                 </nz-list-item-action>
 
-                <nz-list-item-action>
+                <nz-list-item-action *ngIf="!isCurrentUser(member.userId)">
                   <a nz-button nzType="link"
-                     *ngIf="isCurrentUser(member.userId)"
                      nz-popover nzPopoverPlacement="topRight" nzPopoverContent="Nhắn tin"
                      (click)="onCreateMessenger(member.userId)">
                     <i nz-icon nzType="comment" nzTheme="outline"></i>
@@ -107,8 +106,8 @@
                (click)="onConfirmDelete()">
               <nz-list-item>
                 <span *ngIf="isOwner" nz-typography
-                      nzType="danger">Xóa {{isGroup(groupSelected.type) ? 'nhóm' : 'hội thoại'}}</span>
-                <span *ngIf="!isOwner && isGroup(groupSelected.type)" nz-typography nzType="danger">Rời khỏi nhóm</span>
+                      nzType="danger">Xóa {{isGroup() ? 'nhóm' : 'hội thoại'}}</span>
+                <span *ngIf="!isOwner && isGroup()" nz-typography nzType="danger">Rời khỏi nhóm</span>
               </nz-list-item>
             </a>
           </nz-list>

@@ -25,8 +25,6 @@ export class ChatPageComponent implements OnInit {
 
   constructor(private router: Router,
               private userService: UserService) {
-
-
     this.userService.getUserInfo()
       .subscribe(userInfo => this.currentUser = userInfo);
   }
