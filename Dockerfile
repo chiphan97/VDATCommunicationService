@@ -34,7 +34,6 @@ FROM gcr.io/distroless/base-debian10
 WORKDIR /app
 COPY --from=build /go/bin/chatserver ./
 COPY --from=build /go/bin/migration ./
-COPY --from=build /go/bin/migration ./
-COPY --from=build /go/src/app/migration ./migration
+COPY --from=build /go/src/app/migration ./
 COPY --from=angular-build /usr/src/app/dist ./public
 CMD ["./migration", "&&", "./chatserver"]
