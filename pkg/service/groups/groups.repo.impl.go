@@ -188,6 +188,41 @@ func (g *RepoImpl) GetOwnerByGroupAndOwner(owner string, groupId int) (bool, err
 	defer rows.Close()
 	return false, nil
 }
+func (g *RepoImpl) GetGroupPublicByDoctor(user string) ([]Groups, error) {
+	groups := make([]Groups, 0)
+	statement := `	SELECT g.* FROM groups AS g where type = $1
+					EXCEPT 
+					SELECT g.* FROM groups AS g
+					INNER JOIN groups_users AS g_u
+					ON g.id_group = g_u.id_group
+					WHERE  g_u.user_id = $2
+					ORDER BY created_at DESC
+					`
+
+	rows, err := g.Db.Query(statement, MANY, user)
+	if err != nil {
+		return groups, err
+	}
+	for rows.Next() {
+		var group Groups
+		err = rows.Scan(&group.ID,
+			&group.UserCreate,
+			&group.Name,
+			&group.Type,
+			&group.Private,
+			&group.Thumbnail,
+			&group.Description,
+			&group.CreatedAt,
+			&group.UpdatedAt,
+			&group.DeletedAt)
+		if err != nil {
+			return groups, err
+		}
+		groups = append(groups, group)
+	}
+	defer rows.Close()
+	return groups, nil
+}
 func (g *RepoImpl) AddGroupType(group Groups) (Groups, error) {
 
 	statement := `INSERT INTO groups (owner_id,name ,type,private,thumbnail,description) VALUES ($1,$2,$3,$4,$5,$6)`

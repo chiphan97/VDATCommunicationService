@@ -14,7 +14,7 @@ export class Group {
   lastMessage: Message;
 
   historyMessages: Array<Message>;
-  members: Array<User>;
+  members: Array<User> = [];
 
 
   constructor(id: number, nameGroup: string, type: GroupType,

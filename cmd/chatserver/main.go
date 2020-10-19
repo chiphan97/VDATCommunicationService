@@ -97,8 +97,8 @@ func main() {
 	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 
 	// Handler web app
-	spa := spaHandler{staticPath: "public", indexPath: "index.html"}
-	r.PathPrefix("/").Handler(spa)
+	//spa := spaHandler{staticPath: "public", indexPath: "index.html"}
+	//r.PathPrefix("/").Handler(spa)
 
 	r.Use(mux.CORSMethodMiddleware(r))
 
@@ -110,7 +110,9 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
+	fmt.Println("server starting")
 	log.Fatal(srv.ListenAndServe())
+
 }
 
 func metrics() {

@@ -1,66 +1,16 @@
-<ng-template #messageTemplateRef1 let-message="message">
-  <nz-comment [nzAuthor]="message.title"
-              [nzDatetime]="formatDistanceTime(message.createdAt)"
-              style="width: 40vw">
-    <nz-avatar nz-comment-avatar nzIcon="user"
-               [nzSrc]="message?.sender?.avatar">
-    </nz-avatar>
-
-    <nz-comment-content>
-      <p>{{ message.content }}</p>
-    </nz-comment-content>
-
-    <nz-comment-action>Trả lời</nz-comment-action>
-
-    <ng-container *ngIf="message.children && message.children.length">
-      <ng-template ngFor let-child [ngForOf]="message.children">
-        <ng-template [ngTemplateOutlet]="messageTemplateRef"
-                     [ngTemplateOutletContext]="{ message: child }">
-        </ng-template>
-      </ng-template>
-    </ng-container>
-  </nz-comment>
-</ng-template>
-
-<ng-template #messageTemplateRef let-comment="comment">
-  <container-element [ngSwitch]="comment.sender.userId === currentUser.userId" [style]="{'padding': '0px', 'margin': '0px'}">
-    <nz-comment *ngSwitchCase="true" [style]="{'text-align': 'right', 'padding': '0px 0px', 'margin': '0px'}" class="my-comment">
-      <nz-comment-content class="rcorners2">
-        <p>{{ comment.content }}</p>
-      </nz-comment-content>
-    </nz-comment>
-
-    <nz-comment *ngSwitchDefault
-    [nzAuthor]="getFirstname(comment.sender)" [style]="{'padding': '0px 0px', 'margin': '0px'}" class="my-comment">
-    <!-- <nz-avatar nz-comment-avatar nzIcon="user" [nzSrc]="comment.avatar"></nz-avatar>          [style]="comment?.avatar ? '' : 'background-color: ' + getColor(member?.userId)"
-                         [nzSrc]="member?.avatar" -->
-    <nz-avatar nz-comment-avatar [nzText]="getFirstname(comment.sender)" nzIcon="user"></nz-avatar>
-    <nz-comment-content class="rcorners1">
-      <p>{{ comment.content }}</p>
-    </nz-comment-content>
-    <nz-comment-action>Trả lời</nz-comment-action>
-    <ng-container *ngIf="comment.children && comment.children.length">
-      <ng-template ngFor let-child [ngForOf]="comment.children">
-        <ng-template [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ comment: child }"> </ng-template>
-      </ng-template>
-    </ng-container>
-  </nz-comment>
-  </container-element>
-</ng-template>
-
-<nz-row>
+<nz-row *ngIf="isMember">
   <nz-col class="message-container" nzSpan="24">
-    <!-- <div class="message-content" *ngFor="let message of messages">
-      <ng-template [ngTemplateOutlet]="messageTemplateRef"
-                   [ngTemplateOutletContext]="{ message: message }">
-      </ng-template>
-    </div> -->
     <div class="message-content">
-      <nz-list *ngIf="data.length" [nzDataSource]="historyMessages" [nzRenderItem]="item" [nzItemLayout]="'horizontal'"  [style]="{'padding': '5px', 'margin-right': '0px'}">
+      <nz-list *ngIf="historyMessages.length" [nzDataSource]="historyMessages" [nzRenderItem]="item" [nzItemLayout]="'horizontal'"  [style]="{'padding': '5px'}">
         <ng-template #item let-item>
-          <ng-template [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ comment: item}"> </ng-template>
+          <app-message [messageInput]="item" [currentUser]="currentUser"></app-message>
         </ng-template>
       </nz-list>
+      <!-- <nz-list *ngIf="data.length" [nzItemLayout]="'horizontal'"  [style]="{'padding': '5px', 'margin-right': '0px'}"></nz-list>
+        <nz-list-item *ngFor="let item of historyMessages" [ngClass]="item.sender.userId === currentUser.userId? 'owner': ''">
+          <app-message [messageInput]="item" [currentUser]="currentUser"></app-message>
+        </nz-list-item>
+      </nz-list> -->
     </div>
   </nz-col>
 
@@ -87,3 +37,10 @@
     </form>
   </nz-col>
 </nz-row>
+
+<nz-result nzStatus="403" *ngIf="!isMember"
+           nzSubTitle="Xin lỗi, bạn chưa là thành viên của nhóm">
+  <div nz-result-extra>
+    <button nz-button nzType="primary">Xin vào nhóm</button>
+  </div>
+</nz-result>

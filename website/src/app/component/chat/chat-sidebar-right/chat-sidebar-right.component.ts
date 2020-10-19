@@ -9,6 +9,8 @@ import * as _ from 'lodash';
 import {AddMemberGroupComponent} from '../../group/add-member-group/add-member-group.component';
 import {GenerateColorService} from '../../../service/common/generate-color.service';
 import {UserStatus} from '../../../const/user-status.enum';
+import {GroupPayload} from '../../../model/payload/group.payload';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-chat-sidebar-right',
@@ -19,9 +21,18 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
 
   @Input() groupSelected: Group;
   @Output() changeGroup = new EventEmitter<boolean>();
+
+  @Input() refreshGroup: boolean;
+  @Output() refreshGroupChange = new EventEmitter<boolean>();
+
+  @Input() isMember: boolean;
+  @Output() isMemberChange = new EventEmitter<boolean>();
+
+  @Input() currentUser: User;
+
   public members: Array<User>;
   public isOwner: boolean;
-  public colors: {[userId: string]: string} = {};
+  public colors: { [userId: string]: string } = {};
 
   width = 256;
   id = -1;
@@ -35,12 +46,14 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
               private messageService: NzMessageService,
               private groupService: GroupService,
               private storageService: StorageService,
-              private generateColorService: GenerateColorService) {
+              private generateColorService: GenerateColorService,
+              private router: Router) {
     this.members = new Array<User>();
   }
 
-  isGroup = (type) => type === GroupType.MANY;
+  isGroup = () => this.groupSelected.type === GroupType.MANY;
   isOnline = (user: User) => user.status === UserStatus.ONLINE;
+  isCurrentUser = (userId: string) => this.currentUser.userId === userId;
 
   ngOnInit(): void {
   }
@@ -50,9 +63,26 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
       this.groupClone = _.cloneDeep(this.groupSelected);
       this.fetchingData();
 
-      const userInfo = this.storageService.userInfo;
-      this.isOwner = _.get(userInfo, 'userId', '') === this.groupSelected.owner;
+      this.isOwner = this.currentUser.userId === this.groupSelected.owner;
     }
+  }
+
+  public onCreateMessenger(userId: string): void {
+    const groupPayload: GroupPayload = {
+      type: GroupType.ONE,
+      private: true,
+      users: [userId],
+      description: null,
+      nameGroup: null
+    };
+
+    this.groupService.createGroup(groupPayload)
+      .subscribe(group => {
+        if (group && group.id) {
+          this.refreshGroupChange.emit(true);
+          this.router.navigate(['messages', group.id]);
+        }
+      });
   }
 
   public onOpenModalAddMember(): void {
@@ -73,19 +103,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
     });
   }
 
-  private fetchingData() {
-    this.loading = true;
-    if (this.groupSelected && this.groupSelected.id) {
-      this.groupService.getAllMemberOfGroup(this.groupSelected.id)
-        .subscribe(members => {
-          this.members = members;
-          this.loading = false;
-          this.generateColorForUserAvatar();
-        }, error => this.members = []);
-    }
-  }
-
-  onConfirmDelete() {
+  public onConfirmDelete() {
     this.modal.confirm({
       nzTitle: 'Cảnh báo',
       nzContent: `Bạn có muốn ${this.isOwner ? 'xóa' : 'rời khỏi'} cuộc hội thoại này không ?`,
@@ -97,8 +115,70 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
     });
   }
 
+  public onDeleteUser(userId: string) {
+    this.loading = true;
+
+    this.groupService.deleteMemberOfGroup(this.groupSelected.id, userId)
+      .subscribe(result => {
+          if (result) {
+            this.messageService.success('Đã xóa thành viên ra khỏi cuộc hội thoại.');
+            this.fetchingData();
+          } else {
+            this.messageService.error('Không thể xóa thành viên vào lúc này. Vui lòng thử lại sau');
+          }
+        }, error => {
+          this.messageService.error(error);
+          this.loading = false;
+        },
+        () => this.loading = false);
+  }
+
+  public onChangeGroupName(): void {
+    if (this.groupSelected.nameGroup === this.groupClone.nameGroup) {
+      return;
+    }
+
+    this.groupService.updateNameGroup(this.groupSelected.id, this.groupSelected.nameGroup)
+      .subscribe(group => {
+        if (group) {
+          this.changeGroup.emit(true);
+          this.messageService.success('Cập nhật thông tin nhóm thành công');
+        } else {
+          this.messageService.error('Không thể cập nhật thông tin nhóm vào lúc này. Vui lòng thử lại sau');
+        }
+      }, error => {
+        this.messageService.error(error);
+      });
+  }
+
   public getColor(userId: string): string {
     return this.colors[userId];
+  }
+
+  public checkOwner(userId: string): boolean {
+    const userInfo = this.storageService.userInfo;
+    return _.get(userInfo, 'userId', '') === userId;
+  }
+
+  private fetchingData() {
+    if (!this.groupSelected || !this.groupSelected.id) {
+      return;
+    }
+
+    if (this.groupSelected.type === GroupType.MANY) {
+      this.loading = true;
+      this.groupService.getAllMemberOfGroup(this.groupSelected.id)
+        .subscribe(members => {
+          this.members = members;
+          this.loading = false;
+          this.generateColorForUserAvatar();
+
+          this.isMember = !!members.find(member => member.userId === this.currentUser.userId);
+          this.isMemberChange.emit(this.isMember);
+        }, error => this.members = []);
+    } else {
+      this.isMemberChange.emit(true);
+    }
   }
 
   private generateColorForUserAvatar(): void {
@@ -118,7 +198,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
           this.messageService.remove(messId);
 
           if (result) {
-            this.changeGroup.emit(true);
+            this.refreshGroupChange.emit(true);
             this.messageService.success('Đã xóa cuộc hôi thoại.');
           } else {
             this.messageService.error('Không thể xóa cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
@@ -139,7 +219,7 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
           this.messageService.remove(messId);
 
           if (result) {
-            this.changeGroup.emit(true);
+            this.refreshGroupChange.emit(true);
             this.messageService.success('Đã rời khỏi cuộc hôi thoại.');
           } else {
             this.messageService.error('Không thể rời khỏi cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
@@ -149,46 +229,5 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
           this.messageService.error(error);
         },
         () => this.messageService.remove(messId));
-  }
-
-  onDeleteUser(userId: string) {
-    this.loading = true;
-
-    this.groupService.deleteMemberOfGroup(this.groupSelected.id, userId)
-      .subscribe(result => {
-          if (result) {
-            this.messageService.success('Đã xóa thành viên ra khỏi cuộc hội thoại.');
-            this.fetchingData();
-          } else {
-            this.messageService.error('Không thể xóa thành viên vào lúc này. Vui lòng thử lại sau');
-          }
-        }, error => {
-          this.messageService.error(error);
-          this.loading = false;
-        },
-        () => this.loading = false);
-  }
-
-  checkOwner(userId: string): boolean {
-    const userInfo = this.storageService.userInfo;
-    return _.get(userInfo, 'userId', '') === userId;
-  }
-
-  public onChangeGroupName(): void {
-    if (this.groupSelected.nameGroup === this.groupClone.nameGroup) {
-      return;
-    }
-
-    this.groupService.updateNameGroup(this.groupSelected.id, this.groupSelected.nameGroup)
-      .subscribe(group => {
-        if (group) {
-          this.changeGroup.emit(true);
-          this.messageService.success('Cập nhật thông tin nhóm thành công');
-        } else {
-          this.messageService.error('Không thể cập nhật thông tin nhóm vào lúc này. Vui lòng thử lại sau');
-        }
-      }, error => {
-        this.messageService.error(error);
-      });
   }
 }

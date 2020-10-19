@@ -6,25 +6,46 @@ import {ChatContentComponent} from './chat-content/chat-content.component';
 import {ChatHeaderComponent} from './chat-header/chat-header.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {
-  NzAffixModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzCheckboxModule, NzCollapseModule,
-  NzCommentModule, NzDrawerModule, NzDropDownModule,
+  NzAffixModule,
+  NzAvatarModule,
+  NzBadgeModule,
+  NzButtonModule,
+  NzCheckboxModule,
+  NzCollapseModule,
+  NzCommentModule,
+  NzDrawerModule,
+  NzDropDownModule,
   NzFormModule,
   NzGridModule,
   NzIconModule,
   NzInputModule,
-  NzListModule, NzMentionModule, NzMessageModule, NzModalModule, NzPageHeaderModule, NzPopconfirmModule, NzSelectModule,
-  NzSkeletonModule, NzSwitchModule, NzToolTipModule, NzTypographyModule
+  NzListModule,
+  NzMentionModule,
+  NzMessageModule,
+  NzModalModule,
+  NzPageHeaderModule,
+  NzPopconfirmModule,
+  NzPopoverModule,
+  NzResultModule,
+  NzSelectModule,
+  NzSkeletonModule,
+  NzSwitchModule,
+  NzToolTipModule,
+  NzTypographyModule
 } from 'ng-zorro-antd';
 import {NzResizableModule} from 'ng-zorro-antd/resizable';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NzSpaceModule} from 'ng-zorro-antd/space';
 import {GroupModule} from '../group/group.module';
+import {MessageComponent} from './chat-content/message/message.component';
+
 @NgModule({
   declarations: [
     ChatSidebarLeftComponent,
     ChatSidebarRightComponent,
     ChatContentComponent,
-    ChatHeaderComponent
+    ChatHeaderComponent,
+    MessageComponent
   ],
   exports: [
     ChatSidebarLeftComponent,
@@ -63,7 +84,9 @@ import {GroupModule} from '../group/group.module';
     ReactiveFormsModule,
     NzSelectModule,
     NzMessageModule,
-    GroupModule
+    GroupModule,
+    NzResultModule,
+    NzPopoverModule
   ]
 })
 export class ChatModule {

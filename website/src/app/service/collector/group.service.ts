@@ -5,7 +5,6 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {Group} from '../../model/group.model';
 import {User} from '../../model/user.model';
-import {on} from 'cluster';
 import * as _ from 'lodash';
 
 @Injectable({
@@ -24,21 +23,21 @@ export class GroupService {
       this.apiService.get(url)
         .then(res => {
           const data = res.data;
-          const groups = data.map(item => Group.fromJson(item));
-          observer.next(groups);
+          const groups: Array<Group> = data.map(item => Group.fromJson(item));
+          observer.next(_.uniqBy(groups, 'id'));
         })
         .catch(err => observer.error(err))
         .finally(() => observer.complete());
     });
   }
 
-  public createGroup(groupPayload: GroupPayload): Observable<any> {
+  public createGroup(groupPayload: GroupPayload): Observable<Group> {
     return new Observable<any>(observer => {
       const url = `${this.API_ENDPOINT}`;
       this.apiService.post(url, groupPayload)
         .then(res => {
           const data = res.data;
-          const group = Group.fromJson(data);
+          const group = Group.fromJson(data[0]);
           observer.next(group);
         })
         .catch(err => observer.error(err))
@@ -135,4 +134,7 @@ export class GroupService {
     return this.currentSelectedGroupId;
   }
   // endregion
+  public getUserById(group: Group, senderId: string): User {
+    return group.members.find(user => user.userId === senderId);
+  }
 }

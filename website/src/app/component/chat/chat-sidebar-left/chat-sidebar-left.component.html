@@ -75,12 +75,14 @@
             </ng-template>
           </nz-list-item-meta>
 
-          <ul nz-list-item-actions style="margin-top: -6px">
+          <ul nz-list-item-actions
+              *ngIf="isMember"
+              style="margin-top: -6px">
             <nz-list-item-action>
               <a nz-dropdown
                  class="group-item-menu"
                  nzTrigger="click"
-                 [nzDropdownMenu]="menuGroup">
+                 [nzDropdownMenu]="isMember ? menuGroup : null">
                 <i nz-icon nzType="ellipsis" nzTheme="outline" style="font-size: 15px"></i>
               </a>
 

@@ -71,7 +71,7 @@ func GetGroupByDoctorService(user string) ([]Dto, error) {
 	if err != nil {
 		return nil, err
 	}
-	pubGroups, err := NewRepoImpl(database.DB).GetGroupByType(MANY, user)
+	pubGroups, err := NewRepoImpl(database.DB).GetGroupPublicByDoctor(user)
 	if err != nil {
 		return nil, err
 	}
@@ -152,12 +152,20 @@ func GetListUserOnlineAndOffByGroupService(groupId int) ([]userdetail.Dto, error
 	}
 	userIohON := userdetail.GetListFromUserId(onlineStr)
 
+	if userIohON == nil {
+		return nil, nil
+	}
+
 	var offlineStr []string
 	for _, offline := range mapUser[USEROFF] {
 		offlineStr = append(offlineStr, offline.ID)
 	}
 
 	userIohOff := userdetail.GetListFromUserId(offlineStr)
+
+	if userIohOff == nil {
+		return nil, nil
+	}
 
 	for _, u := range userIohON {
 		u.Status = USERON

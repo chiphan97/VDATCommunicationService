@@ -8,7 +8,8 @@ import {User} from '../../../model/user.model';
 import {ChatService} from '../../../service/ws/chat.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash';
-import { GroupService } from 'src/app/service/collector/group.service';
+import {GroupService} from 'src/app/service/collector/group.service';
+import {WsEvent} from 'src/app/const/ws.event';
 
 @Component({
   selector: 'app-chat-content',
@@ -18,66 +19,18 @@ import { GroupService } from 'src/app/service/collector/group.service';
 export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges {
 
   @Input() groupSelected: Group;
+  @Input() isMember: boolean;
+
   @ViewChild('message-content') private myScrollContainer: ElementRef;
 
   public messages: Array<Message>;
   public formGroup: FormGroup;
   public currentUser: User;
-
-  /*mock data for users*/
-  public patient1User: User = new User ('34', 'Hoang', 'Hong', 'Hoang Thi Hong', null, 'patient', 'username', null, null, null);
-  public patientUnknown: User = new User ('45', 'Anonymous', 'Patient', 'Hoang Thi Hong', null, 'patient', 'username', null, null, null);
-  public data = [{
-    author: 'Chi Phan',
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    content:
-      'We supply a series of design principles, practical patterns and high quality design resources' +
-      '(Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-    children: [
-      {
-        author: 'Han Solo',
-        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-        content:
-          'We supply a series of design principles, practical patterns and high quality design resources' +
-          '(Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-      }
-    ]
-  }];
-  public historyMessages: Message[] = [
-    {
-      id: 3,
-      groupId: 22,
-      sender: this.patient1User,
-      content:
-      'I have an enquiry about my current health condition...',
-      createdAt: new Date(),
-      children: [{
-        id: 3,
-        groupId: 22,
-        sender: this.patient1User,
-        content:
-        'also a sub comment',
-        createdAt: new Date(),
-        children: []
-      }]
-    },
-    {
-      id: 3,
-      groupId: 22,
-      sender: this.patient1User,
-      content:
-      'I do not feel well',
-      createdAt: new Date(),
-      children: []
-    }
-  ];
-
-  public user = {
-    author: 'Han Solo',
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-  };
+  public patientUnknown: User = new User('45', 'Anonymous', 'Patient', '', null, 'patient', 'username', null, null, null);
+  public historyMessages: Message[] = [];
 
   submitting = false;
+
   /* end of mock data for users*/
   constructor(private storageService: StorageService,
               private chatService: ChatService,
@@ -89,34 +42,37 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes) {
-      if (changes.groupSelected && this.groupSelected ) {
+      if (changes.groupSelected && this.groupSelected) {
         this.chatService.initWebSocket(this.currentUser.socketId);
 
         // get list of group members
         this.groupService.getAllMemberOfGroup(this.groupSelected.id).subscribe((users: Array<User>) => {
           this.groupSelected.members = users;
+          // get history chat
+          this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
         });
 
-        // get list of group messages
-        this.chatService.getEventListener()
+        this.chatService.getChatEventListener()
           .subscribe((messageDto: MessageDto) => {
-            const message: Message = {
-              id: -1,
-              content: _.get(messageDto.payload.data, 'body', ''),
-              createdAt: new Date(),
-              sender: this.getUserById(this.groupSelected, messageDto.senderId),
-              groupId: _.get(messageDto.payload.data, 'groupId', -1),
-              children: null
-            };
+            if (messageDto.payload.type.trim() === WsEvent.SEND_TEXT) {
+              const message: Message = this.getMessage(this.groupSelected, messageDto);
 
-            if (!message.sender){
-              message.sender = this.patientUnknown;
-            }
-
-            if (message.sender.userId !== this.currentUser.userId){
-              this.historyMessages = [...this.historyMessages, message];
+              if (message.sender.userId !== this.currentUser.userId) {
+                this.historyMessages = [...this.historyMessages, message];
+              }
+            } else {
+              console.log('not yet supported type ');
             }
           });
+
+        // todo: seperate 2 methods, return boolean
+        this.chatService.getChatHistoryListener().subscribe((messageDtos: Array<MessageDto>) => {
+          const pastMessages: Array<Message> = messageDtos.map((messageDto: MessageDto) => {
+            return this.getMessage(this.groupSelected, messageDto);
+          });
+          this.historyMessages = pastMessages;
+          this.scrollToBottom();
+        });
       }
     }
   }
@@ -133,7 +89,6 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
     if (this.formGroup.valid) {
       const rawValue = this.formGroup.getRawValue();
       const message = _.get(rawValue, 'message', '');
-      // todo: parse to Message
       this.chatService.sendMessage(message, this.groupSelected.id, this.currentUser.socketId);
       this.formGroup.patchValue({message: ''});
 
@@ -143,43 +98,25 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
 
   private mockupUISendMessage(message: string, groupId: number): void {
     this.submitting = true;
-    const content = message;
 
     setTimeout(() => {
-      this.submitting = false;
-      this.data = [
-        ...this.data,
+      this.historyMessages = [
+        ...this.historyMessages,
         {
-          ...this.user,
-          content,
-          displayTime: formatDistance(new Date(), new Date()),
-          children: []
+          id: 1,
+          groupId,
+          sender: this.currentUser,
+          content: message,
+          createdAt: new Date(),
+          children: [],
         }
       ].map(e => {
         return {
           ...e,
         };
       });
-    }, 500);
-
-    setTimeout(() => {
-    this.historyMessages = [
-      ...this.historyMessages,
-      {
-        id: 1,
-        groupId,
-        sender: this.currentUser,
-        content,
-        createdAt: new Date(),
-        children: [],
-      }
-    ].map(e => {
-      return {
-        ...e,
-      };
-    });
-  }, 500);
-
+      this.scrollToBottom();
+    }, 200);
   }
 
   formatDistanceTime(date: Date = new Date()): string {
@@ -189,7 +126,8 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
   scrollToBottom(): void {
     try {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-    } catch (err) { }
+    } catch (err) {
+    }
   }
 
   private createFormGroup(): FormGroup {
@@ -198,11 +136,18 @@ export class ChatContentComponent implements OnInit, AfterViewChecked, OnChanges
     });
   }
 
-  public getFirstname(user: User): string {
-    return user.firstName;
-  }
-
-  private getUserById(group: Group, senderId: string): User {
-    return group.members.find(user => user.userId === senderId);
+  private getMessage(group: Group, messageDto: MessageDto): Message {
+    const message: Message = {
+      id: -1,
+      content: _.get(messageDto.payload.data, 'body', ''),
+      createdAt: new Date(),
+      sender: this.groupService.getUserById(group, messageDto.senderId),
+      groupId: _.get(messageDto.payload.data, 'groupId', -1),
+      children: null
+    };
+    if (!message.sender) {
+      message.sender = this.patientUnknown;
+    }
+    return message;
   }
 }

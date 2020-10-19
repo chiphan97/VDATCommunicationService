@@ -51,8 +51,6 @@ export class CreateNewGroupComponent implements OnInit {
       groupPayload.type = GroupType.MANY;
       groupPayload.private = !groupPayload.private;
 
-      // mapping list user selected
-      console.log(this.usersSelected);
       if (this.usersSelected && this.usersSelected.length > 0) {
         const usersFilter = this.usersSelected.filter(user => !!user.userId);
         groupPayload.users = usersFilter.map(user => user.userId);

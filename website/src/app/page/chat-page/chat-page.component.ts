@@ -4,6 +4,7 @@ import {NzResizeEvent} from 'ng-zorro-antd/resizable';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../service/collector/user.service';
 import {User} from '../../model/user.model';
+import { CommonModule } from '@angular/common';
 import {KeycloakService} from '../../service/auth/keycloak.service';
 
 @Component({
@@ -18,16 +19,12 @@ export class ChatPageComponent implements OnInit {
   public changed: boolean;
   public colResize = 5;
   public currentUser: User;
+  public isMember: boolean;
+  public refreshGroup: boolean;
   private idResize = -1;
 
-  constructor(private route: ActivatedRoute,
-              private router: Router,
+  constructor(private router: Router,
               private userService: UserService) {
-    this.route.queryParams
-      .subscribe(params => {
-        console.log(params);
-      });
-
     this.userService.getUserInfo()
       .subscribe(userInfo => this.currentUser = userInfo);
   }

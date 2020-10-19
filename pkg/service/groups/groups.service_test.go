@@ -14,3 +14,13 @@ func TestGetListUserOnlineAndOffByGroupService(t *testing.T) {
 	}
 	log.Println(dtos)
 }
+func TestGetGroupByPatientService(t *testing.T) {
+	database.Connect()
+	dtos, err := GetGroupByPatientService("ffb63922-8f99-46ba-9648-d07f3ac14757")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, dto := range dtos {
+		t.Log(dto.Id)
+	}
+}
