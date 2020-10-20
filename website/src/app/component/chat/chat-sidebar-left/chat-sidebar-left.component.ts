@@ -37,10 +37,6 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
     this.route.params
       .subscribe(params => {
         this.currentGroupId = _.get(params, 'groupId', null);
-
-        if (!!this.currentGroupId) {
-          this.fetchingData();
-        }
       });
 
     this.groups = new Array<Group>();

@@ -22,8 +22,8 @@ WORKDIR /usr/src/app
 COPY website/package.json ./
 RUN npm install
 COPY ./website .
-RUN npm run build:prod
-
+#RUN npm run build:prod
+RUN npm run build:staging
 
 # Target image
 #FROM gcr.io/distroless/base-debian10
