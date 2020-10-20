@@ -152,8 +152,11 @@ func GetListUserOnlineAndOffByGroupService(groupId int) ([]userdetail.Dto, error
 	}
 	userIohON := userdetail.GetListFromUserId(onlineStr)
 
-	if userIohON == nil {
-		return nil, nil
+	if len(userIohON) > 0 {
+		for _, u := range userIohON {
+			u.Status = USERON
+			dtos = append(dtos, u)
+		}
 	}
 
 	var offlineStr []string
@@ -163,17 +166,11 @@ func GetListUserOnlineAndOffByGroupService(groupId int) ([]userdetail.Dto, error
 
 	userIohOff := userdetail.GetListFromUserId(offlineStr)
 
-	if userIohOff == nil {
-		return nil, nil
-	}
-
-	for _, u := range userIohON {
-		u.Status = USERON
-		dtos = append(dtos, u)
-	}
-	for _, u := range userIohOff {
-		u.Status = USEROFF
-		dtos = append(dtos, u)
+	if len(userIohOff) > 0 {
+		for _, u := range userIohOff {
+			u.Status = USEROFF
+			dtos = append(dtos, u)
+		}
 	}
 	return dtos, nil
 }
