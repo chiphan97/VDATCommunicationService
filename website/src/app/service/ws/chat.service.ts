@@ -14,7 +14,7 @@ export class ChatService {
   private socket: WebSocket;
   private messageListener: EventEmitter<MessageDto> = new EventEmitter();
   private chatHistoryListener: EventEmitter<Array<MessageDto>> = new EventEmitter();
-  private readonly WS_ENDPOINT = `${environment.service.wsUrl}/${environment.service.endpoint.message}`;
+  private readonly WS_ENDPOINT = `${environment.service.wsUrl}${environment.service.endpoint.message}`;
 
   constructor(private keycloakService: KeycloakService) {
   }

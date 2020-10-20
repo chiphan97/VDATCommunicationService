@@ -67,6 +67,7 @@ export class ChatSidebarLeftComponent implements OnInit, OnChanges {
 
           if (groups.length > 0) {
             const groupServe = this.groups.find(group => group.id === this.currentGroupId);
+            console.log(this.groups);
             if (!!groupServe) {
               this.groupSelectedChange.emit(groupServe);
             } else if (!this.groupSelected) {

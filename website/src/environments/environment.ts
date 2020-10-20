@@ -9,7 +9,7 @@ export const environment = {
       groups: '/api/v1/groups',
       user: '/api/v1/user',
       chat: '/chat',
-      message: 'message'
+      message: '/message'
     }
   },
   keycloak: {
