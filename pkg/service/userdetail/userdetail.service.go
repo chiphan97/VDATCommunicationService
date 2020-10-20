@@ -224,7 +224,7 @@ func GetListFromUserId(listUser []string) []Dto {
 			req.Header.Add("Authorization", bearer)
 			// Send req using http Client
 			client := http.Client{
-				Timeout: 5 * time.Second,
+				Timeout: 10 * time.Second,
 			}
 			resp, err := client.Do(req)
 			if err != nil {
