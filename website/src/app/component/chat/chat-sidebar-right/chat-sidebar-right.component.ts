@@ -79,8 +79,8 @@ export class ChatSidebarRightComponent implements OnInit, OnChanges {
     this.groupService.createGroup(groupPayload)
       .subscribe(group => {
         if (group && group.id) {
-          this.refreshGroupChange.emit(true);
           this.router.navigate(['messages', group.id]);
+          this.refreshGroupChange.emit(true);
         }
       });
   }
