@@ -1,10 +1,12 @@
 <nz-row *ngIf="isMember">
-  <nz-col class="message-container" nzSpan="24">
+  <nz-col nzSpan="24"
+          class="message-container"
+          #scrollMe [scrollTop]="scrollMe.scrollHeight">
     <div class="message-content">
       <nz-list *ngIf="historyMessages.length" [nzDataSource]="historyMessages" [nzRenderItem]="item"
                [nzItemLayout]="'horizontal'" [style]="{'padding': '5px'}">
         <ng-template #item let-item>
-          <app-messenger-message [messageInput]="item" [currentUser]="currentUser"></app-messenger-message>
+          <app-messenger-message [message]="item" [currentUser]="currentUser"></app-messenger-message>
         </ng-template>
       </nz-list>
       <!-- <nz-list *ngIf="data.length" [nzItemLayout]="'horizontal'"  [style]="{'padding': '5px', 'margin-right': '0px'}"></nz-list>

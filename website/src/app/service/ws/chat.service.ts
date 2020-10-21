@@ -1,10 +1,11 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { KeycloakService } from '../auth/keycloak.service';
-import { MessagePayload } from '../../model/payload/message.payload';
-import { MessageDto } from '../../model/messageDto.model';
-import { WsEvent } from '../../const/ws.event';
+import {EventEmitter, Injectable} from '@angular/core';
+import {environment} from '../../../environments/environment';
+import {KeycloakService} from '../auth/keycloak.service';
+import {MessagePayload} from '../../model/payload/message.payload';
+import {MessageDto} from '../../model/messageDto.model';
+import {WsEvent} from '../../const/ws.event';
 import * as _ from 'lodash';
+import {Observable} from 'rxjs';
 
 
 @Injectable({
@@ -19,44 +20,50 @@ export class ChatService {
   constructor(private keycloakService: KeycloakService) {
   }
 
-  public initWebSocket(socketId: string) {
-    const accessToken = this.keycloakService.accessToken;
-    this.socket = new WebSocket(`${this.WS_ENDPOINT}/${socketId}?token=${accessToken}`);
+  public initWebSocket(socketId: string): Observable<boolean> {
+    return new Observable<boolean>(observer => {
+      const accessToken = this.keycloakService.accessToken;
+      this.socket = new WebSocket(`${this.WS_ENDPOINT}/${socketId}?token=${accessToken}`);
 
-    this.socket.onopen = event => {
-      console.log('opened ws');
-    };
-    this.socket.onclose = event => {
-      console.log('closed ws');
-    };
-    this.socket.onmessage = event => {
-      const mssgData = JSON.parse(event.data.trim());
+      this.socket.onopen = () => observer.next(true);
 
-      if (mssgData.Client) {
-        const messageDto: MessageDto = {
-          payload: mssgData,
-          senderId: mssgData.Client
+      this.socket.onclose = () => {
+        observer.next(false);
+        observer.complete();
+      };
+
+      this.socket.onerror = () => {
+        observer.next(false);
+        observer.complete();
+      };
+
+      this.socket.onmessage = event => {
+        const msgData = JSON.parse(event.data.trim());
+
+        if (msgData.Client) {
+          const messageDto: MessageDto = {
+            payload: msgData,
+            senderId: msgData.Client
+          };
+          this.messageListener.emit(messageDto);
+        } else {
+          const messageDtos: Array<MessageDto> = msgData.historys.map(message => {
+            return {
+              payload: message,
+              senderId: message.data.Sender
+            };
+          });
+          this.chatHistoryListener.emit(messageDtos);
         }
-        this.messageListener.emit(messageDto);
-      }
-      else {
-        const messageDtos: Array<MessageDto> = mssgData.historys.map(message => {
-          return {
-            payload: message,
-            senderId: message.data.Sender
-          }
-        });
-        this.chatHistoryListener.emit(messageDtos);
-      }
-    };
-
-    this.socket.onerror = event => {
-      console.error(event);
-    }
+      };
+    });
   }
 
+  // disconnect websocket
   public close() {
-    this.socket.close();
+    if (this.socket && !(this.socket.CLOSED || this.socket.CLOSING)) {
+      this.socket.close();
+    }
   }
 
   public getChatEventListener(): EventEmitter<any> {
@@ -70,12 +77,12 @@ export class ChatService {
   public sendMessage(message: string, groupId: number, socketId: string): void {
     const payload: MessagePayload = {
       data: {
-        'groupId': groupId,
-        'body': message,
-        "socketId": socketId
+        groupId,
+        body: message,
+        socketId
       },
       type: WsEvent.SEND_TEXT,
-      groupId: groupId
+      groupId
     };
 
     this.socket.send(JSON.stringify(payload));
@@ -84,12 +91,12 @@ export class ChatService {
   public sendGroupChatHistoryRequest(groupId: number, socketId: string): void {
     const payload: MessagePayload = {
       data: {
-        'groupId': groupId,
-        'body': '',
-        "socketId": socketId
+        groupId,
+        body: '',
+        socketId
       },
       type: WsEvent.SUBCRIBE_GROUP,
-    }
+    };
     this.socket.send(JSON.stringify(payload));
   }
 }

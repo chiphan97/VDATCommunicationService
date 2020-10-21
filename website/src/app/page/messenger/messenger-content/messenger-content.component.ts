@@ -20,17 +20,19 @@ import {MessageDto} from '../../../model/messageDto.model';
 import {WsEvent} from '../../../const/ws.event';
 import * as _ from 'lodash';
 import {formatDistance} from 'date-fns';
+import {NzMessageService} from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-messenger-content',
   templateUrl: './messenger-content.component.html',
   styleUrls: ['./messenger-content.component.sass']
 })
-export class MessengerContentComponent implements OnInit, OnChanges, AfterViewChecked {
+export class MessengerContentComponent implements OnInit, OnChanges {
 
   @Input() groupSelected: Group;
   @Input() isMember: boolean;
   @Input() currentUser: User;
+  @Input() memberOfGroup: Array<User>;
 
   @ViewChild('message-content') private myScrollContainer: ElementRef;
 
@@ -44,6 +46,7 @@ export class MessengerContentComponent implements OnInit, OnChanges, AfterViewCh
   /* end of mock data for users*/
   constructor(private storageService: StorageService,
               private chatService: ChatService,
+              private messageService: NzMessageService,
               private groupService: GroupService) {
     this.formGroup = this.createFormGroup();
     this.messages = new Array<Message>();
@@ -51,47 +54,47 @@ export class MessengerContentComponent implements OnInit, OnChanges, AfterViewCh
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes) {
-      if (changes.groupSelected && this.groupSelected) {
-        this.chatService.initWebSocket(this.currentUser.socketId);
+      // close old web socket
+      this.chatService.close();
 
-        // get list of group members
-        this.groupService.getAllMemberOfGroup(this.groupSelected.id).subscribe((users: Array<User>) => {
-          this.groupSelected.members = users;
-          // get history chat
-          this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
-        });
-
-        this.chatService.getChatEventListener()
-          .subscribe((messageDto: MessageDto) => {
-            if (messageDto.payload.type.trim() === WsEvent.SEND_TEXT) {
-              const message: Message = this.getMessage(this.groupSelected, messageDto);
-
-              if (message.sender.userId !== this.currentUser.userId) {
-                this.historyMessages = [...this.historyMessages, message];
-              }
+      // init new websocket
+      if (this.groupSelected && this.currentUser) {
+        this.chatService.initWebSocket(this.currentUser.socketId)
+          .subscribe(ready => {
+            if (!ready) {
+              this.messageService.error('Không thể kết nối đến server !');
             } else {
-              console.log('not yet supported type ');
+              // get history chat
+              this.chatService.sendGroupChatHistoryRequest(this.groupSelected.id, this.currentUser.socketId);
+
+              this.chatService.getChatEventListener()
+                .subscribe((messageDto: MessageDto) => {
+                  if (messageDto.payload.type.trim() === WsEvent.SEND_TEXT) {
+                    const message: Message = this.getMessage(this.groupSelected, messageDto);
+
+                    if (message.sender.userId !== this.currentUser.userId) {
+                      this.historyMessages = [...this.historyMessages, message];
+                    }
+                  } else {
+                    console.log('not yet supported type ');
+                  }
+                });
+
+              // todo: seperate 2 methods, return boolean
+              this.chatService.getChatHistoryListener().subscribe((messageDtos: Array<MessageDto>) => {
+                const pastMessages: Array<Message> = messageDtos.map((messageDto: MessageDto) => {
+                  console.log(messageDto);
+                  return this.getMessage(this.groupSelected, messageDto);
+                });
+                this.historyMessages = pastMessages;
+              });
             }
           });
-
-        // todo: seperate 2 methods, return boolean
-        this.chatService.getChatHistoryListener().subscribe((messageDtos: Array<MessageDto>) => {
-          const pastMessages: Array<Message> = messageDtos.map((messageDto: MessageDto) => {
-            return this.getMessage(this.groupSelected, messageDto);
-          });
-          this.historyMessages = pastMessages;
-          this.scrollToBottom();
-        });
       }
     }
   }
 
   ngOnInit(): void {
-    this.scrollToBottom();
-  }
-
-  ngAfterViewChecked() {
-    this.scrollToBottom();
   }
 
   public onSubmit(): void {
@@ -124,19 +127,11 @@ export class MessengerContentComponent implements OnInit, OnChanges, AfterViewCh
           ...e,
         };
       });
-      this.scrollToBottom();
     }, 200);
   }
 
   formatDistanceTime(date: Date = new Date()): string {
     return formatDistance(date, new Date());
-  }
-
-  scrollToBottom(): void {
-    try {
-      this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-    } catch (err) {
-    }
   }
 
   private createFormGroup(): FormGroup {
@@ -146,17 +141,25 @@ export class MessengerContentComponent implements OnInit, OnChanges, AfterViewCh
   }
 
   private getMessage(group: Group, messageDto: MessageDto): Message {
+    if (!this.memberOfGroup) {
+      return null;
+    }
+
+    const sender: User = this.memberOfGroup.find(member => member.userId === messageDto.senderId);
+
     const message: Message = {
       id: -1,
       content: _.get(messageDto.payload.data, 'body', ''),
       createdAt: new Date(),
-      sender: this.groupService.getUserById(group, messageDto.senderId),
+      sender,
       groupId: _.get(messageDto.payload.data, 'groupId', -1),
       children: null
     };
+
     if (!message.sender) {
       message.sender = this.patientUnknown;
     }
+
     return message;
   }
 }

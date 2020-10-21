@@ -10,32 +10,27 @@ import {Message} from '../../../model/message.model';
 export class MessengerMessageComponent implements OnInit {
 
   @Input() currentUser: User;
-  @Input() messageInput: Message;
+  @Input() message: Message;
 
   public user: User;
-  public likes = 0;
-  public dislikes = 0;
+  public numLikes = 0;
+  public numDislikes = 0;
 
-  public myContext = {message: this.messageInput};
-
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
     this.user = this.currentUser;
   }
 
-  public getFirstname(user: User): string {
-    return user.firstName;
+  public isOwner = (user: User): boolean => this.currentUser && this.currentUser.userId === user.userId;
+
+  onLike(): void {
+    this.numLikes++;
   }
 
-  like(): void {
-    this.likes = 1;
-    this.dislikes = 0;
-  }
-
-  dislike(): void {
-    this.likes = 0;
-    this.dislikes = 1;
+  onDislike(): void {
+    this.numDislikes++;
   }
 
 }

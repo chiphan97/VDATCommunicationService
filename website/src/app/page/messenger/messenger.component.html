@@ -7,7 +7,9 @@
        [nzMaxColumn]="7"
        [nzGridColumnCount]="24"
        [nzSpan]="numColSidebarLeft">
-    <nz-resize-handle nzDirection="right"></nz-resize-handle>
+    <nz-resize-handle nzDirection="right">
+      <div class="sider-resize-line"></div>
+    </nz-resize-handle>
 
     <app-messenger-sidebar-left #messengerSidebarLeftComponent
                                 [(groups)]="groups"
@@ -27,6 +29,7 @@
 
       <app-messenger-content *ngIf="groupSelected"
                              [groupSelected]="groupSelected"
+                             [memberOfGroup]="memberOfGroup"
                              [currentUser]="currentUser"
                              [isMember]="isMember">
       </app-messenger-content>
@@ -46,7 +49,9 @@
        [nzMaxColumn]="8"
        [nzGridColumnCount]="24"
        [nzSpan]="numColSidebarRight">
-    <nz-resize-handle nzDirection="left"></nz-resize-handle>
+    <nz-resize-handle nzDirection="left">
+      <div class="sider-resize-line"></div>
+    </nz-resize-handle>
 
     <app-messenger-sidebar-right #messengerSidebarRightComponent
                                  [(groupSelected)]="groupSelected"
