@@ -3,6 +3,7 @@ import {User} from '../../../model/user.model';
 import {UserService} from '../../../service/collector/user.service';
 import {NzModalRef} from 'ng-zorro-antd';
 import * as _ from 'lodash';
+import {GenerateColorService} from '../../../service/common/generate-color.service';
 
 @Component({
   selector: 'app-search-users',
@@ -21,6 +22,7 @@ export class SearchUsersComponent implements OnInit {
   public isSelected = (userId: string): boolean => !!this.usersSelected.find(user => user.userId === userId);
 
   constructor(private userService: UserService,
+              private generateColorService: GenerateColorService,
               private modalRef: NzModalRef) {
     this.users = new Array<User>();
   }
@@ -60,7 +62,10 @@ export class SearchUsersComponent implements OnInit {
         //   this.usersSelected.findIndex(iter =>
         //     iter.userId === user.userId) === -1);
 
-        this.users = users;
+        this.users = users.map(user => {
+          user.color = this.generateColorService.generate();
+          return user;
+        });
       }, error => {
         this.users = [];
         this.loading = false;

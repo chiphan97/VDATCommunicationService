@@ -60,7 +60,7 @@ export class CreateNewGroupComponent implements OnInit {
         .subscribe(group => {
           if (group) {
             this.messageService.success('Tạo cuộc hội thoại thành công');
-            this.modalService.destroy('created');
+            this.modalService.destroy(group);
           } else {
             this.messageService.error('Không thể tạo cuộc hội thoại vào lúc này. Vui lòng thử lại sau');
             this.formGroup.enable();
@@ -78,6 +78,6 @@ export class CreateNewGroupComponent implements OnInit {
   }
 
   onClose() {
-    this.modalService.destroy('destroy');
+    this.modalService.destroy(null);
   }
 }

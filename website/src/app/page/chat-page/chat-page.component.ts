@@ -4,7 +4,6 @@ import {NzResizeEvent} from 'ng-zorro-antd/resizable';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../service/collector/user.service';
 import {User} from '../../model/user.model';
-import { CommonModule } from '@angular/common';
 import {KeycloakService} from '../../service/auth/keycloak.service';
 
 @Component({

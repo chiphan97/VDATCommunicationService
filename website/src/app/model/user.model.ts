@@ -13,6 +13,9 @@ export class User {
   hostName: string;
   socketId: string;
 
+  color: string;
+  isOnline: boolean;
+
   constructor(userId: string, firstName: string, lastName: string, fullName: string,
               avatar: string, role: string, username: string, status: UserStatus = UserStatus.OFFLINE,
               hostName: string = '', socketId: string = '') {
@@ -26,20 +29,21 @@ export class User {
     this.status = status;
     this.hostName = hostName;
     this.socketId = socketId;
+    this.isOnline = status === UserStatus.ONLINE;
   }
 
   public static fromJson(data: any): User {
     return new User(
-      _.get(data, 'id', ''),
-      _.get(data, 'first', ''),
-      _.get(data, 'last', ''),
-      _.get(data, 'fullName', ''),
-      _.get(data, 'avatar', ''),
-      _.get(data, 'role', ''),
-      _.get(data, 'userName', ''),
+      _.get(data, 'id', '').trim(),
+      _.get(data, 'first', '').trim(),
+      _.get(data, 'last', '').trim(),
+      _.get(data, 'fullName', '').trim(),
+      _.get(data, 'avatar', '').trim(),
+      _.get(data, 'role', '').trim(),
+      _.get(data, 'userName', '').trim(),
       _.get(data, 'status', UserStatus.OFFLINE),
-      _.get(data, 'hostName', ''),
-      _.get(data, 'socketId', ''),
+      _.get(data, 'hostName', '').trim(),
+      _.get(data, 'socketId', '').trim(),
     );
   }
 }

@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {NzMessageService, NzModalRef} from 'ng-zorro-antd';
 import {User} from '../../../model/user.model';
 import {GroupService} from '../../../service/collector/group.service';
+import {GenerateColorService} from '../../../service/common/generate-color.service';
 
 @Component({
   selector: 'app-add-member-group',
@@ -32,7 +33,7 @@ export class AddMemberGroupComponent implements OnInit {
       .subscribe(result => {
         if (result) {
           this.messageService.success('Thêm thành viên thành công');
-          this.modalService.destroy(true);
+          this.modalService.destroy(this.usersSelected);
         } else {
           this.messageService.error('Đã có lỗi xảy ra');
         }
@@ -40,7 +41,7 @@ export class AddMemberGroupComponent implements OnInit {
   }
 
   onClose() {
-    this.modalService.destroy(false);
+    this.modalService.destroy(this.usersSelected);
   }
 
 }

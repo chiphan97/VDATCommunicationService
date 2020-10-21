@@ -1,0 +1,58 @@
+<div class="container" nz-row>
+  <div nz-col
+       nz-resizable
+       id="sidebar-left"
+       (nzResize)="onResize($event, true)"
+       [nzMinColumn]="5"
+       [nzMaxColumn]="7"
+       [nzGridColumnCount]="24"
+       [nzSpan]="numColSidebarLeft">
+    <nz-resize-handle nzDirection="right"></nz-resize-handle>
+
+    <app-messenger-sidebar-left #messengerSidebarLeftComponent
+                                [(groups)]="groups"
+                                [(groupSelected)]="groupSelected"
+                                (groupSelectedChange)="onChangeGroupSelected($event)"
+                                [currentUserIsDoctor]="currentUserIsDoctor">
+    </app-messenger-sidebar-left>
+  </div>
+
+  <div nz-col [nzSpan]="24 - (numColSidebarRight + numColSidebarLeft)">
+    <div *ngIf="groupSelected">
+      <app-messenger-header *ngIf="groupSelected"
+                            [groupSelected]="groupSelected"
+                            [(collapseSidebarRight)]="collapseSidebarRight"
+                            (collapseSidebarRightChange)="onChangeCollapseSidebar($event)">
+      </app-messenger-header>
+
+      <app-messenger-content *ngIf="groupSelected"
+                             [groupSelected]="groupSelected"
+                             [currentUser]="currentUser"
+                             [isMember]="isMember">
+      </app-messenger-content>
+    </div>
+
+    <nz-result *ngIf="!groupSelected" nzStatus="404" nzTitle="Uh ohhh ..."
+               nzSubTitle="Bạn chưa có tin nhắn nào, hãy tìm một người nào đó và bắt đầu trò chuyện nào">
+    </nz-result>
+  </div>
+
+  <div nz-col
+       nz-resizable
+       *ngIf="groupSelected"
+       id="sidebar-right"
+       (nzResize)="onResize($event, false)"
+       [nzMinColumn]="6"
+       [nzMaxColumn]="8"
+       [nzGridColumnCount]="24"
+       [nzSpan]="numColSidebarRight">
+    <nz-resize-handle nzDirection="left"></nz-resize-handle>
+
+    <app-messenger-sidebar-right #messengerSidebarRightComponent
+                                 [(groupSelected)]="groupSelected"
+                                 [(memberOfGroup)]="memberOfGroup"
+                                 [isMember]="isMember"
+                                 [currentUser]="currentUser">
+    </app-messenger-sidebar-right>
+  </div>
+</div>

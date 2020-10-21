@@ -37,8 +37,12 @@ export class GroupService {
       this.apiService.post(url, groupPayload)
         .then(res => {
           const data = res.data;
-          const group = Group.fromJson(data[0]);
-          observer.next(group);
+          if (_.isArray(data) && data.length > 0) {
+            observer.next(Group.fromJson(data[0]));
+          } else {
+            observer.next(Group.fromJson(data));
+          }
+
         })
         .catch(err => observer.error(err))
         .finally(() => observer.complete());

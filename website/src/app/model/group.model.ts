@@ -15,7 +15,8 @@ export class Group {
 
   historyMessages: Array<Message>;
   members: Array<User> = [];
-
+  isOwner: boolean;
+  isGroup: boolean;
 
   constructor(id: number, nameGroup: string, type: GroupType,
               isPrivate: boolean, thumbnail: string, description: string, owner: string, lastMessage: Message) {
@@ -27,11 +28,12 @@ export class Group {
     this.lastMessage = lastMessage;
     this.owner = owner;
     this.description = description;
+    this.isGroup = this.type === GroupType.MANY;
   }
 
   public static fromJson(data: any) {
     return new Group(
-      _.get(data, 'id', ''),
+      _.get(data, 'id', -1),
       _.get(data, 'nameGroup', ''),
       _.get(data, 'type', ''),
       _.get(data, 'private', true),

@@ -1,0 +1,127 @@
+<div class="container">
+  <nz-row class="wrapper" nzJustify="center">
+    <nz-col nzSpan="23" class="text-center user-info">
+      <nz-avatar nzIcon="team" style="background-color:#87d068;"
+                 [nzSize]="128"
+                 [nzSrc]="groupSelected.isGroup ? '' : groupSelected?.thumbnail">
+      </nz-avatar>
+
+      <h4 style="margin: 5px 0 0 28px;"
+          nz-typography [nzEditable]="groupSelected.isGroup && groupSelected.isOwner"
+          [(nzContent)]="groupSelected.nameGroup"
+          (nzContentChange)="onChangeGroupName()">
+        {{groupSelected?.nameGroup}}
+      </h4>
+    </nz-col>
+
+    <nz-col nzSpan="24"
+            class="text-center"
+            style="padding-top: 32px"
+            *ngIf="!isMember && groupSelected.isGroup">
+      <nz-space nzDirection="vertical" [nzSize]="16">
+        <nz-space-item>
+          <span nz-typography
+                nzType="secondary">Bạn chưa là thành viên của nhóm</span>
+        </nz-space-item>
+        <nz-space-item>
+          <button nz-button nzType="primary">Xin vào nhóm</button>
+        </nz-space-item>
+      </nz-space>
+    </nz-col>
+
+    <nz-col nzSpan="24" *ngIf="isMember && groupSelected.isGroup">
+      <nz-collapse [nzBordered]="false" nzExpandIconPosition="right">
+        <nz-collapse-panel nzHeader="Thành viên"
+                           style="background-color: white; padding-left: 0"
+                           [nzActive]="memberCollapse">
+          <nz-list nzItemLayout="horizontal" [nzLoading]="loading">
+            <nz-list-header *ngIf="groupSelected.isOwner" style="text-align: center; padding-top: 0">
+              <a nz-button nzType="link" style="width: 100%" (click)="onOpenModalAddMember()">Thêm thành viên</a>
+            </nz-list-header>
+
+            <nz-list-item class="member" *ngFor="let member of memberOfGroup">
+              <nz-list-item-meta [nzAvatar]="avatar"
+                                 [nzTitle]="title"
+                                 [nzDescription]="description">
+                <ng-template #avatar>
+                  <nz-avatar nzIcon="user"
+                             [style]="member?.avatar ? '' : 'background-color: ' + member.color"
+                             [nzSrc]="member?.avatar"></nz-avatar>
+                </ng-template>
+
+                <ng-template #title>
+                  <nz-space>
+                    <nz-space-item>
+                      <span nz-typography>{{member?.fullName ? member?.fullName : 'Không có tên'}}</span>
+                    </nz-space-item>
+                    <nz-space-item>
+                      <nz-badge [nzStatus]="member.isOnline ? 'success' : ''"></nz-badge>
+                    </nz-space-item>
+                  </nz-space>
+                </ng-template>
+
+                <ng-template #description>
+                  <span nz-typography nzType="secondary"
+                        nzEllipsis
+                        class="mention-user">
+                    @{{member?.username}}
+                  </span>
+                </ng-template>
+              </nz-list-item-meta>
+
+              <ul nz-list-item-actions>
+                <nz-list-item-action *ngIf="groupSelected.isOwner && !checkOwner(member.userId)">
+                  <a nz-button nzType="link" nzDanger
+                     nz-popover nzPopoverPlacement="topRight" nzPopoverContent="Xóa thành viên"
+                     nz-popconfirm
+                     [nzPopconfirmTitle]="'Bạn có chắc muốn xóa ' + member?.fullName + ' ra khỏi nhóm không ?'"
+                     nzOkText="Đồng ý" nzCancelText="Hủy" (nzOnConfirm)="onDeleteUser(member?.userId)">
+                    <i nz-icon nzType="user-delete" nzTheme="outline"></i>
+                  </a>
+                </nz-list-item-action>
+
+                <nz-list-item-action *ngIf="checkOwner(member.userId)">
+                  <a nz-button nzType="link"
+                     nz-popover nzPopoverPlacement="topRight" nzPopoverContent="Trưởng nhóm">
+                    <i nz-icon nzType="crown" nzTheme="outline"></i>
+                  </a>
+                </nz-list-item-action>
+
+                <nz-list-item-action *ngIf="!isCurrentUser(member.userId)">
+                  <a nz-button nzType="link"
+                     nz-popover nzPopoverPlacement="topRight" nzPopoverContent="Nhắn tin"
+                     (click)="onCreateMessenger(member.userId)">
+                    <i nz-icon nzType="comment" nzTheme="outline"></i>
+                  </a>
+                </nz-list-item-action>
+              </ul>
+            </nz-list-item>
+
+            <nz-list-empty *ngIf="memberOfGroup.length === 0"
+                           [nzNoResult]="loading ? 'Đang lấy danh sách thành viên' : 'Chưa có thành viên nào'">
+            </nz-list-empty>
+          </nz-list>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </nz-col>
+
+    <nz-col nzSpan="24" *ngIf="isMember">
+      <nz-collapse [nzBordered]="false" nzExpandIconPosition="right">
+        <nz-collapse-panel nzHeader="Tùy chọn"
+                           style="background-color: white; padding-left: 0"
+                           [nzActive]="optionsCollapse">
+          <nz-list nzItemLayout="vertical">
+            <a nz-button nzType="link" style="width: 100%"
+               (click)="onConfirmDelete()">
+              <nz-list-item>
+                <span *ngIf="groupSelected.isOwner" nz-typography
+                      nzType="danger">Xóa {{groupSelected.isGroup ? 'nhóm' : 'hội thoại'}}</span>
+                <span *ngIf="!groupSelected.isOwner && groupSelected.isGroup" nz-typography nzType="danger">Rời khỏi nhóm</span>
+              </nz-list-item>
+            </a>
+          </nz-list>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </nz-col>
+  </nz-row>
+</div>

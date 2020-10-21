@@ -1,0 +1,19 @@
+<div class="container">
+  <nz-page-header [nzGhost]="false">
+    <nz-page-header-title>
+      <nz-avatar nzIcon="team" style="background-color:#87d068;"
+                 [nzSrc]="groupSelected.isGroup ? '' : groupSelected?.thumbnail">
+      </nz-avatar>
+      <span nz-typography>{{groupSelected?.nameGroup}}</span>
+    </nz-page-header-title>
+    <nz-page-header-subtitle *ngIf="!groupSelected.isGroup">
+      <nz-badge nzStatus="success"></nz-badge>
+      <span>online</span>
+    </nz-page-header-subtitle>
+    <nz-page-header-extra>
+      <a nz-button nzType="link" (click)="onSwitchCollapseSidebar()">
+        <i nz-icon nzType="info-circle" nzTheme="outline"></i>
+      </a>
+    </nz-page-header-extra>
+  </nz-page-header>
+</div>
