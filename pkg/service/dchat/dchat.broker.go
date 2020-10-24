@@ -3,8 +3,8 @@ package dchat
 import (
 	"encoding/json"
 	"fmt"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	message_service "gitlab.com/vdat/mcsvc/chat/pkg/service/message"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"time"
 )
@@ -104,19 +104,24 @@ func (b *Broker) Run() {
 		case message := <-b.Outbound:
 			switch message.TypeEvent {
 			case SEND:
-				userOnAndOFfs, err := groups.GetListUserOnlineAndOffByGroupService(message.Data.GroupId)
+				userOn, err := useronline.GetListUSerOnlineByGroupService(message.Data.GroupId)
+
 				if err != nil {
 					log.Fatal(err)
 				}
+				fmt.Println(userOn)
 				payload := message_service.PayLoad{
 					SubjectSender: message.Client,
 					Content:       message.Data.Body,
 					IdGroup:       message.Data.GroupId,
 				}
 				err = message_service.AddMessageService(payload)
+				if err != nil {
+					log.Fatal(err)
+				}
 				for client := range b.Clients {
-					for _, u := range userOnAndOFfs {
-						if u.ID == client.UserId && u.Status == groups.USERON {
+					for _, u := range userOn {
+						if u.UserID == client.UserId && u.SocketID == client.SocketId {
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
