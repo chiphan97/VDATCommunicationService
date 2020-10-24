@@ -129,46 +129,33 @@ func (b *Broker) Run() {
 
 				}
 			case SUBCRIBE:
-				history, err := message_service.LoadMessageHistoryService(message.Data.GroupId)
+				historys, err := message_service.LoadMessageHistoryService(message.Data.GroupId)
 
 				if err != nil {
 					log.Println(err)
 				}
-				arrayResponse := make([]Message, 0)
-				for _, h := range history {
-					newMess := Message{
-						TypeEvent: message.TypeEvent,
-						Data: Data{
-							GroupId: message.Data.GroupId,
-							Body:    h.Content,
-							Sender:  h.SubjectSender,
-						},
-					}
-					arrayResponse = append(arrayResponse, newMess)
-				}
-				fmt.Println(arrayResponse)
-				response := ResponseHistoryMess{Historys: arrayResponse}
-				fmt.Println(response.Historys)
-				for client := range b.Clients {
-					if client.UserId == message.Client && client.SocketId == message.Data.SocketID {
-						//for _, h := range history {
-						//	message.Data.Body = h.Content
-						//	message.Data.Sender = h.SubjectSender
-						//	msg, _ := json.Marshal(message)
-						//	select {
-						//	case client.Send <- msg:
-						//	default:
-						//		close(client.Send)
-						//		delete(b.Clients, client)
-						//	}
-						//}
-						msg, _ := json.Marshal(response)
+				var msg []byte
+				for _, h := range historys {
+					for client := range b.Clients {
+						if client.UserId == message.Client && client.SocketId == message.Data.SocketID {
 
-						select {
-						case client.Send <- msg:
-						default:
-							close(client.Send)
-							delete(b.Clients, client)
+							mess := Message{
+								TypeEvent: SUBCRIBE,
+								Data: Data{
+									GroupId: message.Data.GroupId,
+									Body:    h.Content,
+									Sender:  h.SubjectSender,
+								},
+							}
+							//message.Data.Body = h.Content
+							//message.Data.Sender = h.SubjectSender
+							msg, _ = json.Marshal(mess)
+							select {
+							case client.Send <- msg:
+							default:
+								close(client.Send)
+								delete(b.Clients, client)
+							}
 						}
 
 					}

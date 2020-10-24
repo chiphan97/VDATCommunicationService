@@ -14,7 +14,7 @@ func RepoImpl(db *sql.DB) Repo {
 
 func (mess *MessageRepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `SELECT * FROM messages WHERE id_group = $1`
+	statement := `SELECT * FROM messages WHERE id_group = $1 ORDER BY created_at DESC LIMIT 20`
 	rows, err := mess.Db.Query(statement, idChatBox)
 	if err != nil {
 		return messages, err
