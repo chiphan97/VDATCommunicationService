@@ -26,14 +26,14 @@ COPY ./website .
 RUN npm run build:staging
 
 # Target image
-#FROM gcr.io/distroless/base-debian10
-FROM ubuntu:20.04
+FROM gcr.io/distroless/base-debian10
+# FROM ubuntu:20.04
 WORKDIR /app
-RUN apt-get update && apt-get install ca-certificates -y
+# RUN apt-get update && apt-get install ca-certificates -y
 COPY --from=build /go/bin/chatserver ./
 COPY --from=build /go/bin/migrator ./
 COPY --from=build /go/src/app/migration/ ./migration/
 COPY --from=angular-build /usr/src/app/dist ./public 
 
 EXPOSE 5000
-CMD [ "sh", "-c", "./migrator &&  ./chatserver"]
+CMD ["/app/migrator", "&&", "/app/cmd/chatserver"]
