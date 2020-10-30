@@ -147,8 +147,7 @@ func (b *Broker) Run() {
 									Sender:  h.SubjectSender,
 								},
 							}
-							//message.Data.Body = h.Content
-							//message.Data.Sender = h.SubjectSender
+
 							msg, _ = json.Marshal(mess)
 							select {
 							case client.Send <- msg:
