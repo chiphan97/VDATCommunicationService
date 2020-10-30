@@ -4,23 +4,18 @@ import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 )
 
-//func GetListUSerOnlineService(fil string) ([]Dto, error) {
-//	users := make([]Dto, 0)
-//	userOnlines, err := NewRepoImpl(database.DB).GetListUSerOnline(fil)
-//	if err != nil {
-//		return users, err
-//	}
-//	for _, userOnline := range userOnlines {
-//		user := Dto{
-//			UserID:   userOnline.UserID,
-//			UserName: userOnline.UserName,
-//			First:    userOnline.First,
-//			Last:     userOnline.Last,
-//		}
-//		users = append(users, user)
-//	}
-//	return users, nil
-//}
+func GetListUSerOnlineByGroupService(idGroup int) ([]Dto, error) {
+	users := make([]Dto, 0)
+	userOnlines, err := NewRepoImpl(database.DB).GetListUSerOnlineByGroup(idGroup)
+	if err != nil {
+		return users, err
+	}
+	for _, userOnline := range userOnlines {
+		user := userOnline.ConvertToDto()
+		users = append(users, user)
+	}
+	return users, nil
+}
 func AddUserOnlineService(payload Payload) error {
 	check, err := NewRepoImpl(database.DB).GetUserOnlineBySocketIdAndHostId(payload.SocketID, payload.HostName)
 	if err != nil {

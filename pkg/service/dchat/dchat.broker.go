@@ -3,8 +3,8 @@ package dchat
 import (
 	"encoding/json"
 	"fmt"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
 	message_service "gitlab.com/vdat/mcsvc/chat/pkg/service/message"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"time"
 )
@@ -104,19 +104,24 @@ func (b *Broker) Run() {
 		case message := <-b.Outbound:
 			switch message.TypeEvent {
 			case SEND:
-				userOnAndOFfs, err := groups.GetListUserOnlineAndOffByGroupService(message.Data.GroupId)
+				userOn, err := useronline.GetListUSerOnlineByGroupService(message.Data.GroupId)
+
 				if err != nil {
 					log.Fatal(err)
 				}
+				fmt.Println(userOn)
 				payload := message_service.PayLoad{
 					SubjectSender: message.Client,
 					Content:       message.Data.Body,
 					IdGroup:       message.Data.GroupId,
 				}
 				err = message_service.AddMessageService(payload)
+				if err != nil {
+					log.Fatal(err)
+				}
 				for client := range b.Clients {
-					for _, u := range userOnAndOFfs {
-						if u.ID == client.UserId && u.Status == groups.USERON {
+					for _, u := range userOn {
+						if u.UserID == client.UserId && u.SocketID == client.SocketId {
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
@@ -129,46 +134,32 @@ func (b *Broker) Run() {
 
 				}
 			case SUBCRIBE:
-				history, err := message_service.LoadMessageHistoryService(message.Data.GroupId)
+				historys, err := message_service.LoadMessageHistoryService(message.Data.GroupId)
 
 				if err != nil {
 					log.Println(err)
 				}
-				arrayResponse := make([]Message, 0)
-				for _, h := range history {
-					newMess := Message{
-						TypeEvent: message.TypeEvent,
-						Data: Data{
-							GroupId: message.Data.GroupId,
-							Body:    h.Content,
-							Sender:  h.SubjectSender,
-						},
-					}
-					arrayResponse = append(arrayResponse, newMess)
-				}
-				fmt.Println(arrayResponse)
-				response := ResponseHistoryMess{Historys: arrayResponse}
-				fmt.Println(response.Historys)
-				for client := range b.Clients {
-					if client.UserId == message.Client && client.SocketId == message.Data.SocketID {
-						//for _, h := range history {
-						//	message.Data.Body = h.Content
-						//	message.Data.Sender = h.SubjectSender
-						//	msg, _ := json.Marshal(message)
-						//	select {
-						//	case client.Send <- msg:
-						//	default:
-						//		close(client.Send)
-						//		delete(b.Clients, client)
-						//	}
-						//}
-						msg, _ := json.Marshal(response)
+				var msg []byte
+				for _, h := range historys {
+					for client := range b.Clients {
+						if client.UserId == message.Client && client.SocketId == message.Data.SocketID {
 
-						select {
-						case client.Send <- msg:
-						default:
-							close(client.Send)
-							delete(b.Clients, client)
+							mess := Message{
+								TypeEvent: SUBCRIBE,
+								Data: Data{
+									GroupId: message.Data.GroupId,
+									Body:    h.Content,
+									Sender:  h.SubjectSender,
+								},
+							}
+
+							msg, _ = json.Marshal(mess)
+							select {
+							case client.Send <- msg:
+							default:
+								close(client.Send)
+								delete(b.Clients, client)
+							}
 						}
 
 					}

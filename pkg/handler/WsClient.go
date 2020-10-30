@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/useronline"
 	"log"
 	"time"
@@ -69,12 +68,12 @@ func (client *WsClient) CheckUserOnlinePump(userHide string) {
 	//	client.Broker.Inbound <- message
 	//	time.Sleep(10000 * time.Millisecond)
 	//}
-	usersOnline, _ := useronline.NewRepoImpl(database.DB).GetListUSerOnline()
-	message := WsMessage{
-		Type: "Online:list_online",
-		Body: usersOnline,
-	}
-	client.Broker.Inbound <- message
+	//usersOnline, _ := useronline.NewRepoImpl(database.DB).GetListUSerOnline()
+	//message := WsMessage{
+	//	Type: "Online:list_online",
+	//	Body: usersOnline,
+	//}
+	//client.Broker.Inbound <- message
 	//return
 }
 
