@@ -12,17 +12,17 @@ func NewRepoImpl(db *sql.DB) Repo {
 	return &RepoImpl{Db: db}
 }
 
-func (u *RepoImpl) GetListUSerOnline() ([]UserOnline, error) {
+func (u *RepoImpl) GetListUSerOnlineByGroup(idGroup int) ([]UserOnline, error) {
 	var users []UserOnline
-	statement := `SELECT user_id,hostname,socket_id,log_at FROM ONLINE `
-	rows, err := u.Db.Query(statement)
+	statement := `select u.user_id,u.socket_id from groups_users as gu inner join online as u on gu.user_id = u.user_id where gu.id_group = $1`
+	rows, err := u.Db.Query(statement, idGroup)
 	//println(err)
 	if err != nil {
 		return users, err
 	}
 	for rows.Next() {
 		var user UserOnline
-		err = rows.Scan(&user.UserID, &user.HostName, &user.SocketID, &user.LogAt)
+		err = rows.Scan(&user.UserID, &user.SocketID)
 		if err != nil {
 			return users, err
 		}
