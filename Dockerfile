@@ -26,10 +26,11 @@ COPY ./website .
 RUN npm run build:staging
 
 # Target image
-FROM gcr.io/distroless/base-debian10
+# FROM gcr.io/distroless/base-debian10
 # FROM ubuntu:20.04
+FROM alpine:latest
 WORKDIR /app
-# RUN apt-get update && apt-get install ca-certificates -y
+RUN apk add ca-certificates
 COPY --from=build /go/bin/chatserver ./
 COPY --from=build /go/bin/migrator ./
 COPY --from=build /go/src/app/migration/ ./migration/
