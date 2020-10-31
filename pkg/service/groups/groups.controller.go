@@ -47,22 +47,33 @@ func GetListGroupApi(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErr(w, http.StatusInternalServerError)
 		return
 	}
+
+	fmt.Println(user)
+	// danh sách user đã được lưu
+	fmt.Println(len(userdetail.ListUserGlobal))
+
 	if check.Role == userdetail.PATIENT {
+		fmt.Println("là bệnh nhân")
 		groups, err := GetGroupByPatientService(user)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			utils.ResponseErr(w, http.StatusInternalServerError)
 			return
 		}
-		w.Write(utils.ResponseWithByte(groups))
+
+		listGroup, _ := getNameGroupForGroup11(groups, check.ID)
+		w.Write(utils.ResponseWithByte(listGroup))
 	} else {
+		fmt.Println("là bác sĩ")
 		groups, err := GetGroupByDoctorService(user)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			utils.ResponseErr(w, http.StatusInternalServerError)
 			return
 		}
-		w.Write(utils.ResponseWithByte(groups))
+
+		listGroup, _ := getNameGroupForGroup11(groups, check.ID)
+		w.Write(utils.ResponseWithByte(listGroup))
 	}
 
 }

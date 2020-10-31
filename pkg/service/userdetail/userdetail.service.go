@@ -19,7 +19,7 @@ import (
 )
 
 var globalToken string = connect()
-var listUserGlobal = make(map[string]User)
+var ListUserGlobal = make(map[string]User)
 
 func AddUserDetailService(payload Payload) error {
 	detail := payload.convertToModel()
@@ -208,7 +208,7 @@ func GetListFromUserId(listUser []string) []Dto {
 	for i, _ := range listUser {
 		fmt.Println(listUser[i])
 
-		value, ok := listUserGlobal[listUser[i]]
+		value, ok := ListUserGlobal[listUser[i]]
 		if ok == true {
 			detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
 			if detail == (UserDetail{}) {
@@ -236,7 +236,7 @@ func GetListFromUserId(listUser []string) []Dto {
 			var user User
 			json.Unmarshal(body, &user)
 			if !(user == (User{})) {
-				listUserGlobal[listUser[i]] = user
+				ListUserGlobal[listUser[i]] = user
 
 				detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
 				if detail == (UserDetail{}) {
