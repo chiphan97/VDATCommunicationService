@@ -194,14 +194,6 @@ func getData(keyword string, page string, pageSize string) []Dto {
 }
 
 func GetListFromUserId(listUser []string) []Dto {
-	if !utils.CheckTokenExp(GlobalToken) {
-		GlobalToken = Connect()
-	}
-	var (
-		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
-	)
-	//token := connect()
-	var bearer = "Bearer " + GlobalToken
 	var userDtos []Dto
 
 	fmt.Println("danh sách id người dùng")
@@ -219,22 +211,7 @@ func GetListFromUserId(listUser []string) []Dto {
 			dto := value.ConvertUserToDto()
 			userDtos = append(userDtos, dto)
 		} else {
-
-			req, err := http.NewRequest("GET", urlHost+listUser[i], nil)
-			req.Header.Add("Authorization", bearer)
-			// Send req using http Client
-			client := http.Client{
-				Timeout: 10 * time.Second,
-			}
-			resp, err := client.Do(req)
-			if err != nil {
-				log.Println("Error on response.\n[ERRO] -", err)
-				return nil
-			}
-			body, _ := ioutil.ReadAll(resp.Body)
-
-			var user User
-			json.Unmarshal(body, &user)
+			user := GetUserFromKCById(listUser[i])
 			if !(user == (User{})) {
 				ListUserGlobal[listUser[i]] = user
 
@@ -254,4 +231,30 @@ func GetListFromUserId(listUser []string) []Dto {
 	//fmt.Println(userDtos)
 	fmt.Println(len(userDtos))
 	return userDtos
+}
+
+func GetUserFromKCById(id string) User {
+	if !utils.CheckTokenExp(GlobalToken) {
+		GlobalToken = Connect()
+	}
+	var (
+		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
+		bearer         = "Bearer " + GlobalToken
+	)
+
+	req, err := http.NewRequest("GET", urlHost+id, nil)
+	req.Header.Add("Authorization", bearer)
+	// Send req using http Client
+	client := http.Client{
+		Timeout: 10 * time.Second,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error on response.\n[ERRO] -", err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	var user User
+	json.Unmarshal(body, &user)
+	ListUserGlobal[id] = user
+	return user
 }
