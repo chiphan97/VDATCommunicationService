@@ -1,7 +1,6 @@
 package groups
 
 import (
-	"fmt"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 )
@@ -178,14 +177,11 @@ func GetListUserOnlineAndOffByGroupService(groupId int) ([]userdetail.Dto, error
 
 func getNameGroupForGroup11(dto []Dto, id string) ([]Dto, error) {
 	for i, _ := range dto {
-		//fmt.Print(dto[i].Name)
 		if dto[i].Type == ONE {
-			fmt.Println(dto[i])
 			users, _ := NewRepoImpl(database.DB).GetListUserByGroup(int(dto[i].Id))
 
 			for j, _ := range users {
 				if users[j].ID != id {
-					fmt.Println(users[j].ID)
 					value, ok := userdetail.ListUserGlobal[users[j].ID]
 					if ok == true {
 						dto[i].Name = value.Username
