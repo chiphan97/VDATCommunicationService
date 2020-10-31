@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-var globalToken string = connect()
+var GlobalToken string = Connect()
 var ListUserGlobal = make(map[string]User)
 
 func AddUserDetailService(payload Payload) error {
@@ -117,8 +117,8 @@ func JWTparseUser(tokenHeader string) (Payload, error) {
 
 func getData(keyword string, page string, pageSize string) []Dto {
 
-	if !utils.CheckTokenExp(globalToken) {
-		globalToken = connect()
+	if !utils.CheckTokenExp(GlobalToken) {
+		GlobalToken = Connect()
 	}
 	//fmt.Println(time)
 
@@ -146,7 +146,7 @@ func getData(keyword string, page string, pageSize string) []Dto {
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users?search="
 	)
 	URL := fmt.Sprintf(urlHost+"%s"+"&max=%s"+"&first=%s", keyword, strconv.Itoa(num), strconv.Itoa(expectNum))
-	var bearer = "Bearer " + globalToken
+	var bearer = "Bearer " + GlobalToken
 
 	req, err := http.NewRequest("GET", URL, nil)
 	req.Header.Add("Authorization", bearer)
@@ -194,14 +194,14 @@ func getData(keyword string, page string, pageSize string) []Dto {
 }
 
 func GetListFromUserId(listUser []string) []Dto {
-	if !utils.CheckTokenExp(globalToken) {
-		globalToken = connect()
+	if !utils.CheckTokenExp(GlobalToken) {
+		GlobalToken = Connect()
 	}
 	var (
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
 	)
 	//token := connect()
-	var bearer = "Bearer " + globalToken
+	var bearer = "Bearer " + GlobalToken
 	var userDtos []Dto
 
 	fmt.Println("danh sách id người dùng")

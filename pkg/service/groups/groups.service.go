@@ -1,9 +1,15 @@
 package groups
 
 import (
+	"encoding/json"
 	"fmt"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"time"
 )
 
 // tao chat 1 1 neu chua co, neu co r tra lai
@@ -177,6 +183,13 @@ func GetListUserOnlineAndOffByGroupService(groupId int) ([]userdetail.Dto, error
 }
 
 func getNameGroupForGroup11(dto []Dto, id string) ([]Dto, error) {
+	if !utils.CheckTokenExp(userdetail.GlobalToken) {
+		userdetail.GlobalToken = userdetail.Connect()
+	}
+	var (
+		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
+		bearer         = "Bearer " + userdetail.GlobalToken
+	)
 
 	for i, _ := range dto {
 		//fmt.Print(dto[i].Name)
@@ -191,7 +204,23 @@ func getNameGroupForGroup11(dto []Dto, id string) ([]Dto, error) {
 					if ok == true {
 						dto[i].Name = value.Username
 					} else {
+						req, err := http.NewRequest("GET", urlHost+users[j].ID, nil)
+						req.Header.Add("Authorization", bearer)
+						// Send req using http Client
+						client := http.Client{
+							Timeout: 10 * time.Second,
+						}
+						resp, err := client.Do(req)
+						if err != nil {
+							log.Println("Error on response.\n[ERRO] -", err)
+							return nil, nil
+						}
+						body, _ := ioutil.ReadAll(resp.Body)
+						var user userdetail.User
+						json.Unmarshal(body, &user)
 
+						userdetail.ListUserGlobal[users[j].ID] = user
+						dto[i].Name = user.Username
 					}
 					break
 				}
