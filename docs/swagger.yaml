@@ -6,6 +6,10 @@ definitions:
         type: string
       groupId:
         type: integer
+      id:
+        type: integer
+      idContinueOldMess:
+        type: integer
       sender:
         example: "null"
         type: string
@@ -356,6 +360,8 @@ paths:
         "type":"subcribe_group" - to open the group the person has joined
 
         "type":"send_text" - to send text from current client to users in that group
+
+        "type":"load_old_mess" - to load continues history message in group
       parameters:
       - description: socketId to know client
         in: path

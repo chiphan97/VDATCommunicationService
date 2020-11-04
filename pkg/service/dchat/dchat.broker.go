@@ -56,6 +56,8 @@ var Wsbroker = &Broker{
 // @Description "type":"subcribe_group" - to open the group the person has joined
 // @Description
 // @Description "type":"send_text" - to send text from current client to users in that group
+// @Description
+// @Description "type":"load_old_mess" - to load continues history message in group
 func (b *Broker) Run() {
 	// polling "new" message from repository
 	// and Send to Outbound channel to Send to Clients
@@ -115,13 +117,14 @@ func (b *Broker) Run() {
 					Content:       message.Data.Body,
 					IdGroup:       message.Data.GroupId,
 				}
-				err = message_service.AddMessageService(payload)
+				idNewMess, err := message_service.AddMessageService(payload)
 				if err != nil {
 					log.Fatal(err)
 				}
 				for client := range b.Clients {
 					for _, u := range userOn {
 						if u.UserID == client.UserId && u.SocketID == client.SocketId {
+							message.Data.Id = idNewMess
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
@@ -147,12 +150,43 @@ func (b *Broker) Run() {
 							mess := Message{
 								TypeEvent: SUBCRIBE,
 								Data: Data{
+									Id:      int(h.ID),
 									GroupId: message.Data.GroupId,
 									Body:    h.Content,
 									Sender:  h.SubjectSender,
 								},
 							}
 
+							msg, _ = json.Marshal(mess)
+							select {
+							case client.Send <- msg:
+							default:
+								close(client.Send)
+								delete(b.Clients, client)
+							}
+						}
+
+					}
+				}
+			case LOADOLDMESS:
+				continueHistory, err := message_service.LoadContinueMessageHistoryService(message.Data.IdContinueOldMess, message.Data.GroupId)
+				if err != nil {
+					log.Println(err)
+				}
+				var msg []byte
+				fmt.Println(continueHistory)
+				for _, h := range continueHistory {
+					for client := range b.Clients {
+						if client.UserId == message.Client && client.SocketId == message.Data.SocketID {
+							mess := Message{
+								TypeEvent: LOADOLDMESS,
+								Data: Data{
+									Id:      int(h.ID),
+									GroupId: message.Data.GroupId,
+									Body:    h.Content,
+									Sender:  h.SubjectSender,
+								},
+							}
 							msg, _ = json.Marshal(mess)
 							select {
 							case client.Send <- msg:
