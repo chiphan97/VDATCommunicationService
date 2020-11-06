@@ -511,7 +511,6 @@ var doc = `{
                     "type": "string"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/dchat.Data"
                 },
                 "type": {
@@ -618,9 +617,9 @@ var SwaggerInfo = swaggerInfo{
 	Version:     "0.1",
 	Host:        "localhost:5000",
 	BasePath:    "/api/v1",
-	Schemes:     []string{},
+	Schemes:     []string{"http", "https"},
 	Title:       "Swagger Chat server API",
-	Description: "This is swagger for chat server.",
+	Description: "This is swagger for chat server.\nlocal:\t  http://localhost:5000/.\nstaging:    http://vdat-mcsvc-chat-staging.vdatlab.com/.\nproduction: https://vdat-mcsvc-chat.vdatlab.com/.",
 }
 
 type s struct{}

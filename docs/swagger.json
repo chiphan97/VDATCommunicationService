@@ -1,7 +1,11 @@
 {
+    "schemes": [
+        "http",
+        "https"
+    ],
     "swagger": "2.0",
     "info": {
-        "description": "This is swagger for chat server.",
+        "description": "This is swagger for chat server.\nlocal:\t  http://localhost:5000/.\nstaging:    http://vdat-mcsvc-chat-staging.vdatlab.com/.\nproduction: https://vdat-mcsvc-chat.vdatlab.com/.",
         "title": "Swagger Chat server API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
@@ -496,7 +500,6 @@
                     "type": "string"
                 },
                 "data": {
-                    "type": "object",
                     "$ref": "#/definitions/dchat.Data"
                 },
                 "type": {

@@ -67,12 +67,17 @@ func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // @title Swagger Chat server API
 // @version 0.1
 // @description This is swagger for chat server.
+// @description local:	  http://localhost:5000/.
+// @description staging:    http://vdat-mcsvc-chat-staging.vdatlab.com/.
+// @description production: https://vdat-mcsvc-chat.vdatlab.com/.
 // @termsOfService http://swagger.io/terms/
 // @contact.name API Support
 // @contact.url http://www.swagger.io/support
 // @contact.email support@swagger.io
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @query.collection.format multi
+// @Schemes http https
 // @host localhost:5000
 // @BasePath /api/v1
 // @query.collection.format multi
