@@ -13,10 +13,6 @@ const routes: Routes = [
         redirectTo: 'messages'
       },
       {
-        path: 'chat',
-        loadChildren: () => import('./../../page/chat-page/chat-page.module').then(m => m.ChatPageModule)
-      },
-      {
         path: 'messages',
         loadChildren: () => import('./../../page/messenger/messenger.module').then(m => m.MessengerModule)
       }

@@ -1,5 +1,5 @@
 <ng-template #messageTemplateRef let-message="message">
-  <container-element [ngSwitch]="message?.sender?.userId == user?.userId">
+  <container-element [ngSwitch]="isOwner()">
     <nz-comment *ngSwitchCase="true"
                 class="message">
       <nz-comment-content class="owner-message">
@@ -9,35 +9,16 @@
 
     <nz-comment *ngSwitchDefault
                 [nzAuthor]="message?.sender?.fullName"
+                [nzDatetime]="formatDistanceTime(message?.createdAt)"
                 class="message">
       <nz-avatar nz-comment-avatar nzIcon="user"
                  [style]="message?.sender?.avatar ? '' : 'background-color: ' + message?.sender?.color"
-                 [nzSrc]="message?.sender?.avatar"></nz-avatar>
+                 [nzSrc]="message?.sender?.avatar">
+      </nz-avatar>
 
       <nz-comment-content class="receiver-message">
         <span>{{ message?.content }}</span>
       </nz-comment-content>
-
-      <nz-comment-action>
-        <i nz-tooltip
-           nzTitle="Like" nz-icon
-           nzType="like"
-           [nzTheme]="numLikes > 0 ? 'twotone' : 'outline'"
-           (click)="onLike()">
-        </i>
-        <span class="react-count">{{ numLikes }}</span>
-      </nz-comment-action>
-
-      <nz-comment-action>
-        <i nz-tooltip
-           nzTitle="Dislike" nz-icon
-           nzType="dislike"
-           [nzTheme]="numDislikes > 0 ? 'twotone' : 'outline'"
-           (click)="onDislike()">
-        </i>
-
-        <span class="react-count">{{ numDislikes }}</span>
-      </nz-comment-action>
 
       <nz-comment-action>Trả lời</nz-comment-action>
 

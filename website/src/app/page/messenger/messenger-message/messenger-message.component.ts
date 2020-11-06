@@ -1,6 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {User} from '../../../model/user.model';
 import {Message} from '../../../model/message.model';
+import {formatDistance} from "date-fns";
 
 @Component({
   selector: 'app-messenger-message',
@@ -12,7 +13,6 @@ export class MessengerMessageComponent implements OnInit {
   @Input() currentUser: User;
   @Input() message: Message;
 
-  public user: User;
   public numLikes = 0;
   public numDislikes = 0;
 
@@ -20,10 +20,12 @@ export class MessengerMessageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.user = this.currentUser;
   }
 
-  public isOwner = (user: User): boolean => this.currentUser && this.currentUser.userId === user.userId;
+  public isOwner = (): boolean => this.currentUser && this.message
+    && this.currentUser.userId === this.message.sender.userId
+
+  public formatDistanceTime = (date: Date): string => formatDistance(date, new Date());
 
   onLike(): void {
     this.numLikes++;

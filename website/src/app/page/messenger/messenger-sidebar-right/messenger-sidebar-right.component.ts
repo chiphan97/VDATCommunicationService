@@ -147,6 +147,7 @@ export class MessengerSidebarRightComponent implements OnInit, OnChanges {
     } else {
       this.loading = !this.loading;
     }
+    console.log(this.loading);
   }
 
   private deleteGroup(groupId: number): void {

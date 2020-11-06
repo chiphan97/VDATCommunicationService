@@ -4,6 +4,8 @@ import {CreateNewGroupComponent} from '../../../component/group/create-new-group
 import {NzModalService} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {FormControl, FormGroup} from '@angular/forms';
+import {SettingModalComponent} from '../../../component/setting/setting-modal/setting-modal.component';
+import {Setting} from '../../../model/setting.model';
 
 @Component({
   selector: 'app-messenger-sidebar-left',
@@ -55,6 +57,14 @@ export class MessengerSidebarLeftComponent implements OnInit {
           this.groupSelectedChange.emit(group);
         }
       });
+  }
+
+  public onOpenSetting() {
+    this.modalService.create<SettingModalComponent>({
+      nzTitle: 'Cài đặt',
+      nzContent: SettingModalComponent,
+      nzWidth: '40vw'
+    });
   }
   // endregion
 

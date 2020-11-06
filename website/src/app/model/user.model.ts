@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import {UserStatus} from '../const/user-status.enum';
+import * as CryptoJS from 'crypto-js';
 
 export class User {
   userId: string;
@@ -23,13 +24,23 @@ export class User {
     this.firstName = firstName;
     this.lastName = lastName;
     this.fullName = fullName;
-    this.avatar = avatar;
     this.role = role;
     this.username = username;
     this.status = status;
     this.hostName = hostName;
     this.socketId = socketId;
     this.isOnline = status === UserStatus.ONLINE;
+    this.avatar = avatar;
+
+    // if (!!avatar) {
+    //   this.avatar = avatar;
+    // } else if (!!userId) {
+    //   const email = `${userId.trim()}@vdatlab.com`;
+    //   const hash = CryptoJS.MD5(email.toLowerCase());
+    //   this.avatar = `https://www.gravatar.com/${hash}`;
+    // } else {
+    //   this.avatar = '';
+    // }
   }
 
   public static fromJson(data: any): User {

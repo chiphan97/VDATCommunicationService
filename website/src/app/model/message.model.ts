@@ -1,17 +1,19 @@
 import {User} from './user.model';
 import * as _ from 'lodash';
+import {Group} from './group.model';
 
 export class Message {
   id: number;
-  groupId: number;
+  group: Group;
   sender: User;
   content: string;
   createdAt: Date;
   children?: Array<Message>;
 
-  constructor(id: number, groupId: number, sender: User, content: string, createdAt: Date, children: Array<Message>) {
+  constructor(id: number, group: Group, sender: User, content: string,
+              createdAt: Date, children: Array<Message> = new Array<Message>()) {
     this.id = id;
-    this.groupId = groupId;
+    this.group = group;
     this.sender = sender;
     this.content = content;
     this.createdAt = createdAt;

@@ -15,11 +15,10 @@ import {FormsModule} from '@angular/forms';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 
 
-
 @NgModule({
   declarations: [SearchUsersComponent],
   exports: [
-    SearchUsersComponent
+    SearchUsersComponent,
   ],
   imports: [
     CommonModule,

@@ -16,16 +16,10 @@
 
             <nz-dropdown-menu #setting="nzDropdownMenu">
               <ul nz-menu>
-                <li nz-menu-item>
-                  <nz-space [nzSize]="40">
-                    <nz-space-item>
-                      <span>Chế độ tối</span>
-                    </nz-space-item>
-                    <nz-space-item>
-                      <nz-switch nzSize="small"></nz-switch>
-                    </nz-space-item>
-                  </nz-space>
-                </li>
+                <li nz-menu-item (click)="onOpenSetting()">Cài đặt</li>
+                <li nz-menu-divider></li>
+                <li nz-menu-item>Trợ giúp</li>
+                <li nz-menu-item>Báo cáo sự cố</li>
               </ul>
             </nz-dropdown-menu>
 

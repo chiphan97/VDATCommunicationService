@@ -22,6 +22,7 @@ import {NzResizableModule} from 'ng-zorro-antd/resizable';
 import {NzSpaceModule} from 'ng-zorro-antd/space';
 import {MessengerMessageComponent} from './messenger-message/messenger-message.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {SettingModule} from '../../component/setting/setting.module';
 
 
 @NgModule({
@@ -58,6 +59,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     NzPageHeaderModule,
     NzResultModule,
     NzCommentModule,
+    SettingModule,
     MessengerRouting
   ]
 })

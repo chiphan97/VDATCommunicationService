@@ -1,9 +1,9 @@
 <nz-row *ngIf="isMember">
   <nz-col nzSpan="24"
           class="message-container"
-          #scrollMe [scrollTop]="scrollMe.scrollHeight">
+          #container [scrollTop]="container.scrollHeight">
     <div class="message-content">
-      <nz-list *ngIf="historyMessages.length" [nzDataSource]="historyMessages" [nzRenderItem]="item"
+      <nz-list *ngIf="messages.length > 0" [nzDataSource]="messages" [nzRenderItem]="item"
                [nzItemLayout]="'horizontal'" [style]="{'padding': '5px'}">
         <ng-template #item let-item>
           <app-messenger-message [message]="item" [currentUser]="currentUser"></app-messenger-message>
@@ -31,7 +31,7 @@
             </a>
           </nz-space-item>
           <nz-space-item>
-            <a nz-button nzType="link">
+            <a nz-button nzType="link" (click)="onSubmit()">
               <i nz-icon nzType="send" nzTheme="outline"></i>
             </a>
           </nz-space-item>
