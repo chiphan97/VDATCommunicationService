@@ -23,7 +23,7 @@ func RegisterUserApi(r *mux.Router) {
 //API tìm kiếm người dùng filtter
 
 // find user by keyword godoc
-// @Summary find user by keyword
+// @Summary find users by keyword
 // @Description find user by keyword
 // @Tags user
 // @Accept  json
