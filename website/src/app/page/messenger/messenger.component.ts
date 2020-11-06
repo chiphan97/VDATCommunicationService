@@ -131,6 +131,8 @@ export class MessengerComponent
     this.numColSidebarRight = collapsed ? 0 : this.DEFAULT_COL_SIDEBAR_RIGHT;
   }
 
+  public onLoadMoreMessages() {
+  }
   // endregion
 
   private fetchingListGroup(): void {
@@ -234,6 +236,7 @@ export class MessengerComponent
               );
 
               this.messages.push(message);
+              this.messages = [].concat(this.messages);
             });
         }
       });

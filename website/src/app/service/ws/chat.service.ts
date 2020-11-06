@@ -113,7 +113,7 @@ export class ChatService {
    * Get History messenger
    * @param groupId group id
    */
-  public getChatHistory(groupId: number): Observable<boolean> {
+  public getChatHistory(groupId: number, lastMessageId?: number): Observable<boolean> {
     const socketId = this.currentUser.socketId;
 
     return new Observable<boolean>(observer => {

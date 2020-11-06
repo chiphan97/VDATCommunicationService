@@ -9,14 +9,25 @@ import {MessengerContentComponent} from './messenger-content/messenger-content.c
 import {
   NzAvatarModule,
   NzBadgeModule,
-  NzButtonModule, NzCollapseModule, NzCommentModule,
+  NzButtonModule,
+  NzCollapseModule,
+  NzCommentModule,
   NzDropDownModule,
   NzFormModule,
   NzGridModule,
   NzIconModule,
-  NzInputModule, NzListModule, NzMessageModule, NzModalModule, NzPageHeaderModule, NzPopconfirmModule, NzPopoverModule, NzResultModule,
+  NzInputModule,
+  NzListModule,
+  NzMessageModule,
+  NzModalModule,
+  NzPageHeaderModule,
+  NzPopconfirmModule,
+  NzPopoverModule,
+  NzResultModule,
+  NzSpinModule,
   NzSwitchModule,
-  NzToolTipModule, NzTypographyModule
+  NzToolTipModule,
+  NzTypographyModule
 } from 'ng-zorro-antd';
 import {NzResizableModule} from 'ng-zorro-antd/resizable';
 import {NzSpaceModule} from 'ng-zorro-antd/space';
@@ -60,7 +71,8 @@ import {SettingModule} from '../../component/setting/setting.module';
     NzResultModule,
     NzCommentModule,
     SettingModule,
-    MessengerRouting
+    MessengerRouting,
+    NzSpinModule
   ]
 })
 export class MessengerModule {

@@ -1,9 +1,16 @@
 <nz-row *ngIf="isMember">
   <nz-col nzSpan="24"
           class="message-container"
-          #container [scrollTop]="container.scrollHeight">
+          #messagesContainer
+          [scrollTop]="messagesContainer.scrollHeight"
+          (scroll)="onMessageContainerScroll($event)">
+    <div class="text-center">
+      <nz-spin nzSimple [nzSpinning]="loading"></nz-spin>
+    </div>
+
     <div class="message-content">
-      <nz-list *ngIf="messages.length > 0" [nzDataSource]="messages" [nzRenderItem]="item"
+      <nz-list *ngIf="messages.length > 0"
+               [nzDataSource]="messages" [nzRenderItem]="item"
                [nzItemLayout]="'horizontal'" [style]="{'padding': '5px'}">
         <ng-template #item let-item>
           <app-messenger-message [message]="item" [currentUser]="currentUser"></app-messenger-message>

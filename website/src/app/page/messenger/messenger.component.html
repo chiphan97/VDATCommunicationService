@@ -32,7 +32,8 @@
                              [memberOfGroup]="memberOfGroup"
                              [currentUser]="currentUser"
                              [messages]="messages"
-                             [isMember]="isMember">
+                             [isMember]="isMember"
+                             (loadMore)="onLoadMoreMessages()">
       </app-messenger-content>
     </div>
 

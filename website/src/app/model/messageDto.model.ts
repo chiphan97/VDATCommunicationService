@@ -38,6 +38,11 @@ export class MessageDto {
         );
 
         messageDto.type = _.get(data, 'type', WsEvent.MESSAGE);
+
+        if (!!!messageDto.senderId) {
+          messageDto.senderId = _.get(data, 'Client', '');
+        }
+
         return messageDto;
       }
     }
