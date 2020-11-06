@@ -18,8 +18,8 @@ import (
 	"time"
 )
 
-var globalToken string = connect()
-var listUserGlobal = make(map[string]User)
+var GlobalToken string = Connect()
+var ListUserGlobal = make(map[string]User)
 
 func AddUserDetailService(payload Payload) error {
 	detail := payload.convertToModel()
@@ -117,8 +117,8 @@ func JWTparseUser(tokenHeader string) (Payload, error) {
 
 func getData(keyword string, page string, pageSize string) []Dto {
 
-	if !utils.CheckTokenExp(globalToken) {
-		globalToken = connect()
+	if !utils.CheckTokenExp(GlobalToken) {
+		GlobalToken = Connect()
 	}
 	//fmt.Println(time)
 
@@ -146,7 +146,7 @@ func getData(keyword string, page string, pageSize string) []Dto {
 		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users?search="
 	)
 	URL := fmt.Sprintf(urlHost+"%s"+"&max=%s"+"&first=%s", keyword, strconv.Itoa(num), strconv.Itoa(expectNum))
-	var bearer = "Bearer " + globalToken
+	var bearer = "Bearer " + GlobalToken
 
 	req, err := http.NewRequest("GET", URL, nil)
 	req.Header.Add("Authorization", bearer)
@@ -194,21 +194,13 @@ func getData(keyword string, page string, pageSize string) []Dto {
 }
 
 func GetListFromUserId(listUser []string) []Dto {
-	if !utils.CheckTokenExp(globalToken) {
-		globalToken = connect()
-	}
-	var (
-		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
-	)
-	//token := connect()
-	var bearer = "Bearer " + globalToken
 	var userDtos []Dto
 
 	fmt.Println("danh sách id người dùng")
 	for i, _ := range listUser {
 		fmt.Println(listUser[i])
 
-		value, ok := listUserGlobal[listUser[i]]
+		value, ok := ListUserGlobal[listUser[i]]
 		if ok == true {
 			detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
 			if detail == (UserDetail{}) {
@@ -219,24 +211,9 @@ func GetListFromUserId(listUser []string) []Dto {
 			dto := value.ConvertUserToDto()
 			userDtos = append(userDtos, dto)
 		} else {
-
-			req, err := http.NewRequest("GET", urlHost+listUser[i], nil)
-			req.Header.Add("Authorization", bearer)
-			// Send req using http Client
-			client := http.Client{
-				Timeout: 10 * time.Second,
-			}
-			resp, err := client.Do(req)
-			if err != nil {
-				log.Println("Error on response.\n[ERRO] -", err)
-				return nil
-			}
-			body, _ := ioutil.ReadAll(resp.Body)
-
-			var user User
-			json.Unmarshal(body, &user)
+			user := GetUserFromKCById(listUser[i])
 			if !(user == (User{})) {
-				listUserGlobal[listUser[i]] = user
+				ListUserGlobal[listUser[i]] = user
 
 				detail, _ := NewRepoImpl(database.DB).GetUserDetailById(listUser[i])
 				if detail == (UserDetail{}) {
@@ -254,4 +231,30 @@ func GetListFromUserId(listUser []string) []Dto {
 	//fmt.Println(userDtos)
 	fmt.Println(len(userDtos))
 	return userDtos
+}
+
+func GetUserFromKCById(id string) User {
+	if !utils.CheckTokenExp(GlobalToken) {
+		GlobalToken = Connect()
+	}
+	var (
+		urlHost string = "https://vdat-mcsvc-kc-admin-api-auth-proxy.vdatlab.com/auth/admin/realms/vdatlab.com/users/"
+		bearer         = "Bearer " + GlobalToken
+	)
+
+	req, err := http.NewRequest("GET", urlHost+id, nil)
+	req.Header.Add("Authorization", bearer)
+	// Send req using http Client
+	client := http.Client{
+		Timeout: 10 * time.Second,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error on response.\n[ERRO] -", err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	var user User
+	json.Unmarshal(body, &user)
+	ListUserGlobal[id] = user
+	return user
 }

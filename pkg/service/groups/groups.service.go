@@ -174,3 +174,25 @@ func GetListUserOnlineAndOffByGroupService(groupId int) ([]userdetail.Dto, error
 	}
 	return dtos, nil
 }
+
+func getNameGroupForGroup11(dto []Dto, id string) ([]Dto, error) {
+	for i, _ := range dto {
+		if dto[i].Type == ONE {
+			users, _ := NewRepoImpl(database.DB).GetListUserByGroup(int(dto[i].Id))
+
+			for j, _ := range users {
+				if users[j].ID != id {
+					value, ok := userdetail.ListUserGlobal[users[j].ID]
+					if ok == true {
+						dto[i].Name = value.Username
+					} else {
+						user := userdetail.GetUserFromKCById(users[j].ID)
+						dto[i].Name = user.Username
+					}
+					break
+				}
+			}
+		}
+	}
+	return dto, nil
+}
