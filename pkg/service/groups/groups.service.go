@@ -184,18 +184,18 @@ func getNameGroupForGroup11(dto []Dto, id string) ([]Dto, error) {
 			for j, _ := range users {
 				if users[j].ID != id {
 					value, ok := userdetail.ListUserGlobal[users[j].ID]
-					fmt.Println(value)
 					if ok == true {
-						if value.LastName == "" && value.FirstName == "" {
-							dto[i].Name = value.Username
+						dto[i].Name = value.Username
+						if value.FirstName != "" {
+							dto[i].Name = value.FirstName + " " + value.LastName
 						}
-						dto[i].Name = value.FirstName + " " + value.LastName
 					} else {
 						user := userdetail.GetUserFromKCById(users[j].ID)
-						if user.LastName == "" && user.FirstName == "" {
-							dto[i].Name = user.Username
+						fmt.Println(user)
+						dto[i].Name = user.Username
+						if user.FirstName != "" {
+							dto[i].Name = user.FirstName + " " + user.LastName
 						}
-						dto[i].Name = user.FirstName + " " + user.LastName
 					}
 					break
 				}
