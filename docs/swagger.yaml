@@ -1,3 +1,4 @@
+basePath: /api/v1
 definitions:
   dchat.Data:
     properties:
@@ -79,8 +80,19 @@ definitions:
       userName:
         type: string
     type: object
+host: localhost:5000
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: "This is swagger for chat server.\nlocal:\t  http://localhost:5000/.\nstaging:    http://vdat-mcsvc-chat-staging.vdatlab.com/.\nproduction: https://vdat-mcsvc-chat.vdatlab.com/."
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Chat server API
+  version: "0.1"
 paths:
   /api/v1/groups:
     get:
@@ -283,7 +295,7 @@ paths:
             items:
               $ref: '#/definitions/userdetail.Dto'
             type: array
-      summary: find user by keyword
+      summary: find users by keyword
       tags:
       - user
   /api/v1/user/info:
@@ -383,4 +395,7 @@ paths:
       summary: Chat websocket
       tags:
       - dchat
+schemes:
+- http
+- https
 swagger: "2.0"

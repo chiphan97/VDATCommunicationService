@@ -1,8 +1,26 @@
 {
+    "schemes": [
+        "http",
+        "https"
+    ],
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is swagger for chat server.\nlocal:\t  http://localhost:5000/.\nstaging:    http://vdat-mcsvc-chat-staging.vdatlab.com/.\nproduction: https://vdat-mcsvc-chat.vdatlab.com/.",
+        "title": "Swagger Chat server API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.1"
     },
+    "host": "localhost:5000",
+    "basePath": "/api/v1",
     "paths": {
         "/api/v1/groups": {
             "get": {
@@ -278,7 +296,7 @@
                 "tags": [
                     "user"
                 ],
-                "summary": "find user by keyword",
+                "summary": "find users by keyword",
                 "parameters": [
                     {
                         "type": "string",

@@ -1,6 +1,7 @@
 package groups
 
 import (
+	"fmt"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 )
@@ -183,11 +184,18 @@ func getNameGroupForGroup11(dto []Dto, id string) ([]Dto, error) {
 			for j, _ := range users {
 				if users[j].ID != id {
 					value, ok := userdetail.ListUserGlobal[users[j].ID]
+					fmt.Println(value)
 					if ok == true {
-						dto[i].Name = value.Username
+						if value.LastName == "" && value.FirstName == "" {
+							dto[i].Name = value.Username
+						}
+						dto[i].Name = value.FirstName + " " + value.LastName
 					} else {
 						user := userdetail.GetUserFromKCById(users[j].ID)
-						dto[i].Name = user.Username
+						if user.LastName == "" && user.FirstName == "" {
+							dto[i].Name = user.Username
+						}
+						dto[i].Name = user.FirstName + " " + user.LastName
 					}
 					break
 				}

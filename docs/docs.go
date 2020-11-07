@@ -18,7 +18,16 @@ var doc = `{
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -298,7 +307,7 @@ var doc = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "find user by keyword",
+                "summary": "find users by keyword",
                 "parameters": [
                     {
                         "type": "string",
@@ -605,12 +614,12 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "",
-	Host:        "",
-	BasePath:    "",
-	Schemes:     []string{},
-	Title:       "",
-	Description: "",
+	Version:     "0.1",
+	Host:        "localhost:5000",
+	BasePath:    "/api/v1",
+	Schemes:     []string{"http", "https"},
+	Title:       "Swagger Chat server API",
+	Description: "This is swagger for chat server.\nlocal:\t  http://localhost:5000/.\nstaging:    http://vdat-mcsvc-chat-staging.vdatlab.com/.\nproduction: https://vdat-mcsvc-chat.vdatlab.com/.",
 }
 
 type s struct{}
