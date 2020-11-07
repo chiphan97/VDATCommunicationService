@@ -1,22 +1,15 @@
-import {
-  AfterContentInit,
-  AfterViewInit,
-  Component,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { GroupService } from '../../service/collector/group.service';
-import { Group } from '../../model/group.model';
-import { User } from '../../model/user.model';
-import { NzResizeEvent } from 'ng-zorro-antd/resizable';
-import { StorageService } from '../../service/common/storage.service';
-import { UserService } from '../../service/collector/user.service';
-import { Role } from '../../const/role.const';
-import { GroupType } from '../../const/group-type.const';
-import { GenerateColorService } from '../../service/common/generate-color.service';
-import { MessengerSidebarLeftComponent } from './messenger-sidebar-left/messenger-sidebar-left.component';
-import { MessengerSidebarRightComponent } from './messenger-sidebar-right/messenger-sidebar-right.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import {AfterContentInit, AfterViewInit, Component, OnInit, ViewChild,} from '@angular/core';
+import {GroupService} from '../../service/collector/group.service';
+import {Group} from '../../model/group.model';
+import {User} from '../../model/user.model';
+import {NzResizeEvent} from 'ng-zorro-antd/resizable';
+import {StorageService} from '../../service/common/storage.service';
+import {UserService} from '../../service/collector/user.service';
+import {Role} from '../../const/role.const';
+import {GenerateColorService} from '../../service/common/generate-color.service';
+import {MessengerSidebarLeftComponent} from './messenger-sidebar-left/messenger-sidebar-left.component';
+import {MessengerSidebarRightComponent} from './messenger-sidebar-right/messenger-sidebar-right.component';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {ChatService} from '../../service/ws/chat.service';
 import {Message} from '../../model/message.model';
@@ -139,30 +132,10 @@ export class MessengerComponent
     this.messengerSidebarLeftComponent.toggleLoading(true);
     this.groupService.getAllGroup().subscribe(
       (groups) => {
-        const groupMap = groups.map((group) => {
+        this.groups = groups.map((group) => {
           group.isOwner = group.owner === this.currentUser.userId;
           return group;
         });
-
-        groupMap.forEach((group) => {
-          if (group.type === GroupType.ONE) {
-            this.groupService.getAllMemberOfGroup(group.id).subscribe(
-              (members) => {
-                group.members = members;
-
-                if (members.length >= 2) {
-                  const targetUser = members.filter(
-                    (member) => member.userId !== this.currentUser.userId
-                  )[0];
-                  group.nameGroup = targetUser.fullName;
-                }
-              },
-              () => (group.members = [])
-            );
-          }
-        });
-
-        this.groups = groupMap;
 
         if (!!this.currentGroupIdFromParam) {
           this.groupSelected = this.groups.find(

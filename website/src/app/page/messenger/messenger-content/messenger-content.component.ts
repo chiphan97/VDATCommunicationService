@@ -36,7 +36,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
 
   @ViewChild('messagesContainer') private messagesContainer: ElementRef;
 
-  private DEFAULT_SCROLL_OFFSET_TOP = 150;
+  private DEFAULT_SCROLL_OFFSET_TOP = 200;
 
   public formGroup: FormGroup;
   public loading: boolean;
@@ -64,6 +64,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     const offsetTop = parseInt(event.target.scrollTop, 0);
 
     if (offsetTop <= this.DEFAULT_SCROLL_OFFSET_TOP) {
+      console.log('load thêm tin nhắn');
       this.loadMore.emit();
     }
   }
