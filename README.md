@@ -1,8 +1,22 @@
 # Chat
 A service to help people communication in VDAT ecosystem
 
+## Quickstart
+> clone dependencies
+```shell script
+git submodule update --init
+```
+
+> run with Docker Compose
+```shell script
+docker-compose up
+```
+
 ## Environments
 * Production: https://vdat-mcsvc-chat.vdatlab.com
+* Staging: https://vdat-mcsvc-chat-staging.vdatlab.com/
+
+see full list [here](https://gitlab.com/vdat/mcsvc/chat/-/environments).
 
 ## Plans
 ### Version 0.1
