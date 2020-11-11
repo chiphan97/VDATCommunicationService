@@ -1,5 +1,7 @@
 package message
 
+import "context"
+
 type Repo interface {
 	GetMessagesByGroup(idChatBox int) ([]Messages, error)
 	InsertMessage(message Messages) error
@@ -7,4 +9,5 @@ type Repo interface {
 	//UpdateMessageByChatBox(idChatBox int) error
 	//DeleteMessageById(idMesssage int) error
 	GetMessagesByGroupAndUser(idGroup int, subUser string) ([]Messages, error)
+	DeleteMessageByGroup(idGroup int, ctx context.Context) error
 }
