@@ -117,14 +117,16 @@ func (b *Broker) Run() {
 					Content:       message.Data.Body,
 					IdGroup:       message.Data.GroupId,
 				}
-				idNewMess, err := message_service.AddMessageService(payload)
+				newMess, err := message_service.AddMessageService(payload)
 				if err != nil {
 					log.Fatal(err)
 				}
 				for client := range b.Clients {
 					for _, u := range userOn {
 						if u.UserID == client.UserId && u.SocketID == client.SocketId {
-							message.Data.Id = idNewMess
+							message.Data.Id = int(newMess.ID)
+							message.Data.CreatedAt = newMess.CreatedAt
+							message.Data.UpdatedAt = newMess.UpdatedAt
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
@@ -150,10 +152,12 @@ func (b *Broker) Run() {
 							mess := Message{
 								TypeEvent: SUBCRIBE,
 								Data: Data{
-									Id:      int(h.ID),
-									GroupId: message.Data.GroupId,
-									Body:    h.Content,
-									Sender:  h.SubjectSender,
+									Id:        int(h.ID),
+									GroupId:   message.Data.GroupId,
+									Body:      h.Content,
+									Sender:    h.SubjectSender,
+									CreatedAt: h.CreatedAt,
+									UpdatedAt: h.UpdatedAt,
 								},
 							}
 
@@ -181,10 +185,12 @@ func (b *Broker) Run() {
 							mess := Message{
 								TypeEvent: LOADOLDMESS,
 								Data: Data{
-									Id:      int(h.ID),
-									GroupId: message.Data.GroupId,
-									Body:    h.Content,
-									Sender:  h.SubjectSender,
+									Id:        int(h.ID),
+									GroupId:   message.Data.GroupId,
+									Body:      h.Content,
+									Sender:    h.SubjectSender,
+									CreatedAt: h.CreatedAt,
+									UpdatedAt: h.UpdatedAt,
 								},
 							}
 							msg, _ = json.Marshal(mess)

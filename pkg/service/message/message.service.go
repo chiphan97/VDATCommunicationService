@@ -7,9 +7,15 @@ import (
 func GetMessagesByGroupAndUserService(idGroup int, subUser string) ([]Messages, error) {
 	return NewRepoImpl(database.DB).GetMessagesByGroupAndUser(idGroup, subUser)
 }
-func AddMessageService(payload PayLoad) (int, error) {
+func AddMessageService(payload PayLoad) (Dto, error) {
+	var dto Dto
 	model := payload.convertToModel()
-	return NewRepoImpl(database.DB).InsertMessage(model)
+	m, err := NewRepoImpl(database.DB).InsertMessage(model)
+	if err != nil {
+		return dto, err
+	}
+	dto = m.convertToDTO()
+	return dto, nil
 }
 func LoadMessageHistoryService(idGroup int) ([]Dto, error) {
 	dtos := make([]Dto, 0)

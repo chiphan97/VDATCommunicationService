@@ -36,15 +36,30 @@ func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 	defer rows.Close()
 	return messages, nil
 }
-func (mess *RepoImpl) InsertMessage(message Messages) (int, error) {
+func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 	var id int
+	m := Messages{}
 	statement := `INSERT INTO messages (user_sender,content,id_group) VALUES ($1,$2,$3) RETURNING id_mess`
 	err := mess.Db.QueryRow(statement,
 		message.SubjectSender,
 		message.Content,
 		message.IdGroup).Scan(&id)
 
-	return id, err
+	statement = `SELECT * FROM messages WHERE  id_mess = $1`
+	rows, err := mess.Db.Query(statement, id)
+	if rows.Next() {
+		err = rows.Scan(&m.ID,
+			&m.SubjectSender,
+			&m.Content,
+			&m.IdGroup,
+			&m.CreatedAt,
+			&m.UpdatedAt,
+			&m.DeletedAt)
+		if err != nil {
+			return m, err
+		}
+	}
+	return m, err
 }
 
 //func (mess *RepoImpl) GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error) {
