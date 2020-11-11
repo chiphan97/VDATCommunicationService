@@ -27,7 +27,8 @@ import {
   NzSpinModule,
   NzSwitchModule,
   NzToolTipModule,
-  NzTypographyModule
+  NzTypographyModule,
+  NzUploadModule
 } from 'ng-zorro-antd';
 import {NzResizableModule} from 'ng-zorro-antd/resizable';
 import {NzSpaceModule} from 'ng-zorro-antd/space';
@@ -74,7 +75,8 @@ import {GroupModule} from '../../component/group/group.module';
     SettingModule,
     GroupModule,
     MessengerRouting,
-    NzSpinModule
+    NzSpinModule,
+    NzUploadModule
   ]
 })
 export class MessengerModule {

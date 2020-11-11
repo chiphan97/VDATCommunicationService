@@ -12,7 +12,8 @@ import {MessengerSidebarRightComponent} from './messenger-sidebar-right/messenge
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {ChatService} from '../../service/ws/chat.service';
-import {Message} from '../../model/message.model';
+//import {Message} from '../../model/message.model';
+import {GenericMessage, TextMessage, FileMessage} from '../../model/generic-message.model';
 
 @Component({
   selector: 'app-messenger',
@@ -32,7 +33,7 @@ export class MessengerComponent
   public currentUser: User;
   public currentUserIsDoctor: boolean;
   public isMember: boolean;
-  public messages: Array<Message>;
+  public messages: Array<GenericMessage>;
 
   public idSidebarLeftResize = -1;
   public idSidebarRightResize = -1;
@@ -55,7 +56,7 @@ export class MessengerComponent
   ) {
     this.groups = new Array<Group>();
     this.groupSelected = null;
-    this.messages = new Array<Message>();
+    this.messages = new Array<GenericMessage>();
   }
 
   ngOnInit(): void {
@@ -191,7 +192,7 @@ export class MessengerComponent
   }
 
   private fetchingHistoryMessages(): void {
-    this.messages = new Array<Message>();
+    this.messages = new Array<GenericMessage>();
 
     this.chatService.getChatHistory(this.groupSelected.id)
       .subscribe(ready => {
@@ -200,12 +201,13 @@ export class MessengerComponent
             .subscribe(messageDto => {
               const sender = this.memberOfGroup.find(member => member.userId === messageDto.senderId);
 
-              const message = new Message(
+              const message = new TextMessage(
                 messageDto.id,
                 this.groupSelected.id === messageDto.groupId ? this.groupSelected : null,
                 sender,
                 messageDto.content,
-                messageDto.createdAt
+                messageDto.createdAt,
+                []
               );
 
               this.messages.push(message);
