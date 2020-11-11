@@ -14,7 +14,7 @@ func NewRepoImpl(db *sql.DB) Repo {
 
 func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `SELECT * FROM messages WHERE id_group = $1 ORDER BY created_at DESC LIMIT 20`
+	statement := `SELECT id_mess,user_sender,content,id_group,created_at,updated_at FROM messages WHERE id_group = $1 ORDER BY created_at DESC LIMIT 20`
 	rows, err := mess.Db.Query(statement, idChatBox)
 	if err != nil {
 		return messages, err
@@ -27,7 +27,7 @@ func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 			&m.IdGroup,
 			&m.CreatedAt,
 			&m.UpdatedAt,
-			&m.DeletedAt)
+		)
 		if err != nil {
 			return messages, err
 		}
@@ -45,7 +45,7 @@ func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 		message.Content,
 		message.IdGroup).Scan(&id)
 
-	statement = `SELECT * FROM messages WHERE  id_mess = $1`
+	statement = `SELECT id_mess,user_sender,content,id_group,created_at,updated_at FROM messages WHERE  id_mess = $1`
 	rows, err := mess.Db.Query(statement, id)
 	if rows.Next() {
 		err = rows.Scan(&m.ID,
@@ -54,7 +54,7 @@ func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 			&m.IdGroup,
 			&m.CreatedAt,
 			&m.UpdatedAt,
-			&m.DeletedAt)
+		)
 		if err != nil {
 			return m, err
 		}
@@ -128,7 +128,7 @@ func (mess *RepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]
 //}
 func (mess *RepoImpl) GetContinueMessageByIdAndGroup(idMessage int, idGroup int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `select * from messages where id_mess < $1 and id_group = $2 order by created_at DESC limit 20`
+	statement := `select id_mess,user_sender,content,id_group,created_at,updated_at from messages where id_mess < $1 and id_group = $2 order by created_at DESC limit 20`
 	rows, err := mess.Db.Query(statement, idMessage, idGroup)
 	if err != nil {
 		return messages, err
@@ -141,7 +141,7 @@ func (mess *RepoImpl) GetContinueMessageByIdAndGroup(idMessage int, idGroup int)
 			&m.IdGroup,
 			&m.CreatedAt,
 			&m.UpdatedAt,
-			&m.DeletedAt)
+		)
 		if err != nil {
 			return messages, err
 		}
