@@ -127,6 +127,7 @@ func (b *Broker) Run() {
 							message.Data.Id = int(newMess.ID)
 							message.Data.CreatedAt = newMess.CreatedAt
 							message.Data.UpdatedAt = newMess.UpdatedAt
+							message.Data.Sender = newMess.SubjectSender
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
