@@ -112,7 +112,7 @@ func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser stri
 //	return err
 //}
 func (mess *MessageRepoImpl) DeleteMessageByGroup(idGroup int, ctx context.Context) error {
-	s := `DELETE FROM messages WHERE Id_group = $1`
+	s := `DELETE FROM messages WHERE id_group = $1`
 	tx, err := mess.Db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
 		log.Fatal(err)

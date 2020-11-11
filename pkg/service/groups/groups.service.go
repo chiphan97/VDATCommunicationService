@@ -2,6 +2,7 @@ package groups
 
 import (
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/message"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/userdetail"
 )
 
@@ -115,6 +116,31 @@ func UpdateGroupService(groupsPayLoad PayLoad, idGroup int) (Dto, error) {
 	return groupdto, err
 }
 func DeleteGroupService(idgroup int) error {
+	//ch := make(chan error)
+	//go func(ch1 chan error) {
+	//
+	//	err := message.DeleteMessageService(idgroup)
+	//
+	//	ch1 <- err
+	//
+	//	close(ch1)
+	//
+	//}(ch)
+	//for {
+	//	select {
+	//	case kq:= <- ch:
+	//		if kq == nil{
+	//			fmt.Println("debug")
+	//			return NewRepoImpl(database.DB).DeleteGroup(idgroup)
+	//		}
+	//	default:
+	//		close(ch)
+	//	}
+	//}
+	err := message.DeleteMessageService(idgroup)
+	if err != nil {
+		return err
+	}
 	return NewRepoImpl(database.DB).DeleteGroup(idgroup)
 }
 func CheckRoleOwnerInGroupService(owner string, idgroup int) (bool, error) {
