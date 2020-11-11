@@ -4,7 +4,7 @@
 ```
 # Backend Websocket test
 ```
-wscat -c ws://localhost:5000/message/1{socketId}?token=<token>
+wscat -c ws://localhost:5000/message/{socketId}?token=<token>
 ```
 # Event Type
 ## 1. Send Message 
