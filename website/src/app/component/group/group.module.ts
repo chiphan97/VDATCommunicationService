@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {CreateNewGroupComponent} from './create-new-group/create-new-group.component';
 import {AddMemberGroupComponent} from './add-member-group/add-member-group.component';
@@ -17,21 +17,26 @@ import {UserModule} from '../user/user.module';
 
 
 @NgModule({
-  declarations: [CreateNewGroupComponent, AddMemberGroupComponent],
+  declarations: [
+    CreateNewGroupComponent,
+    AddMemberGroupComponent
+  ],
   imports: [
     CommonModule,
     NzGridModule,
-    NzFormModule,
-    ReactiveFormsModule,
-    NzInputModule,
-    NzSelectModule,
-    NzAvatarModule,
-    NzCheckboxModule,
+    UserModule,
     NzButtonModule,
-    NzModalModule,
-    NzTableModule,
-    NzIconModule,
-    UserModule
+    NzFormModule,
+    NzInputModule,
+    ReactiveFormsModule,
+    NzCheckboxModule
+  ],
+  exports: [
+    CreateNewGroupComponent,
+    AddMemberGroupComponent
+  ],
+  schemas: [
+    NO_ERRORS_SCHEMA
   ]
 })
 export class GroupModule {

@@ -141,7 +141,7 @@ export class MessengerComponent
           this.groupSelected = this.groups.find(
             (group) => group.id === this.currentGroupIdFromParam
           );
-        } else {
+        } else if (this.groups.length > 0) {
           this.groupSelected = this.groups[0];
           this.router.navigate(['messages', this.groupSelected.id]);
         }

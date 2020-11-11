@@ -34,6 +34,7 @@ import {NzSpaceModule} from 'ng-zorro-antd/space';
 import {MessengerMessageComponent} from './messenger-message/messenger-message.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SettingModule} from '../../component/setting/setting.module';
+import {GroupModule} from '../../component/group/group.module';
 
 
 @NgModule({
@@ -71,6 +72,7 @@ import {SettingModule} from '../../component/setting/setting.module';
     NzResultModule,
     NzCommentModule,
     SettingModule,
+    GroupModule,
     MessengerRouting,
     NzSpinModule
   ]
