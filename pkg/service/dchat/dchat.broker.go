@@ -128,6 +128,7 @@ func (b *Broker) Run() {
 							message.Data.CreatedAt = newMess.CreatedAt
 							message.Data.UpdatedAt = newMess.UpdatedAt
 							message.Data.Sender = newMess.SubjectSender
+							message.Data.NumChildMess = newMess.NumChildMess
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
@@ -166,6 +167,8 @@ func (b *Broker) Run() {
 							message.Data.CreatedAt = newMess.CreatedAt
 							message.Data.UpdatedAt = newMess.UpdatedAt
 							message.Data.Sender = newMess.SubjectSender
+							message.Data.ParentID = newMess.ParentId
+							message.Data.NumChildMess = newMess.NumChildMess
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
@@ -194,12 +197,14 @@ func (b *Broker) Run() {
 							mess := Message{
 								TypeEvent: SUBCRIBE,
 								Data: Data{
-									Id:        int(h.ID),
-									GroupId:   message.Data.GroupId,
-									Body:      h.Content,
-									Sender:    h.SubjectSender,
-									CreatedAt: h.CreatedAt,
-									UpdatedAt: h.UpdatedAt,
+									Id:           int(h.ID),
+									GroupId:      message.Data.GroupId,
+									Body:         h.Content,
+									Sender:       h.SubjectSender,
+									ParentID:     h.ParentId,
+									NumChildMess: h.NumChildMess,
+									CreatedAt:    h.CreatedAt,
+									UpdatedAt:    h.UpdatedAt,
 								},
 							}
 

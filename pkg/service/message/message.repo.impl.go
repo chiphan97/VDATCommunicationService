@@ -2,6 +2,7 @@ package message
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 type RepoImpl struct {
@@ -37,6 +38,9 @@ func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 	return messages, nil
 }
 func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
+	fmt.Println(message.SubjectSender)
+	fmt.Println(message.Content)
+	fmt.Println(message.IdGroup)
 	var id int
 	m := Messages{}
 	statement := `INSERT INTO messages (user_sender,content,id_group) VALUES ($1,$2,$3) RETURNING id_mess`
@@ -45,13 +49,14 @@ func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 		message.Content,
 		message.IdGroup).Scan(&id)
 
-	statement = `SELECT id_mess,user_sender,content,id_group,created_at,updated_at FROM messages WHERE  id_mess = $1`
+	statement = `SELECT id_mess,user_sender,content,id_group,numChild,created_at,updated_at FROM messages WHERE  id_mess = $1`
 	rows, err := mess.Db.Query(statement, id)
 	if rows.Next() {
 		err = rows.Scan(&m.ID,
 			&m.SubjectSender,
 			&m.Content,
 			&m.IdGroup,
+			&m.Num,
 			&m.CreatedAt,
 			&m.UpdatedAt,
 		)
@@ -71,13 +76,15 @@ func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
 		message.IdGroup,
 		message.ParentId).Scan(&id)
 
-	statement = `SELECT id_mess,user_sender,content,id_group,created_at,updated_at FROM messages WHERE  id_mess = $1`
+	statement = `SELECT id_mess,user_sender,content,id_group,parentID,numChild,created_at,updated_at FROM messages WHERE  id_mess = $1`
 	rows, err := mess.Db.Query(statement, id)
 	if rows.Next() {
 		err = rows.Scan(&m.ID,
 			&m.SubjectSender,
 			&m.Content,
 			&m.IdGroup,
+			&m.ParentId,
+			&m.Num,
 			&m.CreatedAt,
 			&m.UpdatedAt,
 		)
