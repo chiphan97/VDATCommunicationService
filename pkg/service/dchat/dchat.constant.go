@@ -22,9 +22,11 @@ const (
 
 // event
 const (
-	SUBCRIBE    = "subcribe_group"
-	SEND        = "send_text"
-	LOADOLDMESS = "load_old_mess"
+	SUBCRIBE      = "subcribe_group"
+	SEND          = "send_text"
+	LOADOLDMESS   = "load_old_mess"
+	RELY          = "rely_message"
+	LOADCHILDMESS = "load_child_mess"
 )
 
 var (

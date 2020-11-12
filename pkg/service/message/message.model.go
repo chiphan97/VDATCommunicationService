@@ -13,6 +13,7 @@ type Messages struct {
 	SubjectSender string
 	Content       string
 	IdGroup       int
+	ParentId      int
 }
 
 func (m *Messages) convertToDTO() Dto {

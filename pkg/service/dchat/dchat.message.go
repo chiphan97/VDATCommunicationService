@@ -14,6 +14,8 @@ type Data struct {
 	Sender            string     `example:"null"`
 	SocketID          string     `json:"socketId" example:"9999"`
 	IdContinueOldMess int        `json:"idContinueOldMess"`
+	ParentID          int        `json:"parentID"`
+	NumChildMess      int        `json:"numChildMess"`
 	Status            string     `example:"null"`
 	CreatedAt         *time.Time `json:"createdAt"`
 	UpdatedAt         *time.Time `json:"updatedAt"`

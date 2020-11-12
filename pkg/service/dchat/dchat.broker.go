@@ -139,6 +139,47 @@ func (b *Broker) Run() {
 					}
 
 				}
+			case RELY:
+				fmt.Println(message.Data.Id)
+				fmt.Println(message.Data.Body)
+
+				userOn, err := useronline.GetListUSerOnlineByGroupService(message.Data.GroupId)
+
+				if err != nil {
+					log.Fatal(err)
+				}
+				fmt.Println(userOn)
+				payload := message_service.PayLoad{
+					SubjectSender: message.Client,
+					Content:       message.Data.Body,
+					IdGroup:       message.Data.GroupId,
+					ID:            message.Data.Id,
+				}
+				newMess, err := message_service.AddRelyService(payload)
+				if err != nil {
+					log.Fatal(err)
+				}
+				for client := range b.Clients {
+					for _, u := range userOn {
+						if u.UserID == client.UserId && u.SocketID == client.SocketId {
+							message.Data.Id = int(newMess.ID)
+							message.Data.CreatedAt = newMess.CreatedAt
+							message.Data.UpdatedAt = newMess.UpdatedAt
+							message.Data.Sender = newMess.SubjectSender
+							msg, _ := json.Marshal(message)
+							select {
+							case client.Send <- msg:
+							default:
+								close(client.Send)
+								delete(b.Clients, client)
+							}
+						}
+					}
+
+				}
+
+			case LOADCHILDMESS:
+				fmt.Println(message.Data.Id)
 			case SUBCRIBE:
 				historys, err := message_service.LoadMessageHistoryService(message.Data.GroupId)
 

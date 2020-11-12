@@ -17,6 +17,18 @@ func AddMessageService(payload PayLoad) (Dto, error) {
 	dto = m.convertToDTO()
 	return dto, nil
 }
+
+func AddRelyService(payload PayLoad) (Dto, error) {
+	var dto Dto
+	model := payload.convertToModel()
+	m, err := NewRepoImpl(database.DB).InsertRely(model)
+	if err != nil {
+		return dto, err
+	}
+	dto = m.convertToDTO()
+	return dto, nil
+}
+
 func LoadMessageHistoryService(idGroup int) ([]Dto, error) {
 	dtos := make([]Dto, 0)
 	model, err := NewRepoImpl(database.DB).GetMessagesByGroup(idGroup)

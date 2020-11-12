@@ -61,6 +61,32 @@ func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 	}
 	return m, err
 }
+func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
+	var id int
+	m := Messages{}
+	statement := `INSERT INTO messages (user_sender,content,id_group,parentID) VALUES ($1,$2,$3,$4) RETURNING id_mess`
+	err := mess.Db.QueryRow(statement,
+		message.SubjectSender,
+		message.Content,
+		message.IdGroup,
+		message.ParentId).Scan(&id)
+
+	statement = `SELECT id_mess,user_sender,content,id_group,created_at,updated_at FROM messages WHERE  id_mess = $1`
+	rows, err := mess.Db.Query(statement, id)
+	if rows.Next() {
+		err = rows.Scan(&m.ID,
+			&m.SubjectSender,
+			&m.Content,
+			&m.IdGroup,
+			&m.CreatedAt,
+			&m.UpdatedAt,
+		)
+		if err != nil {
+			return m, err
+		}
+	}
+	return m, err
+}
 
 //func (mess *RepoImpl) GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error) {
 //	message := make([]model.MessageModel, 0)
