@@ -21,6 +21,8 @@ func (m *Messages) convertToDTO() Dto {
 		SubjectSender: m.SubjectSender,
 		Content:       m.Content,
 		IdGroup:       m.IdGroup,
+		CreatedAt:     m.CreatedAt,
+		UpdatedAt:     m.UpdatedAt,
 	}
 	return message
 }

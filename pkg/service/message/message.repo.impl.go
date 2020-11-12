@@ -4,17 +4,17 @@ import (
 	"database/sql"
 )
 
-type MessageRepoImpl struct {
+type RepoImpl struct {
 	Db *sql.DB
 }
 
-func RepoImpl(db *sql.DB) Repo {
-	return &MessageRepoImpl{Db: db}
+func NewRepoImpl(db *sql.DB) Repo {
+	return &RepoImpl{Db: db}
 }
 
-func (mess *MessageRepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
+func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `SELECT * FROM messages WHERE id_group = $1 ORDER BY created_at DESC LIMIT 20`
+	statement := `SELECT id_mess,user_sender,content,id_group,created_at,updated_at FROM messages WHERE id_group = $1 ORDER BY created_at DESC LIMIT 20`
 	rows, err := mess.Db.Query(statement, idChatBox)
 	if err != nil {
 		return messages, err
@@ -27,7 +27,7 @@ func (mess *MessageRepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, erro
 			&m.IdGroup,
 			&m.CreatedAt,
 			&m.UpdatedAt,
-			&m.DeletedAt)
+		)
 		if err != nil {
 			return messages, err
 		}
@@ -36,16 +36,33 @@ func (mess *MessageRepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, erro
 	defer rows.Close()
 	return messages, nil
 }
-func (mess *MessageRepoImpl) InsertMessage(message Messages) error {
-	statement := `INSERT INTO messages (user_sender,content,id_group) VALUES ($1,$2,$3)`
-	_, err := mess.Db.Exec(statement,
+func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
+	var id int
+	m := Messages{}
+	statement := `INSERT INTO messages (user_sender,content,id_group) VALUES ($1,$2,$3) RETURNING id_mess`
+	err := mess.Db.QueryRow(statement,
 		message.SubjectSender,
 		message.Content,
-		message.IdGroup)
-	return err
+		message.IdGroup).Scan(&id)
+
+	statement = `SELECT id_mess,user_sender,content,id_group,created_at,updated_at FROM messages WHERE  id_mess = $1`
+	rows, err := mess.Db.Query(statement, id)
+	if rows.Next() {
+		err = rows.Scan(&m.ID,
+			&m.SubjectSender,
+			&m.Content,
+			&m.IdGroup,
+			&m.CreatedAt,
+			&m.UpdatedAt,
+		)
+		if err != nil {
+			return m, err
+		}
+	}
+	return m, err
 }
 
-//func (mess *MessageRepoImpl) GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error) {
+//func (mess *RepoImpl) GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error) {
 //	message := make([]model.MessageModel, 0)
 //	statement := `SELECT * FROM message WHERE id_chat = $1 AND seen_at IS NULL ORDER BY created_at LIMIT 10`
 //	rows, err := mess.Db.Query(statement, idChatBox)
@@ -62,12 +79,12 @@ func (mess *MessageRepoImpl) InsertMessage(message Messages) error {
 //	}
 //	return message, nil
 //}
-//func (mess *MessageRepoImpl) UpdateMessageByChatBox(idChatBox int) error {
+//func (mess *RepoImpl) UpdateMessageByChatBox(idChatBox int) error {
 //	statement := `UPDATE message SET seen_at=now() WHERE id_chat = $1`
 //	_, err := mess.Db.Exec(statement, idChatBox)
 //	return err
 //}
-func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]Messages, error) {
+func (mess *RepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]Messages, error) {
 	messages := make([]Messages, 0)
 	statement := `SELECT m.id_mess,m.subject_sender,m.content,m.created_at,m.updated_at,m.deleted_at,m.id_group
 					FROM (SELECT * FROM dchat.public.message WHERE id_group = $1) AS m
@@ -104,8 +121,32 @@ func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser stri
 	return messages, nil
 }
 
-//func (mess *MessageRepoImpl) DeleteMessageById(idMesssage int) error {
+//func (mess *RepoImpl) DeleteMessageById(idMesssage int) error {
 //	statement := `DELETE FROM message WHERE id_mess = $1`
 //	_, err := mess.Db.Exec(statement, idMesssage)
 //	return err
 //}
+func (mess *RepoImpl) GetContinueMessageByIdAndGroup(idMessage int, idGroup int) ([]Messages, error) {
+	messages := make([]Messages, 0)
+	statement := `select id_mess,user_sender,content,id_group,created_at,updated_at from messages where id_mess < $1 and id_group = $2 order by created_at DESC limit 20`
+	rows, err := mess.Db.Query(statement, idMessage, idGroup)
+	if err != nil {
+		return messages, err
+	}
+	for rows.Next() {
+		m := Messages{}
+		err := rows.Scan(&m.ID,
+			&m.SubjectSender,
+			&m.Content,
+			&m.IdGroup,
+			&m.CreatedAt,
+			&m.UpdatedAt,
+		)
+		if err != nil {
+			return messages, err
+		}
+		messages = append(messages, m)
+	}
+	defer rows.Close()
+	return messages, nil
+}
