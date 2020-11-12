@@ -15,7 +15,7 @@ func NewRepoImpl(db *sql.DB) Repo {
 
 func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `SELECT id_mess,user_sender,content,id_group,created_at,updated_at FROM messages WHERE id_group = $1 and parentID IS NULL ORDER BY created_at DESC LIMIT 20`
+	statement := `SELECT id_mess,user_sender,content,id_group,numChild,created_at,updated_at FROM messages WHERE id_group = $1 and parentID IS NULL ORDER BY created_at DESC LIMIT 20`
 	rows, err := mess.Db.Query(statement, idChatBox)
 	if err != nil {
 		return messages, err
@@ -26,6 +26,7 @@ func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 			&m.SubjectSender,
 			&m.Content,
 			&m.IdGroup,
+			&m.Num,
 			&m.CreatedAt,
 			&m.UpdatedAt,
 		)
@@ -75,7 +76,6 @@ func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
 		message.Content,
 		message.IdGroup,
 		message.ParentId).Scan(&id)
-
 	statement = `SELECT id_mess,user_sender,content,id_group,parentID,numChild,created_at,updated_at FROM messages WHERE  id_mess = $1`
 	rows, err := mess.Db.Query(statement, id)
 	if rows.Next() {
@@ -92,6 +92,9 @@ func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
 			return m, err
 		}
 	}
+	statement1 := `update messages set numchild = numchild+1 where id_mess = $1 RETURNING id_mess`
+	_ = mess.Db.QueryRow(statement1,
+		message.ParentId).Scan(&id)
 	return m, err
 }
 
@@ -161,7 +164,7 @@ func (mess *RepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]
 //}
 func (mess *RepoImpl) GetContinueMessageByIdAndGroup(idMessage int, idGroup int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `select id_mess,user_sender,content,id_group,created_at,updated_at from messages where id_mess < $1 and id_group = $2 order by created_at DESC limit 20`
+	statement := `select id_mess,user_sender,content,id_group,numChild,created_at,updated_at from messages where id_mess < $1 and id_group = $2 order by created_at DESC limit 20`
 	rows, err := mess.Db.Query(statement, idMessage, idGroup)
 	if err != nil {
 		return messages, err
@@ -172,6 +175,7 @@ func (mess *RepoImpl) GetContinueMessageByIdAndGroup(idMessage int, idGroup int)
 			&m.SubjectSender,
 			&m.Content,
 			&m.IdGroup,
+			&m.Num,
 			&m.CreatedAt,
 			&m.UpdatedAt,
 		)

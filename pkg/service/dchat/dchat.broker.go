@@ -232,12 +232,14 @@ func (b *Broker) Run() {
 							mess := Message{
 								TypeEvent: LOADOLDMESS,
 								Data: Data{
-									Id:        int(h.ID),
-									GroupId:   message.Data.GroupId,
-									Body:      h.Content,
-									Sender:    h.SubjectSender,
-									CreatedAt: h.CreatedAt,
-									UpdatedAt: h.UpdatedAt,
+									Id:           int(h.ID),
+									GroupId:      message.Data.GroupId,
+									Body:         h.Content,
+									Sender:       h.SubjectSender,
+									ParentID:     h.ParentId,
+									NumChildMess: h.NumChildMess,
+									CreatedAt:    h.CreatedAt,
+									UpdatedAt:    h.UpdatedAt,
 								},
 							}
 							msg, _ = json.Marshal(mess)
