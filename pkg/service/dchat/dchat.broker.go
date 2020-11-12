@@ -183,6 +183,41 @@ func (b *Broker) Run() {
 
 			case LOADCHILDMESS:
 				fmt.Println(message.Data.Id)
+				child, err := message_service.LoadChildMessageService(message.Data.GroupId, message.Data.Id)
+
+				if err != nil {
+					log.Println(err)
+				}
+				var msg []byte
+				for _, h := range child {
+					for client := range b.Clients {
+						if client.UserId == message.Client && client.SocketId == message.Data.SocketID {
+
+							mess := Message{
+								TypeEvent: LOADCHILDMESS,
+								Data: Data{
+									Id:           int(h.ID),
+									GroupId:      message.Data.GroupId,
+									Body:         h.Content,
+									Sender:       h.SubjectSender,
+									ParentID:     h.ParentId,
+									NumChildMess: h.NumChildMess,
+									CreatedAt:    h.CreatedAt,
+									UpdatedAt:    h.UpdatedAt,
+								},
+							}
+
+							msg, _ = json.Marshal(mess)
+							select {
+							case client.Send <- msg:
+							default:
+								close(client.Send)
+								delete(b.Clients, client)
+							}
+						}
+
+					}
+				}
 			case SUBCRIBE:
 				historys, err := message_service.LoadMessageHistoryService(message.Data.GroupId)
 

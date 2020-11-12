@@ -38,6 +38,34 @@ func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 	defer rows.Close()
 	return messages, nil
 }
+
+func (mess *RepoImpl) GetChilMessByParentId(idChatBox int, parentId int) ([]Messages, error) {
+	messages := make([]Messages, 0)
+	statement := `SELECT id_mess,user_sender,content,id_group,parentID,numChild,created_at,updated_at FROM messages WHERE id_group = $1 and parentID = $2 ORDER BY created_at DESC LIMIT 20`
+	rows, err := mess.Db.Query(statement, idChatBox, parentId)
+	if err != nil {
+		return messages, err
+	}
+	for rows.Next() {
+		m := Messages{}
+		err := rows.Scan(&m.ID,
+			&m.SubjectSender,
+			&m.Content,
+			&m.IdGroup,
+			&m.ParentId,
+			&m.Num,
+			&m.CreatedAt,
+			&m.UpdatedAt,
+		)
+		if err != nil {
+			return messages, err
+		}
+		messages = append(messages, m)
+	}
+	defer rows.Close()
+	return messages, nil
+}
+
 func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 	fmt.Println(message.SubjectSender)
 	fmt.Println(message.Content)
@@ -164,7 +192,7 @@ func (mess *RepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]
 //}
 func (mess *RepoImpl) GetContinueMessageByIdAndGroup(idMessage int, idGroup int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `select id_mess,user_sender,content,id_group,numChild,created_at,updated_at from messages where id_mess < $1 and id_group = $2 order by created_at DESC limit 20`
+	statement := `select id_mess,user_sender,content,id_group,numChild,created_at,updated_at from messages where id_mess < $1 and id_group = $2 and parentID IS NULL order by created_at DESC limit 20`
 	rows, err := mess.Db.Query(statement, idMessage, idGroup)
 	if err != nil {
 		return messages, err

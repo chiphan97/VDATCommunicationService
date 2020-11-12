@@ -42,6 +42,21 @@ func LoadMessageHistoryService(idGroup int) ([]Dto, error) {
 	return dtos, nil
 
 }
+
+func LoadChildMessageService(idGroup int, parentId int) ([]Dto, error) {
+	dtos := make([]Dto, 0)
+	model, err := NewRepoImpl(database.DB).GetChilMessByParentId(idGroup, parentId)
+	if err != nil {
+		return dtos, err
+	}
+	for _, m := range model {
+		dto := m.convertToDTO()
+		dtos = append(dtos, dto)
+	}
+	return dtos, nil
+
+}
+
 func LoadContinueMessageHistoryService(idMessage int, idGroup int) ([]Dto, error) {
 	dtos := make([]Dto, 0)
 	model, err := NewRepoImpl(database.DB).GetContinueMessageByIdAndGroup(idMessage, idGroup)
