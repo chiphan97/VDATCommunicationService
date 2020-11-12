@@ -69,7 +69,6 @@ export class CreateNewGroupComponent implements OnInit {
           this.formGroup.enable();
           this.messageService.error(error);
           this.loading = false;
-          this.formGroup.enable();
         }, () => {
           this.loading = false;
           this.formGroup.enable();
