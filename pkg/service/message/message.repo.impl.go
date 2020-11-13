@@ -1,7 +1,9 @@
 package message
 
 import (
+	"context"
 	"database/sql"
+	"log"
 )
 
 type MessageRepoImpl struct {
@@ -109,3 +111,21 @@ func (mess *MessageRepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser stri
 //	_, err := mess.Db.Exec(statement, idMesssage)
 //	return err
 //}
+func (mess *MessageRepoImpl) DeleteMessageByGroup(idGroup int, ctx context.Context) error {
+	s := `DELETE FROM messages WHERE id_group = $1`
+	tx, err := mess.Db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, execErr := tx.Exec(s, idGroup)
+	if execErr != nil {
+		_ = tx.Rollback()
+		log.Fatal(execErr)
+		return execErr
+	}
+	if err := tx.Commit(); err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
+}

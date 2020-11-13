@@ -1,6 +1,7 @@
 package message
 
 import (
+	"context"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 )
 
@@ -23,4 +24,7 @@ func LoadMessageHistoryService(idGroup int) ([]Dto, error) {
 	}
 	return dtos, nil
 
+}
+func DeleteMessageService(idGroup int) error {
+	return RepoImpl(database.DB).DeleteMessageByGroup(idGroup, context.Background())
 }
