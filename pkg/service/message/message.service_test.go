@@ -21,10 +21,11 @@ func TestAddMessageService(t *testing.T) {
 		Content:       "mới thêm",
 		IdGroup:       1,
 	}
-	err := AddMessageService(payload)
+	id, err := AddMessageService(payload)
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Log(id)
 
 }
 func TestLoadMessageHistoryService(t *testing.T) {
@@ -36,4 +37,12 @@ func TestLoadMessageHistoryService(t *testing.T) {
 	}
 	t.Log(dtos)
 
+}
+func TestLoadContinueMessageHistoryService(t *testing.T) {
+	database.Connect()
+	dtos, err := LoadContinueMessageHistoryService(15, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(dtos)
 }
