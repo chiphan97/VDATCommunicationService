@@ -30,6 +30,8 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
         "body":"hello",
         "Sender":"893a4692-63bb-4919-80d9-aece678c0422",
         "socketId":"",
+        "parentID": 0,
+        "numChildMess": 0,
         "idContinueOldMess":0,
         "createdAt":"2020-11-11T15:04:24.800875Z",
         "updatedAt":"2020-11-11T15:04:24.800875Z"
@@ -58,6 +60,8 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
             "body":"hello",
             "Sender":"ffb63922-8f99-46ba-9648-d07f3ac14757",
             "socketId":"",
+            "parentID": 0,
+            "numChildMess": 0,
             "idContinueOldMess":0,
             "createdAt":"2020-11-11T14:37:06.818823Z",
             "updatedAt":"2020-11-11T14:37:06.818823Z"}
@@ -85,9 +89,75 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
             "id":42,"body":"hello",
             "Sender":"893a4692-63bb-4919-80d9-aece678c0422",
             "socketId":"",
+            "parentID": 0,
+            "numChildMess": 0,
             "idContinueOldMess":0,
             "createdAt":"2020-11-04T18:12:47.907925Z",
             "updatedAt":"2020-11-04T18:12:47.907925Z"
             }
 }
 ```
+
+## 4. Rely 
+- Rely message in chat 
+
+**Request**
+```json
+{ 
+    "type":"rely_message",
+    "data":{
+            "groupId": <idgroup>,
+            "socketId":"<socketId>",
+            "id": "<id>",
+            "body": "<message>"
+            }
+}
+```
+**Response**
+```json
+{
+    "type":"rely_message",
+    "data":{"groupId":1,
+            "id":42,"body":"hello",
+            "Sender":"893a4692-63bb-4919-80d9-aece678c0422",
+            "socketId":"",
+            "parentID": 0,
+            "numChildMess": 0,
+            "idContinueOldMess":0,
+            "createdAt":"2020-11-04T18:12:47.907925Z",
+            "updatedAt":"2020-11-04T18:12:47.907925Z"
+            }
+}
+```
+
+## 5. Load chile message 
+- Rely message in chat 
+
+**Request**
+```json
+{ 
+    "type":"load_child_mess",
+    "data":{
+            "groupId": <idgroup>,
+            "socketId":"<socketId>",
+            "id": "<id>"
+            }
+}
+```
+**Response**
+```json
+{
+    "type":"load_child_mess",
+    "data":{"groupId":1,
+            "id":42,"body":"hello",
+            "Sender":"893a4692-63bb-4919-80d9-aece678c0422",
+            "socketId":"",
+            "parentID": 0,
+            "numChildMess": 0,
+            "idContinueOldMess":0,
+            "createdAt":"2020-11-04T18:12:47.907925Z",
+            "updatedAt":"2020-11-04T18:12:47.907925Z"
+            }
+}
+```
+

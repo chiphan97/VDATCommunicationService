@@ -68,5 +68,4 @@ func LoadContinueMessageHistoryService(idMessage int, idGroup int) ([]Dto, error
 		dtos = append(dtos, dto)
 	}
 	return dtos, nil
-
 }
