@@ -1,7 +1,9 @@
 package message
 
 import (
+	"context"
 	"database/sql"
+	"log"
 	"fmt"
 )
 
@@ -56,7 +58,7 @@ func (mess *RepoImpl) GetChilMessByParentId(idChatBox int, parentId int) ([]Mess
 			&m.Num,
 			&m.CreatedAt,
 			&m.UpdatedAt,
-		)
+			&m.DeletedAt)
 		if err != nil {
 			return messages, err
 		}
@@ -126,7 +128,7 @@ func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
 	return m, err
 }
 
-//func (mess *RepoImpl) GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error) {
+//func (mess *MessageRepoImpl) GetMessagesByChatBoxAndSeenAtOrderByCreatedAtLimit10(idChatBox int) ([]model.MessageModel, error) {
 //	message := make([]model.MessageModel, 0)
 //	statement := `SELECT * FROM message WHERE id_chat = $1 AND seen_at IS NULL ORDER BY created_at LIMIT 10`
 //	rows, err := mess.Db.Query(statement, idChatBox)
@@ -143,7 +145,7 @@ func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
 //	}
 //	return message, nil
 //}
-//func (mess *RepoImpl) UpdateMessageByChatBox(idChatBox int) error {
+//func (mess *MessageRepoImpl) UpdateMessageByChatBox(idChatBox int) error {
 //	statement := `UPDATE message SET seen_at=now() WHERE id_chat = $1`
 //	_, err := mess.Db.Exec(statement, idChatBox)
 //	return err
@@ -185,11 +187,29 @@ func (mess *RepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]
 	return messages, nil
 }
 
-//func (mess *RepoImpl) DeleteMessageById(idMesssage int) error {
+//func (mess *MessageRepoImpl) DeleteMessageById(idMesssage int) error {
 //	statement := `DELETE FROM message WHERE id_mess = $1`
 //	_, err := mess.Db.Exec(statement, idMesssage)
 //	return err
 //}
+func (mess *RepoImpl) DeleteMessageByGroup(idGroup int, ctx context.Context) error {
+	s := `DELETE FROM messages WHERE id_group = $1`
+	tx, err := mess.Db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, execErr := tx.Exec(s, idGroup)
+	if execErr != nil {
+		_ = tx.Rollback()
+		log.Fatal(execErr)
+		return execErr
+	}
+	if err := tx.Commit(); err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
+}
 func (mess *RepoImpl) GetContinueMessageByIdAndGroup(idMessage int, idGroup int) ([]Messages, error) {
 	messages := make([]Messages, 0)
 	statement := `select id_mess,user_sender,content,id_group,numChild,created_at,updated_at from messages where id_mess < $1 and id_group = $2 and parentID IS NULL order by created_at DESC limit 20`

@@ -1,6 +1,7 @@
 package message
 
 import (
+	"context"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 )
 
@@ -28,7 +29,6 @@ func AddRelyService(payload PayLoad) (Dto, error) {
 	dto = m.convertToDTO()
 	return dto, nil
 }
-
 func LoadMessageHistoryService(idGroup int) ([]Dto, error) {
 	dtos := make([]Dto, 0)
 	model, err := NewRepoImpl(database.DB).GetMessagesByGroup(idGroup)
@@ -68,4 +68,8 @@ func LoadContinueMessageHistoryService(idMessage int, idGroup int) ([]Dto, error
 		dtos = append(dtos, dto)
 	}
 	return dtos, nil
+
+}
+func DeleteMessageService(idGroup int) error {
+	return RepoImpl(database.DB).DeleteMessageByGroup(idGroup, context.Background())
 }
