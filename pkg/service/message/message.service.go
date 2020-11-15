@@ -71,5 +71,5 @@ func LoadContinueMessageHistoryService(idMessage int, idGroup int) ([]Dto, error
 
 }
 func DeleteMessageService(idGroup int) error {
-	return RepoImpl(database.DB).DeleteMessageByGroup(idGroup, context.Background())
+	return NewRepoImpl(database.DB).DeleteMessageByGroup(idGroup, context.Background())
 }

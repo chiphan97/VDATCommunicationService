@@ -3,8 +3,8 @@ package message
 import (
 	"context"
 	"database/sql"
-	"log"
 	"fmt"
+	"log"
 )
 
 type RepoImpl struct {
@@ -58,7 +58,7 @@ func (mess *RepoImpl) GetChilMessByParentId(idChatBox int, parentId int) ([]Mess
 			&m.Num,
 			&m.CreatedAt,
 			&m.UpdatedAt,
-			&m.DeletedAt)
+		)
 		if err != nil {
 			return messages, err
 		}
