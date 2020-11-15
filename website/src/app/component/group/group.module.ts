@@ -29,7 +29,8 @@ import {UserModule} from '../user/user.module';
     NzFormModule,
     NzInputModule,
     ReactiveFormsModule,
-    NzCheckboxModule
+    NzCheckboxModule,
+    NzModalModule
   ],
   exports: [
     CreateNewGroupComponent,
