@@ -29,7 +29,6 @@ func AddRelyService(payload PayLoad) (Dto, error) {
 	dto = m.convertToDTO()
 	return dto, nil
 }
-
 func LoadMessageHistoryService(idGroup int) ([]Dto, error) {
 	dtos := make([]Dto, 0)
 	model, err := NewRepoImpl(database.DB).GetMessagesByGroup(idGroup)
@@ -72,5 +71,5 @@ func LoadContinueMessageHistoryService(idMessage int, idGroup int) ([]Dto, error
 
 }
 func DeleteMessageService(idGroup int) error {
-	return RepoImpl(database.DB).DeleteMessageByGroup(idGroup, context.Background())
+	return NewRepoImpl(database.DB).DeleteMessageByGroup(idGroup, context.Background())
 }
