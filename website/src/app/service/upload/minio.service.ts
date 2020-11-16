@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import { Minio, Client } from '../../../../node_modules/minio';
+//import { Client } from 'minio';
+import * as Minio from '../../../../node_modules/minio/dist/main/minio-browser';
 
 
 @Injectable({
@@ -8,7 +9,7 @@ import { Minio, Client } from '../../../../node_modules/minio';
 
 export class MinioService {
 
-    private minioClient: Client;
+    private minioClient;
 
     constructor(){
         this.minioClient = new Minio.Client({

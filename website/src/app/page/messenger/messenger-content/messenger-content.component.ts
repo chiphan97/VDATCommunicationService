@@ -16,6 +16,7 @@ import {GenericMessage, TextMessage, FileMessage} from '../../../model/generic-m
 import {StorageService} from '../../../service/common/storage.service';
 import {ChatService} from '../../../service/ws/chat.service';
 import {GroupService} from '../../../service/collector/group.service';
+import { MinioService} from '../../../service/upload/minio.service';
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
@@ -58,14 +59,13 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
               private chatService: ChatService,
               private changeDetectorRef: ChangeDetectorRef,
               private messageService: NzMessageService,
-              private groupService: GroupService) {
+              private groupService: GroupService,
+              private minioService: MinioService) {
     this.formGroup = this.createFormGroup();
   }
 
   ngOnInit(): void {
     this.focusInputField();
-    console.log('history: ');
-    console.log(this.messages);
   }
 
   ngAfterContentChecked() {
@@ -93,12 +93,6 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     this.onSubmitText();
 
     this.clearReplyToMessage();
-    if (this.formGroup.valid) {
-      const rawValue = this.formGroup.getRawValue();
-      const message = _.get(rawValue, 'message', '');
-      this.chatService.sendMessage(message, this.groupSelected.id);
-      this.formGroup.patchValue({message: ''});
-    }
   }
 
   private onSubmitText(): void {
@@ -108,12 +102,22 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
       this.chatService.sendMessage(message, this.groupSelected.id);
       this.formGroup.patchValue({message: ''});
 
-      this.mockupUISendMessage(message, this.groupSelected.id);
+      this.mockupUISendMessage(message, this.groupSelected);
     }  
   }
 
-  private mockupUISendMessage(message: string, groupId: number): void {
+  private mockupUISendMessage(message: string, group: Group): void {
     this.submitting = true;
+    // setTimeout(() => {
+    //   this.messages = [
+    //    ...this.messages, new TextMessage(1, group, this.currentUser, message, new Date(), [])
+    //   ].map(e => {
+    //     return {
+    //      ...e,
+    //     };
+    //   });
+    // }, 200);
+  //  this.submitting = false; 
   }
 
   private onSubmitFile(): void {
@@ -166,7 +170,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
   }
 
   focusInputField(): void {
-    setTimeout(()=>{ // this will make the execution after the above boolean has changed
+    setTimeout(()=>{
       this.inputElement.nativeElement.focus();
     },0);  
   }
