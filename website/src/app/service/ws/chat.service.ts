@@ -75,8 +75,7 @@ export class ChatService {
               const data = '[' + rawData.replace(/\n/g, ',') + ']';
 
               const messages = JSON.parse(data);
-              const messagesReverse = _.reverse(messages);
-              messagesReverse.forEach(message => {
+              messages.forEach(message => {
                 const messageDto = MessageDto.fromJson(message);
                 observer.next(messageDto);
               });
@@ -110,7 +109,7 @@ export class ChatService {
   }
 
   /**
-   * Get History messenger
+   * Subscribe group
    * @param groupId group id
    */
   public getChatHistory(groupId: number, lastMessageId?: number): Observable<boolean> {
@@ -127,6 +126,36 @@ export class ChatService {
                 socketId
               },
               type: WsEvent.SUBCRIBE_GROUP,
+            };
+            socket.send(JSON.stringify(message));
+
+            observer.next(true);
+            observer.complete();
+          } else {
+            observer.next(false);
+            observer.complete();
+          }
+        });
+    });
+  }
+
+  /**
+   * Load old messages
+   * @param groupId group id
+   * @param lastMessageId last message id
+   */
+  public getMessagesHistory(groupId: number, lastMessageId: number = -1): Observable<boolean> {
+    return new Observable<boolean>(observer => {
+      this.getSocket()
+        .subscribe(socket => {
+          if (socket) {
+            const message: MessagePayload = {
+              data: {
+                groupId,
+                socketId: this.currentUser.socketId,
+                idContinueOldMess: lastMessageId
+              },
+              type: WsEvent.LOAD_OLD_MESSAGE,
             };
             socket.send(JSON.stringify(message));
 

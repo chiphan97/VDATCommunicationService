@@ -2,7 +2,7 @@
   <nz-col nzSpan="24"
           class="message-container"
           #messagesContainer
-          [scrollTop]="messagesContainer.scrollHeight"
+          [scrollTop]="isScrollHeight ? messagesContainer.scrollHeight : messagesContainer.scrollTop"
           (scroll)="onMessageContainerScroll($event)">
     <div class="text-center">
       <nz-spin nzSimple [nzSpinning]="loading"></nz-spin>

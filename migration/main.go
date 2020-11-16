@@ -3,22 +3,37 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	_ "github.com/lib/pq"
 	"log"
 	"os"
 )
 
-var conn = `postgres://postgres:postgres@localhost:5432`
+const DefaultDbConnection = `postgres://postgres:postgres@localhost:5432`
+const DefaultDbName = "dchat"
 
 func main() {
-	connectionStr := os.Getenv("DATABASE_URL")
-	if len(connectionStr) > 0 {
-		conn = connectionStr
-	}
-	conn = conn + "?sslmode=disable"
+	var connectionDbMaster = DefaultDbConnection
+	var connectionDb = DefaultDbConnection
 
-	statement := `SELECT 1 from pg_database WHERE datname='dchat'`
-	db, err := sql.Open("postgres", conn)
+	connectionStrEnv := os.Getenv("DATABASE_URL")
+
+	if len(connectionStrEnv) > 0 {
+		connectionDbMaster = connectionStrEnv
+		connectionDb = connectionStrEnv
+	}
+
+	connectionDbMaster += "?sslmode=disable"
+	connectionDb += fmt.Sprintf("/%s?sslmode=disable", DefaultDbName)
+
+	statement := `SELECT 1 from pg_database WHERE datname='` + DefaultDbName + `'`
+	db, err := sql.Open("postgres", connectionDbMaster)
+
+	if db == nil {
+		log.Print("Cannot connect to db")
+		return
+	}
+
 	rows, err := db.Query(statement)
 	if err != nil {
 		log.Println(err)
@@ -26,22 +41,20 @@ func main() {
 	}
 
 	if rows.Next() {
-		//conn := `postgres://postgres:postgres@localhost:5432/dchat?sslmode=disable`
-		db, err = sql.Open("postgres", conn)
+		db, err = sql.Open("postgres", connectionDb)
 		if err != nil {
 			log.Printf("Fail to openDB: %v \n", err)
 			return
 		}
 	} else {
-		statement := `CREATE DATABASE dchat`
+		statement := `CREATE DATABASE ` + DefaultDbName
 		_, err := db.Exec(statement)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 		log.Println(statement)
-		//conn = `postgres://postgres:postgres@localhost:5432/dchat?sslmode=disable`
-		db, err = sql.Open("postgres", conn)
+		db, err = sql.Open("postgres", connectionDb)
 		if err != nil {
 			log.Printf("Fail to openDB: %v \n", err)
 			return

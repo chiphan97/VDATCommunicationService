@@ -42,7 +42,7 @@ export class CreateNewGroupComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  public onSubmit(): void {
     if (this.formGroup.valid) {
       this.formGroup.disable();
       this.loading = true;
@@ -69,15 +69,16 @@ export class CreateNewGroupComponent implements OnInit {
           this.formGroup.enable();
           this.messageService.error(error);
           this.loading = false;
-          this.formGroup.enable();
         }, () => {
           this.loading = false;
           this.formGroup.enable();
         });
+    } else {
+      this.messageService.warning('Vui lòng kiểm tra lại dữ liệu nhập');
     }
   }
 
-  onClose() {
+  public onClose() {
     this.modalService.destroy(null);
   }
 }

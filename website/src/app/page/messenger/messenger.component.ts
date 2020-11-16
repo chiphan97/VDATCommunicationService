@@ -14,6 +14,8 @@ import * as _ from 'lodash';
 import {ChatService} from '../../service/ws/chat.service';
 //import {Message} from '../../model/message.model';
 import {GenericMessage, TextMessage, FileMessage} from '../../model/generic-message.model';
+import {Message} from '../../model/message.model';
+import {WsEvent} from '../../const/ws.event';
 
 @Component({
   selector: 'app-messenger',
@@ -199,6 +201,7 @@ export class MessengerComponent
         if (ready) {
           this.chatService.listener()
             .subscribe(messageDto => {
+              // get info sender
               const sender = this.memberOfGroup.find(member => member.userId === messageDto.senderId);
 
               const message = new TextMessage(
@@ -210,7 +213,20 @@ export class MessengerComponent
                 []
               );
 
-              this.messages.push(message);
+              switch (messageDto.eventType) {
+                case WsEvent.LOAD_OLD_MESSAGE:
+                case WsEvent.SUBCRIBE_GROUP:
+                  this.messages = this.messages.reverse();
+                  this.messages.push(message);
+                  this.messages = this.messages.reverse();
+                  break;
+                case WsEvent.SEND_TEXT:
+                  this.messages.push(message);
+                  break;
+                default:
+                  console.warn('Cannot support this event');
+              }
+
               this.messages = [].concat(this.messages);
             });
         }

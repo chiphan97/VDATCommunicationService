@@ -7,6 +7,8 @@ type Dto struct {
 	SubjectSender string     `json:"subjectSender"`
 	Content       string     `json:"content"`
 	IdGroup       int        `json:"idGroup"`
+	ParentId      int        `json:"parentId"`
+	NumChildMess  int        `json:"numChildMess"`
 	CreatedAt     *time.Time `json:"createdAt"`
 	UpdatedAt     *time.Time `json:"updatedAt"`
 }

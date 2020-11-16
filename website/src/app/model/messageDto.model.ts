@@ -9,42 +9,50 @@ export class MessageDto {
   socketId: number;
   content: any;
   status: string;
+  idContinueOldMess: number;
+  parentID: number;
+  numChildMess: number;
   createdAt: Date;
-  type: WsEvent;
+  eventType: WsEvent;
 
   constructor(id: number, groupId: number, senderId: string, socketId: number,
-              content: any, status: string, createdAt: Date = new Date()) {
+              content: any, status: string, idContinueOldMess: number,
+              parentID: number, numChildMess: number, createdAt: Date = new Date()) {
     this.id = id;
     this.groupId = groupId;
     this.senderId = senderId;
     this.socketId = socketId;
     this.content = content;
     this.status = status;
+    this.idContinueOldMess = idContinueOldMess;
+    this.parentID = parentID;
+    this.numChildMess = numChildMess;
     this.createdAt = createdAt;
   }
 
   public static fromJson(data: any): MessageDto {
     if (!!data) {
-      const messageData = _.get(data, 'data', null);
+      const messageData = _.get(data, 'data', {});
 
-      if (!!messageData) {
-        const messageDto = new MessageDto(
-          _.get(messageData, 'id', -1),
-          _.get(messageData, 'groupId', -1),
-          _.get(messageData, 'Sender', ''),
-          _.get(messageData, 'socketId', -1),
-          _.get(messageData, 'body', ''),
-          _.get(messageData, 'Status', '')
-        );
+      const messageDto = new MessageDto(
+        _.get(messageData, 'id', -1),
+        _.get(messageData, 'groupId', -1),
+        _.get(messageData, 'Sender', ''),
+        _.get(messageData, 'socketId', -1),
+        _.get(messageData, 'body', ''),
+        _.get(messageData, 'Status', ''),
+        _.get(messageData, 'idContinueOldMess', -1),
+        _.get(messageData, 'parentID', -1),
+        _.get(messageData, 'numChildMess', 0)
+      );
 
-        messageDto.type = _.get(data, 'type', WsEvent.MESSAGE);
+      messageDto.eventType = _.get(data, 'type', WsEvent.MESSAGE);
 
-        if (!!!messageDto.senderId) {
-          messageDto.senderId = _.get(data, 'Client', '');
-        }
-
-        return messageDto;
+      if (!!!messageDto.senderId) {
+        messageDto.senderId = _.get(data, 'Client', '');
       }
+
+      return messageDto;
     }
 
     return null;

@@ -432,7 +432,7 @@ var doc = `{
                 ]
             },
             "post": {
-                "description": "NOTE\nEvent For Send Message\n\n\"type\":\"subcribe_group\" - to open the group the person has joined\n\n\"type\":\"send_text\" - to send text from current client to users in that group",
+                "description": "NOTE\nEvent For Send Message\n\n\"type\":\"subcribe_group\" - to open the group the person has joined\n\n\"type\":\"send_text\" - to send text from current client to users in that group\n\n\"type\":\"load_old_mess\" - to load continues history message in group",
                 "consumes": [
                     "application/json"
                 ],
@@ -488,6 +488,12 @@ var doc = `{
                     "example": "tin nhan moi"
                 },
                 "groupId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "idContinueOldMess": {
                     "type": "integer"
                 },
                 "sender": {

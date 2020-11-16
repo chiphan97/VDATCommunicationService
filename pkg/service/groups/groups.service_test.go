@@ -24,3 +24,11 @@ func TestGetGroupByPatientService(t *testing.T) {
 		t.Log(dto.Id)
 	}
 }
+func TestDeleteGroupService(t *testing.T) {
+	database.Connect()
+	err := DeleteGroupService(2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log("sucess")
+}
