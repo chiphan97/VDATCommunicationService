@@ -79,7 +79,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     const offsetTop = parseInt(event.target.scrollTop, 0);
 
     if (offsetTop <= this.DEFAULT_SCROLL_OFFSET_TOP) {
-      const lastMessage: Message = this.messages[0];
+      const lastMessage: GenericMessage = this.messages[0];
       this.chatService.getMessagesHistory(this.groupSelected.id, lastMessage.id)
         .subscribe(() => {
           console.log('đang load thêm tin nhắn');
