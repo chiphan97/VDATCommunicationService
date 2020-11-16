@@ -40,6 +40,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
 
   public formGroup: FormGroup;
   public loading: boolean;
+  public isScrollHeight = true;
 
   public patientUnknown: User = new User('45', 'Anonymous', 'Patient', '', null, 'patient', 'username', null, null, null);
   public submitting = false;
@@ -61,10 +62,15 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
 
   @HostListener('scroll', ['$event'])
   public onMessageContainerScroll(event: any) {
+    this.isScrollHeight = false;
     const offsetTop = parseInt(event.target.scrollTop, 0);
 
     if (offsetTop <= this.DEFAULT_SCROLL_OFFSET_TOP) {
-      console.log('load thêm tin nhắn');
+      const lastMessage: Message = this.messages[0];
+      this.chatService.getMessagesHistory(this.groupSelected.id, lastMessage.id)
+        .subscribe(() => {
+          console.log('đang load thêm tin nhắn');
+        });
       this.loadMore.emit();
     }
   }

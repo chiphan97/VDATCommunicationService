@@ -13,6 +13,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {ChatService} from '../../service/ws/chat.service';
 import {Message} from '../../model/message.model';
+import {WsEvent} from '../../const/ws.event';
 
 @Component({
   selector: 'app-messenger',
@@ -198,8 +199,10 @@ export class MessengerComponent
         if (ready) {
           this.chatService.listener()
             .subscribe(messageDto => {
+              // get info sender
               const sender = this.memberOfGroup.find(member => member.userId === messageDto.senderId);
 
+              // convert model message from dto
               const message = new Message(
                 messageDto.id,
                 this.groupSelected.id === messageDto.groupId ? this.groupSelected : null,
@@ -208,7 +211,20 @@ export class MessengerComponent
                 messageDto.createdAt
               );
 
-              this.messages.push(message);
+              switch (messageDto.eventType) {
+                case WsEvent.LOAD_OLD_MESSAGE:
+                case WsEvent.SUBCRIBE_GROUP:
+                  this.messages = this.messages.reverse();
+                  this.messages.push(message);
+                  this.messages = this.messages.reverse();
+                  break;
+                case WsEvent.SEND_TEXT:
+                  this.messages.push(message);
+                  break;
+                default:
+                  console.warn('Cannot support this event');
+              }
+
               this.messages = [].concat(this.messages);
             });
         }
