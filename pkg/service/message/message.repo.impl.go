@@ -74,11 +74,12 @@ func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 	fmt.Println(message.IdGroup)
 	var id int
 	m := Messages{}
-	statement := `INSERT INTO messages (user_sender,content,id_group) VALUES ($1,$2,$3) RETURNING id_mess`
+	statement := `INSERT INTO messages (user_sender,content,id_group,type) VALUES ($1,$2,$3,$4) RETURNING id_mess`
 	err := mess.Db.QueryRow(statement,
 		message.SubjectSender,
 		message.Content,
-		message.IdGroup).Scan(&id)
+		message.IdGroup,
+		message.Type).Scan(&id)
 
 	statement = `SELECT id_mess,user_sender,content,id_group,numChild,created_at,updated_at FROM messages WHERE  id_mess = $1`
 	rows, err := mess.Db.Query(statement, id)
@@ -100,12 +101,13 @@ func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
 	var id int
 	m := Messages{}
-	statement := `INSERT INTO messages (user_sender,content,id_group,parentID) VALUES ($1,$2,$3,$4) RETURNING id_mess`
+	statement := `INSERT INTO messages (user_sender,content,id_group,parentID,type) VALUES ($1,$2,$3,$4,$5) RETURNING id_mess`
 	err := mess.Db.QueryRow(statement,
 		message.SubjectSender,
 		message.Content,
 		message.IdGroup,
-		message.ParentId).Scan(&id)
+		message.ParentId,
+		message.Type).Scan(&id)
 	statement = `SELECT id_mess,user_sender,content,id_group,parentID,numChild,created_at,updated_at FROM messages WHERE  id_mess = $1`
 	rows, err := mess.Db.Query(statement, id)
 	if rows.Next() {

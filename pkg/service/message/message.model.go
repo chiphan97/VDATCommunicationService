@@ -15,6 +15,7 @@ type Messages struct {
 	IdGroup       int
 	ParentId      int
 	Num           int
+	Type          string
 }
 
 func (m *Messages) convertToDTO() Dto {

@@ -116,6 +116,7 @@ func (b *Broker) Run() {
 					SubjectSender: message.Client,
 					Content:       message.Data.Body,
 					IdGroup:       message.Data.GroupId,
+					Type:          message.Data.Type,
 				}
 				newMess, err := message_service.AddMessageService(payload)
 				if err != nil {
@@ -155,6 +156,7 @@ func (b *Broker) Run() {
 					Content:       message.Data.Body,
 					IdGroup:       message.Data.GroupId,
 					ID:            message.Data.Id,
+					Type:          message.Data.Type,
 				}
 				newMess, err := message_service.AddRelyService(payload)
 				if err != nil {
