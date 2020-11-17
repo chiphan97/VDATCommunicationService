@@ -9,6 +9,7 @@ type Dto struct {
 	IdGroup       int        `json:"idGroup"`
 	ParentId      int        `json:"parentId"`
 	NumChildMess  int        `json:"numChildMess"`
+	Type          string     `json:"type"`
 	CreatedAt     *time.Time `json:"createdAt"`
 	UpdatedAt     *time.Time `json:"updatedAt"`
 }

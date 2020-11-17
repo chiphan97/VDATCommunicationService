@@ -206,6 +206,7 @@ func (b *Broker) Run() {
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
+									Type:         h.Type,
 								},
 							}
 
@@ -242,6 +243,7 @@ func (b *Broker) Run() {
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
+									Type:         h.Type,
 								},
 							}
 
@@ -277,6 +279,7 @@ func (b *Broker) Run() {
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
+									Type:         h.Type,
 								},
 							}
 							msg, _ = json.Marshal(mess)

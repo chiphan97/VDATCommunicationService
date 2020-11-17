@@ -26,6 +26,7 @@ func (m *Messages) convertToDTO() Dto {
 		IdGroup:       m.IdGroup,
 		ParentId:      m.ParentId,
 		NumChildMess:  m.Num,
+		Type:          m.Type,
 		CreatedAt:     m.CreatedAt,
 		UpdatedAt:     m.UpdatedAt,
 	}
