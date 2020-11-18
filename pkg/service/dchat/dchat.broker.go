@@ -130,6 +130,7 @@ func (b *Broker) Run() {
 							message.Data.UpdatedAt = newMess.UpdatedAt
 							message.Data.Sender = newMess.SubjectSender
 							message.Data.NumChildMess = newMess.NumChildMess
+							message.Data.ParentID = -1
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
@@ -239,7 +240,7 @@ func (b *Broker) Run() {
 									GroupId:      message.Data.GroupId,
 									Body:         h.Content,
 									Sender:       h.SubjectSender,
-									ParentID:     h.ParentId,
+									ParentID:     -1,
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
@@ -275,7 +276,7 @@ func (b *Broker) Run() {
 									GroupId:      message.Data.GroupId,
 									Body:         h.Content,
 									Sender:       h.SubjectSender,
-									ParentID:     h.ParentId,
+									ParentID:     -1,
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
