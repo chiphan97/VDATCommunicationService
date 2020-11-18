@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AuthComponent} from './auth.component';
 import {AuthRouting} from './auth.routing';
-import {NzAvatarModule, NzButtonModule, NzCardModule, NzGridModule, NzIconModule, NzLayoutModule, NzTypographyModule} from 'ng-zorro-antd';
+import {NzGridModule} from 'ng-zorro-antd';
 
 
 @NgModule({
@@ -10,13 +10,7 @@ import {NzAvatarModule, NzButtonModule, NzCardModule, NzGridModule, NzIconModule
   imports: [
     CommonModule,
     AuthRouting,
-    NzLayoutModule,
-    NzGridModule,
-    NzTypographyModule,
-    NzCardModule,
-    NzAvatarModule,
-    NzButtonModule,
-    NzIconModule
+    NzGridModule
   ]
 })
 export class AuthModule {

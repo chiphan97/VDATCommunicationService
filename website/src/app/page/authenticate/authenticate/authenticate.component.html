@@ -1,0 +1,37 @@
+<div class="container">
+  <nz-row style="min-height: 100vh">
+    <nz-col nzSpan="24" id="header">
+      <h3 nz-typography style="color: white">VDAT Messenger</h3>
+    </nz-col>
+
+    <nz-col nzSpan="24">
+      <nz-row nzJustify="center">
+        <nz-col nzXs="23" nzSm="22" nzMd="14" nzLg="8" style="text-align: center">
+          <nz-card [nzBordered]="true" style="width: 100%; padding: 20px 16px">
+            <nz-avatar nzIcon="user"
+                       [nzSize]="100"
+                       style="margin: -100px 0 20px 0"
+                       nzSrc="./assets/icons/icons8-delete-chat-100.png">
+            </nz-avatar>
+
+            <h3 style="padding-bottom: 10px">Đăng nhập để tiếp tục ...</h3>
+
+            <button nz-button nzType="primary"
+                    nzSize="large" nzGhost nzShape="round"
+                    (click)="onLogin()">
+              Đăng nhập
+            </button>
+          </nz-card>
+        </nz-col>
+      </nz-row>
+    </nz-col>
+
+    <nz-col nzSpan="24" style="text-align: center; bottom: 10px; vertical-align: text-bottom">
+      <p nz-typography style="color: white">
+        Made with
+        <i nz-icon [nzType]="'heart'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"></i>
+        by VDAT Team
+      </p>
+    </nz-col>
+  </nz-row>
+</div>
