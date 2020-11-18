@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var defalutParnetID = -1
+
 type Broker struct {
 	// 1 group va nhieu client connect toi
 	Clients map[*Client]bool
@@ -130,7 +132,7 @@ func (b *Broker) Run() {
 							message.Data.UpdatedAt = newMess.UpdatedAt
 							message.Data.Sender = newMess.SubjectSender
 							message.Data.NumChildMess = newMess.NumChildMess
-							message.Data.ParentID = -1
+							message.Data.ParentID = defalutParnetID
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
@@ -240,7 +242,7 @@ func (b *Broker) Run() {
 									GroupId:      message.Data.GroupId,
 									Body:         h.Content,
 									Sender:       h.SubjectSender,
-									ParentID:     -1,
+									ParentID:     defalutParnetID,
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
@@ -276,7 +278,7 @@ func (b *Broker) Run() {
 									GroupId:      message.Data.GroupId,
 									Body:         h.Content,
 									Sender:       h.SubjectSender,
-									ParentID:     -1,
+									ParentID:     defalutParnetID,
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
