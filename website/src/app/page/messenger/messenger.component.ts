@@ -12,9 +12,7 @@ import {MessengerSidebarRightComponent} from './messenger-sidebar-right/messenge
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {ChatService} from '../../service/ws/chat.service';
-//import {Message} from '../../model/message.model';
 import {GenericMessage, TextMessage, FileMessage} from '../../model/generic-message.model';
-import {Message} from '../../model/message.model';
 import {WsEvent} from '../../const/ws.event';
 
 @Component({
@@ -209,6 +207,7 @@ export class MessengerComponent
                 this.groupSelected.id === messageDto.groupId ? this.groupSelected : null,
                 sender,
                 messageDto.content,
+                messageDto.parentID,
                 messageDto.createdAt,
                 []
               );
@@ -222,6 +221,9 @@ export class MessengerComponent
                   break;
                 case WsEvent.SEND_TEXT:
                   this.messages.push(message);
+                  break;
+                case WsEvent.REPLY_MESSAGE:
+                  console.log('new reply: ' + message.content);
                   break;
                 default:
                   console.warn('Cannot support this event');

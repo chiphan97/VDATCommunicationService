@@ -20,6 +20,7 @@ import { MinioService} from '../../../service/upload/minio.service';
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
+import { WsEvent } from 'src/app/const/ws.event';
 
 @Component({
   selector: 'app-messenger-content',
@@ -60,9 +61,12 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
               private chatService: ChatService,
               private changeDetectorRef: ChangeDetectorRef,
               private messageService: NzMessageService,
-              private groupService: GroupService,
-              private minioService: MinioService) {
+              private groupService: GroupService) {
     this.formGroup = this.createFormGroup();
+    console.log('messages');
+    console.log(this.messages);
+    //try uploading
+    //this.minioService.uploadFile('/Users/chiphan/screenShot');
   }
 
   ngOnInit(): void {
@@ -94,6 +98,32 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     });
   }
 
+  public fetchMessageReplies(message: GenericMessage): void{
+    const parentId = message.id;
+    this.chatService.getMessageReplies(this.groupSelected.id, parentId)
+    .subscribe(ready => {
+      if (ready) {
+        this.chatService.listener()
+          .subscribe(messageDto => {
+            const sender = this.memberOfGroup.find(member => member.userId === messageDto.senderId);
+
+            const message = new TextMessage(
+              messageDto.id,
+              this.groupSelected.id === messageDto.groupId ? this.groupSelected : null,
+              sender,
+              messageDto.content,
+              messageDto.parentID,
+              messageDto.createdAt,
+              []
+            );
+            if (messageDto.eventType == WsEvent.REPLY_MESSAGE) {
+              console.log('new reply in mess.cont: ' + message.content);
+            }
+          });
+      };
+    })
+  }
+
   public onSubmit(): void {
     this.onSubmitFile();
     this.onSubmitText();
@@ -105,7 +135,12 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     if (this.formGroup.valid) {
       const rawValue = this.formGroup.getRawValue();
       const message = _.get(rawValue, 'message', '');
-      this.chatService.sendMessage(message, this.groupSelected.id);
+      if (!this.messageToReply) {
+        this.chatService.sendMessage(message, this.groupSelected.id);
+      } else {
+        this.chatService.replyToMessage(message, this.groupSelected.id, this.messageToReply.id);
+      }
+      
       this.formGroup.patchValue({message: ''});
 
       this.mockupUISendMessage(message, this.groupSelected);
@@ -135,7 +170,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
   private createFileMessage(uploadFiles: NzUploadFile[], group: Group){
     this.submitting = true;
 
-    const fileMessage = new FileMessage(1, group, this.currentUser, uploadFiles, new Date(), []);
+    const fileMessage = new FileMessage(1, group, this.currentUser, uploadFiles, null, new Date(), []);
     setTimeout(() => {
        this.messages = [
         ...this.messages, fileMessage
@@ -166,8 +201,6 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     }
     this.focusInputField();
     this.messageToReply = event;
-    //place cursor inside input
-    console.log('replying to : ' + event.content);
   }
 
   clearReplyToMessage(): void{

@@ -62,4 +62,21 @@
                                  [currentUser]="currentUser">
     </app-messenger-sidebar-right>
   </div>
+  <div nz-col
+       nz-resizable
+       *ngIf="groupSelected && false"
+       id="sidebar-right"
+       (nzResize)="onResize($event, false)"
+       [nzMinColumn]="6"
+       [nzMaxColumn]="8"
+       [nzGridColumnCount]="24"
+       [nzSpan]="numColSidebarRight">
+    <nz-resize-handle nzDirection="left">
+      <div class="sider-resize-line"></div>
+    </nz-resize-handle>
+
+    <messenger-reply-thread-right #messengerReplyThreadRightComponent
+                                 >
+    </messenger-reply-thread-right>
+  </div>
 </div>

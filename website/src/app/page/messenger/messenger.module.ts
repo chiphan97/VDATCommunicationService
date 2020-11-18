@@ -36,6 +36,7 @@ import {MessengerMessageComponent} from './messenger-message/messenger-message.c
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SettingModule} from '../../component/setting/setting.module';
 import {GroupModule} from '../../component/group/group.module';
+import { MessengerReplyThreadRightComponent } from './messenger-reply-thread-right/messenger-reply-thread-right.component';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import {GroupModule} from '../../component/group/group.module';
     MessengerSidebarRightComponent,
     MessengerHeaderComponent,
     MessengerContentComponent,
-    MessengerMessageComponent
+    MessengerMessageComponent,
+    MessengerReplyThreadRightComponent
   ],
   imports: [
     CommonModule,

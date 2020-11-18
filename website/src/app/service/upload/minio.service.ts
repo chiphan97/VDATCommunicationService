@@ -1,13 +1,11 @@
 import {Injectable} from '@angular/core';
 import * as Minio from '../../../../node_modules/minio/dist/main/minio-browser';
-
-
+import * as fs from 'fs';
 @Injectable({
     providedIn: 'root'
 })
 
 export class MinioService {
-
     private readonly vdatBucketName = 'vdat.s3.bucket';
     private minioClient: Minio.Client;
 
@@ -38,15 +36,15 @@ export class MinioService {
     }
 
     public uploadFile(file: string) {
-        var metaData = {
-            'Content-Type': 'application/octet-stream',
-            'X-Amz-Meta-Testing': 1234,
-            'example': 5678
-        }
-        this.minioClient.fPutObject(this.vdatBucketName, 'new-File.png', file, 'application/octet-stream', function(err, etag) {
-            if (err) {console.log(err)
+        let fileStream = fs.createReadStream(file);
+        let fileStat = fs.stat(file, function(err, stats) {
+            if (err) {
+                return console.log(err);
             }
-            console.log('File uploaded successfully .')
-          });
+            this.minioClient.putObject(this.vdatBucketName, 'new-File', fileStream, stats.size, function (err, etag) {
+                if (err) console.log(err); 
+                return console.log('File uploaded successfully.');
+            })
+        })
     }
 }

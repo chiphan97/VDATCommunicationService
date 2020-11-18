@@ -13,6 +13,7 @@ import {User} from '../../model/user.model';
 @Injectable({
   providedIn: 'root'
 })
+
 export class ChatService {
   private readonly WS_ENDPOINT = `${environment.service.wsUrl}${environment.service.endpoint.message}`;
 
@@ -140,6 +141,37 @@ export class ChatService {
   }
 
   /**
+   * Subscribe group
+   * @param groupId group id
+   */
+  public getMessageReplies(groupId: number, messageId: number): Observable<boolean> {
+    const socketId = this.currentUser.socketId;
+
+    return new Observable<boolean>(observer => {
+      this.getSocket()
+        .subscribe(socket => {
+          if (socket) {
+            const message: MessagePayload = {
+              data: {
+                groupId,
+                socketId,
+               "id": messageId
+              },
+              type: WsEvent.LOAD_CHILD_MESSAGE,
+            };
+            socket.send(JSON.stringify(message));
+
+            observer.next(true);
+            observer.complete();
+          } else {
+            observer.next(false);
+            observer.complete();
+          }
+        });
+    });
+  }
+
+  /**
    * Load old messages
    * @param groupId group id
    * @param lastMessageId last message id
@@ -179,7 +211,6 @@ export class ChatService {
 
   public sendMessage(message: string, groupId: number): void {
     const socketId = this.currentUser.socketId;
-
     const payload: MessagePayload = {
       data: {
         groupId,
@@ -187,6 +218,23 @@ export class ChatService {
         socketId
       },
       type: WsEvent.SEND_TEXT,
+      groupId
+    };
+
+    this.socket.send(JSON.stringify(payload));
+  }
+
+  public replyToMessage(message: string, groupId: number, parentId: number): void {
+    const socketId = this.currentUser.socketId;
+
+    const payload: MessagePayload = {
+      data: {
+        groupId,
+        socketId,
+        id: parentId,
+        body : message       
+      },
+      type: WsEvent.REPLY_MESSAGE,
       groupId
     };
 
