@@ -8,7 +8,7 @@ import {
   NzCardModule,
   NzGridModule,
   NzIconModule,
-  NzLayoutModule,
+  NzLayoutModule, NzResultModule,
   NzSpinModule,
   NzTypographyModule
 } from 'ng-zorro-antd';
@@ -30,7 +30,8 @@ import {AuthenticateRouting} from './authenticate.routing';
     NzButtonModule,
     NzIconModule,
     AuthenticateRouting,
-    NzSpinModule
+    NzSpinModule,
+    NzResultModule
   ]
 })
 export class AuthenticateModule {
