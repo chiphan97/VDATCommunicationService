@@ -5,7 +5,13 @@ import {AuthComponent} from './auth.component';
 const routes: Routes = [
   {
     path: '',
-    component: AuthComponent
+    component: AuthComponent,
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('./../../page/authenticate/authenticate.module').then(m => m.AuthenticateModule)
+      }
+    ]
   }
 ];
 

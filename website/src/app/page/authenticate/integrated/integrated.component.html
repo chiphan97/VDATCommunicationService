@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="vertical-center">
+    <div *ngIf="loading">
+      <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+      <h4 nz-typography>Vui lòng đợi trong giây lát ...</h4>
+    </div>
+
+    <nz-result *ngIf="!loading && !authenticated"
+               nzStatus="403" nzTitle="403"
+               nzSubTitle="Sorry, you are not authorized to access this page.">
+      <div nz-result-extra>
+        <button nz-button nzType="primary">Back Home</button>
+      </div>
+    </nz-result>
+
+    <nz-result *ngIf="!loading && authenticated"
+               nzStatus="success"
+               nzTitle="Successfully Purchased Cloud Server ECS!"
+               nzSubTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait.">
+      <div nz-result-extra>
+        <button nz-button nzType="primary">Go Console</button>
+        <button nz-button>Buy Again</button>
+      </div>
+    </nz-result>
+  </div>
+</div>
