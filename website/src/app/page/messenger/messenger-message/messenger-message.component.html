@@ -1,5 +1,11 @@
 <ng-container [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ message: message }">
 </ng-container>
+<ng-container *ngIf="showChildren && message.children && message.children.length">
+  <ng-template ngFor let-child [ngForOf]="message.children">
+    <ng-template [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ message: child }">
+    </ng-template>
+  </ng-template>
+</ng-container>
 
 <ng-template #messageTemplateRef let-message="message">
   <container-element [ngSwitch]="isOwner()">
@@ -28,13 +34,6 @@
         <i nz-tooltip nzTooltipTitle="Trả lời" class="fa fa-reply" aria-hidden="true" (click)="onMessageReply()">
         </i>
       </nz-comment-action>
-
-      <ng-container *ngIf="message.children && message.children.length">
-        <ng-template ngFor let-child [ngForOf]="message.children">
-          <ng-template [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ message: child }">
-          </ng-template>
-        </ng-template>
-      </ng-container>
     </nz-comment>
   </container-element>
 </ng-template>

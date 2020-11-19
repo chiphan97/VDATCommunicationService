@@ -37,7 +37,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SettingModule} from '../../component/setting/setting.module';
 import {GroupModule} from '../../component/group/group.module';
 import { MessengerReplyThreadRightComponent } from './messenger-reply-thread-right/messenger-reply-thread-right.component';
-
+import { ReplyThreadHeaderComponent } from './messenger-reply-thread-right/reply-thread-header/reply-thread-header.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +47,8 @@ import { MessengerReplyThreadRightComponent } from './messenger-reply-thread-rig
     MessengerHeaderComponent,
     MessengerContentComponent,
     MessengerMessageComponent,
-    MessengerReplyThreadRightComponent
+    MessengerReplyThreadRightComponent,
+    ReplyThreadHeaderComponent,
   ],
   imports: [
     CommonModule,

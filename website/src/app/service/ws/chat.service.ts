@@ -1,13 +1,13 @@
-import {EventEmitter, Injectable} from '@angular/core';
-import {environment} from '../../../environments/environment';
-import {KeycloakService} from '../auth/keycloak.service';
-import {MessagePayload} from '../../model/payload/message.payload';
-import {MessageDto} from '../../model/messageDto.model';
-import {WsEvent} from '../../const/ws.event';
+import { EventEmitter, Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { KeycloakService } from '../auth/keycloak.service';
+import { MessagePayload } from '../../model/payload/message.payload';
+import { MessageDto } from '../../model/messageDto.model';
+import { WsEvent } from '../../const/ws.event';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs';
-import {StorageService} from '../common/storage.service';
-import {User} from '../../model/user.model';
+import { Observable } from 'rxjs';
+import { StorageService } from '../common/storage.service';
+import { User } from '../../model/user.model';
 
 
 @Injectable({
@@ -23,7 +23,7 @@ export class ChatService {
   private chatHistoryListener: EventEmitter<Array<MessageDto>> = new EventEmitter();
 
   constructor(private keycloakService: KeycloakService,
-              private storageService: StorageService) {
+    private storageService: StorageService) {
     this.currentUser = this.storageService.userInfo;
 
     if (!!!this.currentUser.socketId) {
@@ -155,7 +155,7 @@ export class ChatService {
               data: {
                 groupId,
                 socketId,
-               "id": messageId
+                "id": messageId
               },
               type: WsEvent.LOAD_CHILD_MESSAGE,
             };
@@ -232,7 +232,7 @@ export class ChatService {
         groupId,
         socketId,
         id: parentId,
-        body : message       
+        body: message
       },
       type: WsEvent.REPLY_MESSAGE,
       groupId

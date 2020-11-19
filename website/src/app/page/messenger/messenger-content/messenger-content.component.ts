@@ -36,6 +36,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
   @Input() messages: Array<GenericMessage>;
 
   @Output() loadMore = new EventEmitter();
+  @Output() replyToMessage = new EventEmitter();
 
   @ViewChild('messagesContainer') private messagesContainer: ElementRef;
   @ViewChild('textInput') private inputElement: ElementRef;
@@ -63,9 +64,6 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
               private messageService: NzMessageService,
               private groupService: GroupService) {
     this.formGroup = this.createFormGroup();
-    console.log('messages');
-    console.log(this.messages);
-    //try uploading
     //this.minioService.uploadFile('/Users/chiphan/screenShot');
   }
 
@@ -96,32 +94,6 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     return new FormGroup({
       message: new FormControl('', [Validators.required])
     });
-  }
-
-  public fetchMessageReplies(message: GenericMessage): void{
-    const parentId = message.id;
-    this.chatService.getMessageReplies(this.groupSelected.id, parentId)
-    .subscribe(ready => {
-      if (ready) {
-        this.chatService.listener()
-          .subscribe(messageDto => {
-            const sender = this.memberOfGroup.find(member => member.userId === messageDto.senderId);
-
-            const message = new TextMessage(
-              messageDto.id,
-              this.groupSelected.id === messageDto.groupId ? this.groupSelected : null,
-              sender,
-              messageDto.content,
-              messageDto.parentID,
-              messageDto.createdAt,
-              []
-            );
-            if (messageDto.eventType == WsEvent.REPLY_MESSAGE) {
-              console.log('new reply in mess.cont: ' + message.content);
-            }
-          });
-      };
-    })
   }
 
   public onSubmit(): void {
@@ -196,10 +168,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
   }
 
   onReplyToMessage(event) {
-    if (!this.openReplyToMessage) {
-      this.openReplyToMessage = true;
-    }
-    this.focusInputField();
+    this.replyToMessage.emit(event);
     this.messageToReply = event;
   }
 

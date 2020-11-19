@@ -1,1 +1,75 @@
-<p>messenger-reply-thread-right works!</p>
+<app-reply-thread-header [closeReplyThread]="closeReplyThread">
+</app-reply-thread-header>
+<nz-row>
+  <!-- <nz-row nzSpan="24">
+    <button nz-button nzType="link" nzShape="circle" style="color: black" (click)="clearReplyToMessage()"
+      class="close-btn"><i nz-icon nzType="close"></i></button>
+  </nz-row> -->
+  <nz-col nzSpan="24" class="message-container" #messagesContainer
+    [scrollTop]="isScrollHeight ? messagesContainer.scrollHeight : messagesContainer.scrollTop">
+    <div class="text-center">
+      <nz-spin nzSimple [nzSpinning]="loading"></nz-spin>
+    </div>
+
+    <div class="message-content">
+        <app-messenger-message [message]="parentMessage" [currentUser]="currentUser" [showChildren]="true" (onReply)="onReplyToMessage($event)">
+        </app-messenger-message>
+      <!-- <nz-list *ngIf="parentMessage" [nzDataSource]="parentMessage" [nzRenderItem]="item" [nzItemLayout]="'horizontal'"
+        [style]="{'padding': '5px'}">
+        <ng-template #item let-item>
+          
+        </ng-template>
+      </nz-list> -->
+    </div>
+  </nz-col>
+</nz-row>
+
+<nz-row class="message-input-row">
+  <nz-col class="message-input-container" nzSpan="24">
+    <div *ngIf="openReplyToMessage" class="clearfix reply-mess">
+      Đang trả lời <strong>{{messageToReply?.sender?.firstName}}</strong>
+      <div *ngIf="messageToReply.messageType === 'TEXT_MESSAGE'" class="reply-text">
+        <span>{{messageToReply?.content}}</span>
+      </div>
+    </div>
+
+    <div *ngIf="openUploadFile" class="file-upload-container clearfix">
+      <nz-upload nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76" nzListType="picture-card"
+        [(nzFileList)]="fileList" [nzShowButton]="fileList.length < 8" [nzPreview]="handlePreviewFile">
+        <div>
+          <i nz-icon nzType="plus"></i>
+          <div>Upload</div>
+        </div>
+      </nz-upload>
+      <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null"
+        (nzOnCancel)="previewVisible = false">
+        <ng-template #modalContent>
+          <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+        </ng-template>
+      </nz-modal>
+    </div>
+
+    <form nz-form [formGroup]="formGroup" (ngSubmit)="onSubmit()" autocomplete="off">
+      <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" [style]="{'border-color':'white'}">
+        <input #textInput type="text" nz-input name="message" id="message" formControlName="message"
+          placeholder="Nhập tin nhắn ..." autofocus />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <nz-space>
+          <nz-space-item>
+            <a nz-button nzType="link" (click)="attachIconClicked()" nz-tooltip nzTooltipPlacement="bottom"
+              nzTooltipTitle="Đính kèm" nzTooltipTrigger="hover">
+              <i nz-icon nzType="link" nzTheme="outline"></i>
+            </a>
+          </nz-space-item>
+          <nz-space-item>
+            <a nz-button nzType="link" (click)="onSubmit()" nz-tooltip nzTooltipPlacement="bottom" nzTooltipTitle="Gửi"
+              nzTooltipTrigger="hover">
+              <i nz-icon nzType="send" nzTheme="outline"></i>
+            </a>
+          </nz-space-item>
+        </nz-space>
+      </ng-template>
+    </form>
+  </nz-col>
+</nz-row>

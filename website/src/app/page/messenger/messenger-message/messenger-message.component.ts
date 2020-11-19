@@ -15,6 +15,7 @@ export class MessengerMessageComponent implements OnInit {
 
   @Input() currentUser: User;
   @Input() message: Message;
+  @Input() showChildren: boolean;
 
   @Output() onReply : EventEmitter<any> = new EventEmitter();
 
@@ -27,8 +28,11 @@ export class MessengerMessageComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+
+  }
+
   onMessageReply(): void {
-    console.log('on reply clicked');
     this.onReply.emit(this.message);
   }
 
