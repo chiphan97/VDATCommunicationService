@@ -23,7 +23,7 @@
         [style]="message?.sender?.avatar ? '' : 'background-color: ' + message?.sender?.color"
         [nzSrc]="message?.sender?.avatar"></nz-avatar>
 
-      <nz-comment-content *ngIf="message.messageType === 'TEXT_MESSAGE'" class="receiver-message">
+      <nz-comment-content *ngIf="message.messageType === 'TEXT_MESSAGE'" class="receiver-message other-message">
         <span>{{ message?.content }}</span>
       </nz-comment-content>
 
