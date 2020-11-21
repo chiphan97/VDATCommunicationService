@@ -13,7 +13,7 @@ export class AppComponent {
   constructor(private keycloakService: KeycloakService,
               private languageService: LanguageService,
               private userService: UserService) {
-    this.keycloakService.initKeycloak();
+    this.keycloakService.getKeycloakInstance();
     this.languageService.setDefaultLanguage();
   }
 

@@ -3,7 +3,7 @@ import {environment} from '../../../environments/environment';
 import {KeycloakInstance, KeycloakLoginOptions, KeycloakInitOptions, KeycloakLogoutOptions} from 'keycloak-js';
 import {StorageConst} from '../../const/storage.const';
 import * as Keycloak from 'keycloak-js';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,57 +16,61 @@ export class KeycloakService {
   private readonly TIME_REFRESH = 120;
   private readonly REDIRECT_URL = environment.keycloak.redirectUrl;
 
-  public keycloak: KeycloakInstance;
-  private readonly isBrowser: boolean;
-  public authenticated: boolean;
+  private keycloak: KeycloakInstance;
   public tokenListener: Subject<string> = new Subject<string>();
 
-  public initKeycloak(): void {
-    this.keycloak = Keycloak(this.getKeycloakConfig());
+  public getKeycloakInstance(clientId?: string, integrated: boolean = false): Observable<KeycloakInstance> {
+    return new Observable<Keycloak.KeycloakInstance>(observer => {
+      if (!!this.keycloak) {
+        observer.next(this.keycloak);
+        observer.complete();
+        return;
+      }
 
-    const initOptions: KeycloakInitOptions = {
-      onLoad: 'check-sso',
-      checkLoginIframe: true,
-      checkLoginIframeInterval: this.TIME_REFRESH,
-      idToken: this.idToken,
-      token: this.accessToken,
-      refreshToken: this.refreshToken,
-      redirectUri: this.REDIRECT_URL
-    };
+      this.keycloak = Keycloak(this.getKeycloakConfig(clientId));
 
-    this.keycloak.init(initOptions)
-      .then((auth) => {
-        this.authenticated = auth;
+      const initOptions: KeycloakInitOptions = {
+        onLoad: integrated ? 'login-required' : 'check-sso',
+        checkLoginIframe: !integrated,
+        checkLoginIframeInterval: this.TIME_REFRESH,
+        idToken: this.idToken,
+        token: this.accessToken,
+        refreshToken: this.refreshToken,
+        redirectUri: this.REDIRECT_URL
+      };
 
-        if (!auth) {
-          return;
-        }
+      this.keycloak.init(initOptions)
+        .then(() => {
+          setTimeout(() => {
+            this.keycloak.updateToken(600)
+              .then((refreshed) => {
+                if (refreshed) {
+                  console.log('Token refreshed ' + refreshed);
+                } else {
+                  console.warn('Token not refreshed, valid for '
+                    + Math.round(this.keycloak.tokenParsed.exp + this.keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
+                }
+              }).catch(() => {
+              console.error('Failed to refresh token');
+            });
+          }, 60000);
 
-        setTimeout(() => {
-          this.keycloak.updateToken(600)
-            .then((refreshed) => {
-              if (refreshed) {
-                console.log('Token refreshed ' + refreshed);
-              } else {
-                console.warn('Token not refreshed, valid for '
-                  + Math.round(this.keycloak.tokenParsed.exp + this.keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
-              }
-            }).catch(() => {
-            console.error('Failed to refresh token');
-          });
-        }, 60000);
-      })
-      .catch(() => {
-        console.log('bug');
-        this.clearAuth();
-        console.error('Authenticated Failed');
-      });
+          observer.next(this.keycloak);
+          observer.complete();
+        })
+        .catch(err => {
+          console.log(err);
+          this.clearAuth();
+          observer.next(null);
+          observer.complete();
+        });
 
-    this.keycloak.onReady = this.onReady;
-    this.keycloak.onAuthSuccess = this.onAuthSuccess;
-    this.keycloak.onAuthError = this.onAuthError;
-    this.keycloak.onAuthRefreshSuccess = this.onAuthSuccess;
-    this.keycloak.onAuthRefreshError = this.onAuthError;
+      this.keycloak.onReady = this.onReady;
+      this.keycloak.onAuthSuccess = this.onAuthSuccess;
+      this.keycloak.onAuthError = this.onAuthError;
+      this.keycloak.onAuthRefreshSuccess = this.onAuthSuccess;
+      this.keycloak.onAuthRefreshError = this.onAuthError;
+    });
   }
 
   public onReady = (authenticated: boolean) => {
@@ -94,20 +98,31 @@ export class KeycloakService {
     this.tokenListener.next(null);
   }
 
+  public forceCreate(clientId?: string, integrated: boolean = false): Observable<KeycloakInstance> {
+    this.keycloak = null;
+    return this.getKeycloakInstance(clientId, integrated);
+  }
+
   public login(options?: KeycloakLoginOptions): void {
-    this.keycloak.login(options);
+    this.getKeycloakInstance()
+      .subscribe(keycloak => {
+        keycloak.login(options);
+      });
   }
 
   public logout(options?: KeycloakLogoutOptions) {
-    this.keycloak.logout(options);
-    this.clearAuth();
+    this.getKeycloakInstance()
+      .subscribe(keycloak => {
+        keycloak.logout(options);
+        this.clearAuth();
+      });
   }
 
-  private getKeycloakConfig(): any {
+  private getKeycloakConfig(clientId?: string): any {
     return {
       url: environment.keycloak.url,
       realm: environment.keycloak.realm,
-      clientId: environment.keycloak.clientId
+      clientId: clientId || environment.keycloak.clientId
     };
   }
 

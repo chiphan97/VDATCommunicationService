@@ -11,11 +11,12 @@ export class AuthenticateComponent implements OnInit {
 
   constructor(@Inject(DOCUMENT) private document: Document,
               private keycloakService: KeycloakService) {
-    this.keycloakService.keycloak.onReady = authenticated => {
-      if (authenticated) {
-        document.location.href = '/';
-      }
-    };
+    this.keycloakService.getKeycloakInstance()
+      .subscribe(keycloak => {
+        if (keycloak.authenticated) {
+          document.location.href = '/';
+        }
+      });
   }
 
   ngOnInit() {

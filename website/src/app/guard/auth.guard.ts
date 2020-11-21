@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
 import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router, CanActivateChild} from '@angular/router';
 import {Observable} from 'rxjs';
-import {StorageService} from '../service/common/storage.service';
-import * as _ from 'lodash';
 import {KeycloakService} from '../service/auth/keycloak.service';
 
 @Injectable({
@@ -26,16 +24,16 @@ export class AuthGuard implements CanActivate, CanActivateChild {
 
   private authentication(): Observable<boolean> {
     return new Observable<boolean>(observer => {
-      this.keycloakService.keycloak.onReady = (authenticated) => {
-        console.log(`authenticated: ${authenticated}`);
-        if (authenticated) {
-          observer.next(true);
-          observer.complete();
-        } else {
-          observer.next(false);
-          this.router.navigateByUrl('/auth').then(() => observer.complete());
-        }
-      };
+      this.keycloakService.getKeycloakInstance()
+        .subscribe(keycloak => {
+          if (!!keycloak && keycloak.authenticated) {
+            observer.next(true);
+            observer.complete();
+          } else {
+            observer.next(false);
+            this.router.navigateByUrl('/auth').then(() => observer.complete());
+          }
+        });
     });
   }
 }
