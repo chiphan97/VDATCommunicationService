@@ -1,4 +1,4 @@
-const SERVER_URL = '0eb64cda9c46.ngrok.io';
+const SERVER_URL = 'localhost:5000';
 
 export const environment = {
   production: false,
@@ -15,7 +15,7 @@ export const environment = {
   keycloak: {
     url: 'https://accounts.vdatlab.com/auth',
     realm: 'vdatlab.com',
-    clientId: 'chat.apps.vdatlab.com',
-    redirectUrl: 'http://0eb64cda9c46.ngrok.io/auth'
+    clientId: 'ioh.apps.vdatlab.com',
+    redirectUrl: 'http://localhost:5000/auth'
   }
 };

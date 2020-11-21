@@ -1,12 +1,13 @@
 import {
   AfterContentChecked,
-  AfterViewChecked, AfterViewInit, ChangeDetectorRef,
-  Component, DoCheck,
-  ElementRef, EventEmitter, HostListener,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
   Input,
-  OnChanges,
-  OnInit, Output,
-  SimpleChanges,
+  OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import {Group} from '../../../model/group.model';
@@ -17,6 +18,7 @@ import {StorageService} from '../../../service/common/storage.service';
 import {ChatService} from '../../../service/ws/chat.service';
 import {GroupService} from '../../../service/collector/group.service';
 import * as _ from 'lodash';
+import * as Sentry from '@sentry/angular';
 import {NzMessageService} from 'ng-zorro-antd';
 
 @Component({
@@ -41,6 +43,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
   public formGroup: FormGroup;
   public loading: boolean;
   public isScrollHeight = true;
+  private oldScrollTop: number;
 
   public patientUnknown: User = new User('45', 'Anonymous', 'Patient', '', null, 'patient', 'username', null, null, null);
   public submitting = false;
@@ -62,10 +65,23 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
 
   @HostListener('scroll', ['$event'])
   public onMessageContainerScroll(event: any) {
-    this.isScrollHeight = false;
-    const offsetTop = parseInt(event.target.scrollTop, 0);
+    const scrollTop = parseInt(event.target.scrollTop, 0);
 
-    if (offsetTop <= this.DEFAULT_SCROLL_OFFSET_TOP) {
+    console.log(this.oldScrollTop, scrollTop);
+
+    if (!!!this.oldScrollTop) {
+      console.log('init');
+      this.oldScrollTop = scrollTop;
+    } else if (this.oldScrollTop <= scrollTop) {
+      console.log('oldScrollTop <= scrollTop');
+      this.isScrollHeight = true;
+    } else {
+      console.log('oldScrollTop > scrollTop');
+      this.oldScrollTop = scrollTop;
+      this.isScrollHeight = false;
+    }
+
+    if (scrollTop <= this.DEFAULT_SCROLL_OFFSET_TOP) {
       const lastMessage: Message = this.messages[0];
       this.chatService.getMessagesHistory(this.groupSelected.id, lastMessage.id)
         .subscribe(() => {
@@ -73,6 +89,8 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
         });
       this.loadMore.emit();
     }
+
+    console.log('isScrollHeight: ', this.isScrollHeight);
   }
 
   public onSubmit(): void {
@@ -81,6 +99,15 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
       const message = _.get(rawValue, 'message', '');
       this.chatService.sendMessage(message, this.groupSelected.id);
       this.formGroup.patchValue({message: ''});
+      this.scrollToBottom();
+    }
+  }
+
+  private scrollToBottom() {
+    try {
+      this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+    } catch (err) {
+      Sentry.captureException(err);
     }
   }
 
