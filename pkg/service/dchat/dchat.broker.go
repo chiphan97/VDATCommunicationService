@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var defalutParnetID = -1
+
 type Broker struct {
 	// 1 group va nhieu client connect toi
 	Clients map[*Client]bool
@@ -116,6 +118,7 @@ func (b *Broker) Run() {
 					SubjectSender: message.Client,
 					Content:       message.Data.Body,
 					IdGroup:       message.Data.GroupId,
+					Type:          message.Data.Type,
 				}
 				newMess, err := message_service.AddMessageService(payload)
 				if err != nil {
@@ -129,6 +132,7 @@ func (b *Broker) Run() {
 							message.Data.UpdatedAt = newMess.UpdatedAt
 							message.Data.Sender = newMess.SubjectSender
 							message.Data.NumChildMess = newMess.NumChildMess
+							message.Data.ParentID = defalutParnetID
 							msg, _ := json.Marshal(message)
 							select {
 							case client.Send <- msg:
@@ -155,6 +159,7 @@ func (b *Broker) Run() {
 					Content:       message.Data.Body,
 					IdGroup:       message.Data.GroupId,
 					ID:            message.Data.Id,
+					Type:          message.Data.Type,
 				}
 				newMess, err := message_service.AddRelyService(payload)
 				if err != nil {
@@ -204,6 +209,7 @@ func (b *Broker) Run() {
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
+									Type:         h.Type,
 								},
 							}
 
@@ -236,10 +242,11 @@ func (b *Broker) Run() {
 									GroupId:      message.Data.GroupId,
 									Body:         h.Content,
 									Sender:       h.SubjectSender,
-									ParentID:     h.ParentId,
+									ParentID:     defalutParnetID,
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
+									Type:         h.Type,
 								},
 							}
 
@@ -271,10 +278,11 @@ func (b *Broker) Run() {
 									GroupId:      message.Data.GroupId,
 									Body:         h.Content,
 									Sender:       h.SubjectSender,
-									ParentID:     h.ParentId,
+									ParentID:     defalutParnetID,
 									NumChildMess: h.NumChildMess,
 									CreatedAt:    h.CreatedAt,
 									UpdatedAt:    h.UpdatedAt,
+									Type:         h.Type,
 								},
 							}
 							msg, _ = json.Marshal(mess)

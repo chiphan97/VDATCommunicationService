@@ -15,6 +15,7 @@ type Data struct {
 	SocketID          string     `json:"socketId" example:"9999"`
 	IdContinueOldMess int        `json:"idContinueOldMess"`
 	ParentID          int        `json:"parentID"`
+	Type              string     `json:"type"`
 	NumChildMess      int        `json:"numChildMess"`
 	Status            string     `example:"null"`
 	CreatedAt         *time.Time `json:"createdAt"`

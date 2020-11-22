@@ -16,7 +16,8 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
     "type":"send_text",
     "data":{
              "groupId": <idgroup>,
-             "body":"<message>"
+             "body":"<message>",
+             "type": "TEXT || FILE"  
            }
 }
 ```
@@ -31,6 +32,7 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
         "Sender":"893a4692-63bb-4919-80d9-aece678c0422",
         "socketId":"",
         "parentID": 0,
+        "type": "TEXT || FILE" ,
         "numChildMess": 0,
         "idContinueOldMess":0,
         "createdAt":"2020-11-11T15:04:24.800875Z",
@@ -61,6 +63,7 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
             "Sender":"ffb63922-8f99-46ba-9648-d07f3ac14757",
             "socketId":"",
             "parentID": 0,
+            "type": "TEXT || FILE" ,
             "numChildMess": 0,
             "idContinueOldMess":0,
             "createdAt":"2020-11-11T14:37:06.818823Z",
@@ -90,6 +93,7 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
             "Sender":"893a4692-63bb-4919-80d9-aece678c0422",
             "socketId":"",
             "parentID": 0,
+            "type": "TEXT || FILE" ,
             "numChildMess": 0,
             "idContinueOldMess":0,
             "createdAt":"2020-11-04T18:12:47.907925Z",
@@ -109,6 +113,7 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
             "groupId": <idgroup>,
             "socketId":"<socketId>",
             "id": "<id>",
+            "type": "TEXT || FILE" ,
             "body": "<message>"
             }
 }
@@ -122,6 +127,7 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
             "Sender":"893a4692-63bb-4919-80d9-aece678c0422",
             "socketId":"",
             "parentID": 0,
+            "type": "TEXT || FILE" ,
             "numChildMess": 0,
             "idContinueOldMess":0,
             "createdAt":"2020-11-04T18:12:47.907925Z",
@@ -153,6 +159,7 @@ wscat -c ws://localhost:5000/message/{socketId}?token=<token>
             "Sender":"893a4692-63bb-4919-80d9-aece678c0422",
             "socketId":"",
             "parentID": 0,
+            "type": "TEXT || FILE" ,
             "numChildMess": 0,
             "idContinueOldMess":0,
             "createdAt":"2020-11-04T18:12:47.907925Z",
