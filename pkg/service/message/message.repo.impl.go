@@ -17,7 +17,7 @@ func NewRepoImpl(db *sql.DB) Repo {
 
 func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `SELECT id_mess,user_sender,content,id_group,numChild,created_at,updated_at FROM messages WHERE id_group = $1 and parentID IS NULL ORDER BY created_at DESC LIMIT 20`
+	statement := `SELECT id_mess,user_sender,content,id_group,numChild,created_at,updated_at,type FROM messages WHERE id_group = $1 and parentID IS NULL ORDER BY created_at DESC LIMIT 20`
 	rows, err := mess.Db.Query(statement, idChatBox)
 	if err != nil {
 		return messages, err
@@ -31,6 +31,7 @@ func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 			&m.Num,
 			&m.CreatedAt,
 			&m.UpdatedAt,
+			&m.Type,
 		)
 		if err != nil {
 			return messages, err
@@ -43,7 +44,7 @@ func (mess *RepoImpl) GetMessagesByGroup(idChatBox int) ([]Messages, error) {
 
 func (mess *RepoImpl) GetChilMessByParentId(idChatBox int, parentId int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `SELECT id_mess,user_sender,content,id_group,parentID,numChild,created_at,updated_at FROM messages WHERE id_group = $1 and parentID = $2 ORDER BY created_at DESC LIMIT 20`
+	statement := `SELECT id_mess,user_sender,content,id_group,parentID,numChild,created_at,updated_at,type FROM messages WHERE id_group = $1 and parentID = $2 ORDER BY created_at DESC LIMIT 20`
 	rows, err := mess.Db.Query(statement, idChatBox, parentId)
 	if err != nil {
 		return messages, err
@@ -58,6 +59,7 @@ func (mess *RepoImpl) GetChilMessByParentId(idChatBox int, parentId int) ([]Mess
 			&m.Num,
 			&m.CreatedAt,
 			&m.UpdatedAt,
+			&m.Type,
 		)
 		if err != nil {
 			return messages, err
@@ -74,11 +76,12 @@ func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 	fmt.Println(message.IdGroup)
 	var id int
 	m := Messages{}
-	statement := `INSERT INTO messages (user_sender,content,id_group) VALUES ($1,$2,$3) RETURNING id_mess`
+	statement := `INSERT INTO messages (user_sender,content,id_group,type) VALUES ($1,$2,$3,$4) RETURNING id_mess`
 	err := mess.Db.QueryRow(statement,
 		message.SubjectSender,
 		message.Content,
-		message.IdGroup).Scan(&id)
+		message.IdGroup,
+		message.Type).Scan(&id)
 
 	statement = `SELECT id_mess,user_sender,content,id_group,numChild,created_at,updated_at FROM messages WHERE  id_mess = $1`
 	rows, err := mess.Db.Query(statement, id)
@@ -100,12 +103,13 @@ func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
 	var id int
 	m := Messages{}
-	statement := `INSERT INTO messages (user_sender,content,id_group,parentID) VALUES ($1,$2,$3,$4) RETURNING id_mess`
+	statement := `INSERT INTO messages (user_sender,content,id_group,parentID,type) VALUES ($1,$2,$3,$4,$5) RETURNING id_mess`
 	err := mess.Db.QueryRow(statement,
 		message.SubjectSender,
 		message.Content,
 		message.IdGroup,
-		message.ParentId).Scan(&id)
+		message.ParentId,
+		message.Type).Scan(&id)
 	statement = `SELECT id_mess,user_sender,content,id_group,parentID,numChild,created_at,updated_at FROM messages WHERE  id_mess = $1`
 	rows, err := mess.Db.Query(statement, id)
 	if rows.Next() {
@@ -212,7 +216,7 @@ func (mess *RepoImpl) DeleteMessageByGroup(idGroup int, ctx context.Context) err
 }
 func (mess *RepoImpl) GetContinueMessageByIdAndGroup(idMessage int, idGroup int) ([]Messages, error) {
 	messages := make([]Messages, 0)
-	statement := `select id_mess,user_sender,content,id_group,numChild,created_at,updated_at from messages where id_mess < $1 and id_group = $2 and parentID IS NULL order by created_at DESC limit 20`
+	statement := `select id_mess,user_sender,content,id_group,numChild,created_at,updated_at,type from messages where id_mess < $1 and id_group = $2 and parentID IS NULL order by created_at DESC limit 20`
 	rows, err := mess.Db.Query(statement, idMessage, idGroup)
 	if err != nil {
 		return messages, err
@@ -226,6 +230,7 @@ func (mess *RepoImpl) GetContinueMessageByIdAndGroup(idMessage int, idGroup int)
 			&m.Num,
 			&m.CreatedAt,
 			&m.UpdatedAt,
+			&m.Type,
 		)
 		if err != nil {
 			return messages, err

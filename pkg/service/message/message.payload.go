@@ -5,6 +5,7 @@ type PayLoad struct {
 	Content       string `json:"content"`
 	IdGroup       int    `json:"idGroup"`
 	ID            int    `json:"id"`
+	Type          string `json:"type"`
 }
 
 func (p *PayLoad) convertToModel() Messages {
@@ -13,6 +14,7 @@ func (p *PayLoad) convertToModel() Messages {
 		Content:       p.Content,
 		IdGroup:       p.IdGroup,
 		ParentId:      p.ID,
+		Type:          p.Type,
 	}
 	return model
 }

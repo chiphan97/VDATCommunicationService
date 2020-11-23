@@ -1,19 +1,19 @@
-import {AfterContentInit, AfterViewInit, Component, OnInit, ViewChild,} from '@angular/core';
-import {GroupService} from '../../service/collector/group.service';
-import {Group} from '../../model/group.model';
-import {User} from '../../model/user.model';
-import {NzResizeEvent} from 'ng-zorro-antd/resizable';
-import {StorageService} from '../../service/common/storage.service';
-import {UserService} from '../../service/collector/user.service';
-import {Role} from '../../const/role.const';
-import {GenerateColorService} from '../../service/common/generate-color.service';
-import {MessengerSidebarLeftComponent} from './messenger-sidebar-left/messenger-sidebar-left.component';
-import {MessengerSidebarRightComponent} from './messenger-sidebar-right/messenger-sidebar-right.component';
-import {ActivatedRoute, Router} from '@angular/router';
+import { AfterContentInit, AfterViewInit, Component, OnInit, ViewChild, } from '@angular/core';
+import { GroupService } from '../../service/collector/group.service';
+import { Group } from '../../model/group.model';
+import { User } from '../../model/user.model';
+import { NzResizeEvent } from 'ng-zorro-antd/resizable';
+import { StorageService } from '../../service/common/storage.service';
+import { UserService } from '../../service/collector/user.service';
+import { Role } from '../../const/role.const';
+import { GenerateColorService } from '../../service/common/generate-color.service';
+import { MessengerSidebarLeftComponent } from './messenger-sidebar-left/messenger-sidebar-left.component';
+import { MessengerSidebarRightComponent } from './messenger-sidebar-right/messenger-sidebar-right.component';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {ChatService} from '../../service/ws/chat.service';
-import {Message} from '../../model/message.model';
-import {WsEvent} from '../../const/ws.event';
+import { ChatService } from '../../service/ws/chat.service';
+import { GenericMessage, TextMessage, FileMessage } from '../../model/generic-message.model';
+import { WsEvent } from '../../const/ws.event';
 
 @Component({
   selector: 'app-messenger',
@@ -33,7 +33,8 @@ export class MessengerComponent
   public currentUser: User;
   public currentUserIsDoctor: boolean;
   public isMember: boolean;
-  public messages: Array<Message>;
+  public messages: Array<GenericMessage>;
+  public messageToReply: GenericMessage;
 
   public idSidebarLeftResize = -1;
   public idSidebarRightResize = -1;
@@ -56,7 +57,7 @@ export class MessengerComponent
   ) {
     this.groups = new Array<Group>();
     this.groupSelected = null;
-    this.messages = new Array<Message>();
+    this.messages = new Array<GenericMessage>();
   }
 
   ngOnInit(): void {
@@ -192,23 +193,23 @@ export class MessengerComponent
   }
 
   private fetchingHistoryMessages(): void {
-    this.messages = new Array<Message>();
+    this.messages = new Array<GenericMessage>();
 
     this.chatService.getChatHistory(this.groupSelected.id)
       .subscribe(ready => {
         if (ready) {
           this.chatService.listener()
             .subscribe(messageDto => {
-              // get info sender
               const sender = this.memberOfGroup.find(member => member.userId === messageDto.senderId);
 
-              // convert model message from dto
-              const message = new Message(
+              const message = new TextMessage(
                 messageDto.id,
                 this.groupSelected.id === messageDto.groupId ? this.groupSelected : null,
                 sender,
                 messageDto.content,
-                messageDto.createdAt
+                messageDto.parentID,
+                messageDto.createdAt,
+                []
               );
 
               switch (messageDto.eventType) {
@@ -221,6 +222,8 @@ export class MessengerComponent
                 case WsEvent.SEND_TEXT:
                   this.messages.push(message);
                   break;
+                case WsEvent.REPLY_MESSAGE:
+                  break;
                 default:
                   console.warn('Cannot support this event');
               }
@@ -229,5 +232,42 @@ export class MessengerComponent
             });
         }
       });
+  }
+
+  public onReplyToMessage(event): void {
+    this.messageToReply = event;
+    this.fetchMessageReplies(this.messageToReply.id);
+  }
+
+  public fetchMessageReplies(parentId: number): void {
+    //const parentId = message.id;
+    this.messageToReply.children = [];
+    this.chatService.getMessageReplies(this.groupSelected.id, parentId)
+      .subscribe(ready => {
+        if (ready) {
+          this.chatService.listener()
+            .subscribe(messageDto => {
+              const sender = this.memberOfGroup.find(member => member.userId === messageDto.senderId);
+
+              const message = new TextMessage(
+                messageDto.id,
+                this.groupSelected.id === messageDto.groupId ? this.groupSelected : null,
+                sender,
+                messageDto.content,
+                messageDto.parentID,
+                messageDto.createdAt,
+                []
+              );
+              if (messageDto.eventType == WsEvent.LOAD_CHILD_MESSAGE) {
+                //getting in reversed order
+                this.messageToReply.children = [message, ...this.messageToReply.children];
+              }
+              if (messageDto.eventType == WsEvent.REPLY_MESSAGE) {
+                const parentMess = this.messages.find(mess => mess.id === message.parentID);
+                parentMess.children = [...parentMess.children, message];
+              }
+            });
+        };
+      })
   }
 }

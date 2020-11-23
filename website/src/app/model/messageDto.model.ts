@@ -16,16 +16,16 @@ export class MessageDto {
   eventType: WsEvent;
 
   constructor(id: number, groupId: number, senderId: string, socketId: number,
-              content: any, status: string, idContinueOldMess: number,
-              parentID: number, numChildMess: number, createdAt: Date = new Date()) {
+              content: any, parentID: number, status: string, idContinueOldMess: number,
+              numChildMess: number, createdAt: Date = new Date()) {
     this.id = id;
     this.groupId = groupId;
     this.senderId = senderId;
     this.socketId = socketId;
     this.content = content;
+    this.parentID = parentID;
     this.status = status;
     this.idContinueOldMess = idContinueOldMess;
-    this.parentID = parentID;
     this.numChildMess = numChildMess;
     this.createdAt = createdAt;
   }
@@ -33,16 +33,15 @@ export class MessageDto {
   public static fromJson(data: any): MessageDto {
     if (!!data) {
       const messageData = _.get(data, 'data', {});
-
       const messageDto = new MessageDto(
         _.get(messageData, 'id', -1),
         _.get(messageData, 'groupId', -1),
         _.get(messageData, 'Sender', ''),
         _.get(messageData, 'socketId', -1),
         _.get(messageData, 'body', ''),
+        _.get(messageData, 'parentID', -1),
         _.get(messageData, 'Status', ''),
         _.get(messageData, 'idContinueOldMess', -1),
-        _.get(messageData, 'parentID', -1),
         _.get(messageData, 'numChildMess', 0)
       );
 

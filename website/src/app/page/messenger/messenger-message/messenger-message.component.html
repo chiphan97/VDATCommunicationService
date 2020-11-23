@@ -1,37 +1,62 @@
+<ng-container [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ message: message }">
+</ng-container>
+<ng-container *ngIf="showChildren && message.children && message.children.length">
+  <ng-template ngFor let-child [ngForOf]="message.children">
+    <ng-template [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ message: child }">
+    </ng-template>
+  </ng-template>
+</ng-container>
+
 <ng-template #messageTemplateRef let-message="message">
   <container-element [ngSwitch]="isOwner()">
-    <nz-comment *ngSwitchCase="true"
-                class="message">
-      <nz-comment-content class="owner-message">
+    <nz-comment *ngSwitchCase="true" class="message">
+      <nz-comment-content *ngIf="message.messageType === 'TEXT_MESSAGE'" class="owner-message">
         <span>{{ message?.content }}</span>
       </nz-comment-content>
+
+      <ng-container *ngIf="message.messageType=== 'FILE_MESSAGE'" [ngTemplateOutlet]="fileMessageTemplateRef"
+        [ngTemplateOutletContext]="{ message: message }"></ng-container>
     </nz-comment>
 
-    <nz-comment *ngSwitchDefault
-                [nzAuthor]="message?.sender?.fullName"
-                [nzDatetime]="formatDistanceTime(message?.createdAt)"
-                class="message">
+    <nz-comment *ngSwitchDefault [nzAuthor]="message?.sender?.fullName" class="message">
       <nz-avatar nz-comment-avatar nzIcon="user"
-                 [style]="message?.sender?.avatar ? '' : 'background-color: ' + message?.sender?.color"
-                 [nzSrc]="message?.sender?.avatar">
-      </nz-avatar>
+        [style]="message?.sender?.avatar ? '' : 'background-color: ' + message?.sender?.color"
+        [nzSrc]="message?.sender?.avatar"></nz-avatar>
 
-      <nz-comment-content class="receiver-message">
+      <nz-comment-content *ngIf="message.messageType === 'TEXT_MESSAGE'" class="receiver-message other-message">
         <span>{{ message?.content }}</span>
       </nz-comment-content>
 
-      <nz-comment-action>Trả lời</nz-comment-action>
+      <ng-container *ngIf="message.messageType=== 'FILE_MESSAGE'" [ngTemplateOutlet]="fileMessageTemplateRef"
+        [ngTemplateOutletContext]="{ message: message }"></ng-container>
 
-      <ng-container *ngIf="message.children && message.children.length">
-        <ng-template ngFor let-child [ngForOf]="message.children">
-          <ng-template [ngTemplateOutlet]="messageTemplateRef" [ngTemplateOutletContext]="{ message: child }">
-          </ng-template>
-        </ng-template>
-      </ng-container>
+      <nz-comment-action>
+        <i nz-tooltip nzTooltipTitle="Trả lời" class="fa fa-reply" aria-hidden="true" (click)="onMessageReply()">
+        </i>
+      </nz-comment-action>
     </nz-comment>
   </container-element>
 </ng-template>
 
-<ng-container [ngTemplateOutlet]="messageTemplateRef"
-              [ngTemplateOutletContext]="{ message: message }">
-</ng-container>
+<ng-template #fileMessageTemplateRef let-message="message">
+  <div class="clearfix" style="margin-left: 50%">
+    <nz-upload nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76" nzListType="picture"
+      [nzFileList]="message.content" [nzPreviewFile]="handlePreviewSentFile">
+    </nz-upload>
+    <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null"
+      (nzOnCancel)="previewVisible = false">
+      <ng-template #modalContent>
+        <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+      </ng-template>
+    </nz-modal>
+  </div>
+</ng-template>
+
+<ng-template #messageContent let-message="message" let-group="group">
+  <nz-comment-content *ngIf="message.messageType === 'TEXT_MESSAGE'" [ngClass]="group">
+    <span>{{ message?.content }}</span>
+  </nz-comment-content>
+
+  <ng-container *ngIf="message.messageType=== 'FILE_MESSAGE'" [ngTemplateOutlet]="fileMessageTemplateRef"
+    [ngTemplateOutletContext]="{ message: message }"></ng-container>
+</ng-template>
