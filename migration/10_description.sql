@@ -1,0 +1,1 @@
+alter table Article add column slug text;
