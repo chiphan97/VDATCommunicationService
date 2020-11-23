@@ -98,6 +98,7 @@ func (mess *RepoImpl) InsertMessage(message Messages) (Messages, error) {
 			return m, err
 		}
 	}
+	defer rows.Close()
 	return m, err
 }
 func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
@@ -125,6 +126,7 @@ func (mess *RepoImpl) InsertRely(message Messages) (Messages, error) {
 		if err != nil {
 			return m, err
 		}
+		defer rows.Close()
 	}
 	statement1 := `update messages set numchild = numchild+1 where id_mess = $1 RETURNING id_mess`
 	_ = mess.Db.QueryRow(statement1,
@@ -188,6 +190,7 @@ func (mess *RepoImpl) GetMessagesByGroupAndUser(idGroup int, subUser string) ([]
 		}
 		messages = append(messages, message)
 	}
+	defer rows.Close()
 	return messages, nil
 }
 

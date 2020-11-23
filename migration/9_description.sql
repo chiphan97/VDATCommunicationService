@@ -1,0 +1,1 @@
+update messages set type = 'TEXT' WHERE type IS NULL ;
