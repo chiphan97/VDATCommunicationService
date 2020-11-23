@@ -1,5 +1,5 @@
 import {User} from './user.model';
-import { NzUploadFile} from 'ng-zorro-antd/upload';
+import {NzUploadFile} from 'ng-zorro-antd/upload';
 import {Group} from './group.model';
 import * as _ from 'lodash';
 
@@ -28,7 +28,7 @@ export class FileMessage extends GenericMessage {
     super(id, group, sender, parentID, createdAt, children);
     this.messageType = 'FILE_MESSAGE';
     this.content = content;
-  } 
+  }
 }
 
 export class TextMessage extends GenericMessage {
@@ -36,7 +36,7 @@ export class TextMessage extends GenericMessage {
     super(id, group, sender, parentID, createdAt, children);
     this.messageType = 'TEXT_MESSAGE';
     this.content = content;
-  } 
+  }
 
   public static fromJson(obj: any): TextMessage {
     return new TextMessage(
@@ -51,5 +51,4 @@ export class TextMessage extends GenericMessage {
   }
 }
 
-
-export type MessageType = 'TEXT_MESSAGE' | 'FILE_MESSAGE'
+export type MessageType = 'TEXT_MESSAGE' | 'FILE_MESSAGE';
