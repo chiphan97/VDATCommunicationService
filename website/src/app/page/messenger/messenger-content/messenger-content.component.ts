@@ -82,30 +82,15 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
   public onMessageContainerScroll(event: any) {
     const scrollTop = parseInt(event.target.scrollTop, 0);
 
-    console.log(this.oldScrollTop, scrollTop);
-
-    if (!!!this.oldScrollTop) {
-      console.log('init');
-      this.oldScrollTop = scrollTop;
-    } else if (this.oldScrollTop <= scrollTop) {
-      console.log('oldScrollTop <= scrollTop');
-      this.isScrollHeight = true;
-    } else {
-      console.log('oldScrollTop > scrollTop');
-      this.oldScrollTop = scrollTop;
-      this.isScrollHeight = false;
-    }
-
     if (scrollTop <= this.DEFAULT_SCROLL_OFFSET_TOP) {
       const lastMessage: GenericMessage = this.messages[0];
       this.chatService.getMessagesHistory(this.groupSelected.id, lastMessage.id)
         .subscribe(() => {
+          this.isScrollHeight = false;
           console.log('đang load thêm tin nhắn');
         });
       this.loadMore.emit();
     }
-
-    console.log('isScrollHeight: ', this.isScrollHeight);
   }
 
   private createFormGroup(): FormGroup {
