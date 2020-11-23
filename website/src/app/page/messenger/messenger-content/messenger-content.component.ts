@@ -153,7 +153,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
 
   attachIconClicked = () => {
     this.openUploadFile = !this.openUploadFile;
-  };
+  }
 
   handlePreviewFile = async (file: NzUploadFile) => {
     if (!file.url && !file.preview) {
@@ -161,7 +161,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     }
     this.previewImage = file.url || file.preview;
     this.previewVisible = true;
-  };
+  }
 
   onReplyToMessage(event) {
     this.replyToMessage.emit(event);
