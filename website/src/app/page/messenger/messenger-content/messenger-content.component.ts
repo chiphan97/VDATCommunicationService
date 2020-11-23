@@ -47,7 +47,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
 
   public patientUnknown: User = new User('45', 'Anonymous', 'Patient', '', null, 'patient', 'username', null, null, null);
   public submitting = false;
-
+ba
   constructor(private storageService: StorageService,
               private chatService: ChatService,
               private changeDetectorRef: ChangeDetectorRef,
