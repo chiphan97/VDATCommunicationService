@@ -240,7 +240,7 @@ export class MessengerComponent
   }
 
   public fetchMessageReplies(parentId: number): void {
-    //const parentId = message.id;
+    // const parentId = message.id;
     this.messageToReply.children = [];
     this.chatService.getMessageReplies(this.groupSelected.id, parentId)
       .subscribe(ready => {
@@ -258,16 +258,16 @@ export class MessengerComponent
                 messageDto.createdAt,
                 []
               );
-              if (messageDto.eventType == WsEvent.LOAD_CHILD_MESSAGE) {
-                //getting in reversed order
+              if (messageDto.eventType === WsEvent.LOAD_CHILD_MESSAGE) {
+                // getting in reversed order
                 this.messageToReply.children = [message, ...this.messageToReply.children];
               }
-              if (messageDto.eventType == WsEvent.REPLY_MESSAGE) {
+              if (messageDto.eventType === WsEvent.REPLY_MESSAGE) {
                 const parentMess = this.messages.find(mess => mess.id === message.parentID);
                 parentMess.children = [...parentMess.children, message];
               }
             });
-        };
-      })
+        }
+      });
   }
 }

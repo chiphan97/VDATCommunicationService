@@ -17,12 +17,12 @@ import {GenericMessage, TextMessage, FileMessage} from '../../../model/generic-m
 import {StorageService} from '../../../service/common/storage.service';
 import {ChatService} from '../../../service/ws/chat.service';
 import {GroupService} from '../../../service/collector/group.service';
-import { MinioService} from '../../../service/upload/minio.service';
+import {MinioService} from '../../../service/upload/minio.service';
 import * as _ from 'lodash';
 import * as Sentry from '@sentry/angular';
 import {NzMessageService} from 'ng-zorro-antd';
-import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
-import { WsEvent } from 'src/app/const/ws.event';
+import {NzUploadFile, NzUploadModule} from 'ng-zorro-antd/upload';
+import {WsEvent} from 'src/app/const/ws.event';
 
 @Component({
   selector: 'app-messenger-content',
@@ -67,7 +67,7 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
               private messageService: NzMessageService,
               private groupService: GroupService) {
     this.formGroup = this.createFormGroup();
-    //this.minioService.uploadFile('/Users/chiphan/screenShot');
+    // this.minioService.uploadFile('/Users/chiphan/screenShot');
   }
 
   ngOnInit(): void {
@@ -150,25 +150,25 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     this.fileList = [];
   }
 
-  private createFileMessage(uploadFiles: NzUploadFile[], group: Group){
+  private createFileMessage(uploadFiles: NzUploadFile[], group: Group) {
     this.submitting = true;
 
     const fileMessage = new FileMessage(1, group, this.currentUser, uploadFiles, null, new Date(), []);
     setTimeout(() => {
-       this.messages = [
+      this.messages = [
         ...this.messages, fileMessage
-       ].map(e => {
-         return {
+      ].map(e => {
+        return {
           ...e,
-         };
-       });
-     }, 200);
+        };
+      });
+    }, 200);
     this.submitting = false;
   }
 
   attachIconClicked = () => {
     this.openUploadFile = !this.openUploadFile;
-  }
+  };
 
   handlePreviewFile = async (file: NzUploadFile) => {
     if (!file.url && !file.preview) {
@@ -176,22 +176,22 @@ export class MessengerContentComponent implements OnInit, AfterContentChecked {
     }
     this.previewImage = file.url || file.preview;
     this.previewVisible = true;
-  }
+  };
 
   onReplyToMessage(event) {
     this.replyToMessage.emit(event);
     this.messageToReply = event;
   }
 
-  clearReplyToMessage(): void{
+  clearReplyToMessage(): void {
     this.messageToReply = null;
     this.openReplyToMessage = false;
   }
 
   focusInputField(): void {
-    setTimeout(()=>{
+    setTimeout(() => {
       this.inputElement.nativeElement.focus();
-    },0);
+    }, 0);
   }
 }
 
