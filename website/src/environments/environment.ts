@@ -1,4 +1,5 @@
 const SERVER_URL = 'localhost:5000';
+const IOH_SERVER_URL = 'vdat-mcsvc-collector-staging.vdatlab.com';
 
 export const environment = {
   production: false,
@@ -10,6 +11,12 @@ export const environment = {
       user: '/api/v1/user',
       chat: '/chat',
       message: '/message'
+    }
+  },
+  ioh: {
+    apiUrl: `https://${IOH_SERVER_URL}/dcs/v1`,
+    endpoint: {
+      user: 'users'
     }
   },
   keycloak: {

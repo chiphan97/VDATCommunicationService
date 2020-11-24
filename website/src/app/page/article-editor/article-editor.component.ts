@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-article-editor',
@@ -7,9 +8,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ArticleEditorComponent implements OnInit {
 
-  constructor() { }
+  public formArticle: FormGroup;
+
+  constructor() {
+    this.formArticle = this.createFormGroup();
+  }
 
   ngOnInit(): void {
   }
 
+  private createFormGroup(): FormGroup {
+    return new FormGroup({
+      title: new FormControl('', [Validators.required])
+    });
+  }
 }

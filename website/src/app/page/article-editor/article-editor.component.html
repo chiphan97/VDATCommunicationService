@@ -1,1 +1,43 @@
-<p>article-editor works!</p>
+<nz-row class="container" nzType="flex" nzJustify="center">
+  <nz-col nzXs="24" nzSm="23" nzMd="12" nzLg="12" nzXl="12" nzXXl="12">
+    <nz-row>
+      <nz-col nzSpan="24">
+        <form nz-form nzLayout="horizontal"
+              nz-row
+              [formGroup]="formArticle" autocomplete="off">
+          <nz-form-item nz-col nzXs="24" nzSm="24" nzMd="18" nzLg="18" nzXl="18" nzXXl="18">
+            <nz-input-group nzSize="large">
+              <input type="text" nz-input
+                     id="title"
+                     name="title"
+                     formControlName="title"
+                     placeholder="Nhập tiêu đề bài viết ..."/>
+            </nz-input-group>
+          </nz-form-item>
+
+          <nz-form-item nz-col nzXs="24" nzSm="24" nzMd="6" nzLg="6" nzXl="6" nzXXl="6">
+            <nz-select nzSize="large">
+              <nz-option nzCustomContent nzLabel="Windows" nzValue="windows">
+                <i nz-icon nzType="windows"></i>
+                Windows
+              </nz-option>
+              <nz-option nzCustomContent nzLabel="Mac" nzValue="mac">
+                <i nz-icon nzType="apple"></i>
+                Mac
+              </nz-option>
+              <nz-option nzCustomContent nzLabel="Android" nzValue="android">
+                <i nz-icon nzType="android"></i>
+                Android
+              </nz-option>
+            </nz-select>
+          </nz-form-item>
+        </form>
+      </nz-col>
+
+      <nz-col nzSpan="24">
+        <app-editor></app-editor>
+      </nz-col>
+    </nz-row>
+  </nz-col>
+</nz-row>
+

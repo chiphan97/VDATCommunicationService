@@ -14,6 +14,7 @@ import * as _ from 'lodash';
 import { ChatService } from '../../service/ws/chat.service';
 import { GenericMessage, TextMessage, FileMessage } from '../../model/generic-message.model';
 import { WsEvent } from '../../const/ws.event';
+import {IohUserService} from '../../service/ioh/ioh-user.service';
 
 @Component({
   selector: 'app-messenger',
@@ -53,7 +54,8 @@ export class MessengerComponent
     private storageService: StorageService,
     private generateColorService: GenerateColorService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private iohUserService: IohUserService
   ) {
     this.groups = new Array<Group>();
     this.groupSelected = null;
