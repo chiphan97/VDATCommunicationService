@@ -18,21 +18,198 @@ var doc = `{
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/all-article": {
+            "get": {
+                "description": "Get all article",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Get all article",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/article.Dto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/article": {
+            "get": {
+                "description": "Get the article corresponding to the input user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Get article by userid",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/article.Dto"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Insert new article",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Insert article",
+                "parameters": [
+                    {
+                        "description": "insert article",
+                        "name": "payload",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/article.Payload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/article.Dto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/article/{idArticle}": {
+            "get": {
+                "description": "Get the article corresponding to the input title",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Get article by title",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "name search by title",
+                        "name": "title",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/article.Dto"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the article corresponding to the input idArticle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Update article by idArticle",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the article to be updated",
+                        "name": "idArticle",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "update article",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article.Payload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/article.Dto"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete the article corresponding to the input idArticle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Delete article by idArticle",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the article to be updated",
+                        "name": "idArticle",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ResponseBool"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/groups": {
             "get": {
                 "description": "Get all groups",
@@ -480,12 +657,70 @@ var doc = `{
         }
     },
     "definitions": {
+        "article.Dto": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updateAt": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "integer"
+                }
+            }
+        },
+        "article.Payload": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "string"
+                }
+            }
+        },
         "dchat.Data": {
             "type": "object",
             "properties": {
                 "body": {
                     "type": "string",
                     "example": "tin nhan moi"
+                },
+                "createdAt": {
+                    "type": "string"
                 },
                 "groupId": {
                     "type": "integer"
@@ -494,6 +729,12 @@ var doc = `{
                     "type": "integer"
                 },
                 "idContinueOldMess": {
+                    "type": "integer"
+                },
+                "numChildMess": {
+                    "type": "integer"
+                },
+                "parentID": {
                     "type": "integer"
                 },
                 "sender": {
@@ -507,6 +748,12 @@ var doc = `{
                 "status": {
                     "type": "string",
                     "example": "null"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },
@@ -605,6 +852,14 @@ var doc = `{
                     "type": "string"
                 }
             }
+        },
+        "utils.ResponseBool": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "type": "boolean"
+                }
+            }
         }
     }
 }`
@@ -620,12 +875,12 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "0.1",
-	Host:        "localhost:5000",
-	BasePath:    "/api/v1",
-	Schemes:     []string{"http", "https"},
-	Title:       "Swagger Chat server API",
-	Description: "This is swagger for chat server.\nlocal:\t  http://localhost:5000/.\nstaging:    http://vdat-mcsvc-chat-staging.vdatlab.com/.\nproduction: https://vdat-mcsvc-chat.vdatlab.com/.",
+	Version:     "",
+	Host:        "",
+	BasePath:    "",
+	Schemes:     []string{},
+	Title:       "",
+	Description: "",
 }
 
 type s struct{}

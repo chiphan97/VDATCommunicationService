@@ -6,6 +6,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	httpSwagger "github.com/swaggo/http-swagger"
 	_ "gitlab.com/vdat/mcsvc/chat/docs"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/article"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
@@ -93,13 +94,14 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/healthcheck", CheckHelthHandlr).Methods(http.MethodGet, http.MethodOptions)
+	//r.HandleFunc("/healthcheck", CheckHelthHandlr).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/chat/{idgroup}", auth.AuthenMiddleJWT(dchat.ChatHandlr)).Methods(http.MethodGet, http.MethodOptions)
 	// handler
 	r.HandleFunc("/message/{socketId}", dchat.ChatHandlr).Methods(http.MethodGet, http.MethodOptions)
 	//api
 	groups.RegisterGroupApi(r)
 	userdetail.RegisterUserApi(r)
+	article.NewHandler(r)
 
 	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 
