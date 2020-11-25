@@ -37,6 +37,7 @@ func ResponseErr(w http.ResponseWriter, statusCode int) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
 	w.Write(jData)
 }
 
@@ -53,6 +54,7 @@ func ResponseOk(w http.ResponseWriter, data interface{}) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	w.Write(jData)
 }
 
