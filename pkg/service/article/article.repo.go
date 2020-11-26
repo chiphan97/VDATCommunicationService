@@ -39,6 +39,7 @@ func (m *RepoImpl) fetch(ctx context.Context, query string, args ...interface{})
 			&t.UpdateBy,
 			&t.CreatedAt,
 			&t.UpdateAt,
+			&t.Slug,
 		)
 		if err != nil {
 			log.Panic(err)
@@ -46,6 +47,7 @@ func (m *RepoImpl) fetch(ctx context.Context, query string, args ...interface{})
 		}
 		results = append(results, t)
 	}
+	rows.Close()
 	return results, nil
 }
 func (m *RepoImpl) Fetch(ctx context.Context) (results []Article, err error) {
@@ -86,12 +88,12 @@ func (m *RepoImpl) GetByUserId(ctx context.Context, userid string) (results []Ar
 	return
 }
 func (m *RepoImpl) Update(ctx context.Context, a *Article) (err error) {
-	query := `UPDATE article SET title = $1,content = $2,thumbnail = $3,update_by = $4 WHERE id_article = $5`
+	query := `UPDATE article SET title = $1,content = $2,thumbnail = $3,update_by = $4,slug = $5 WHERE id_article = $6`
 	stmt, err := m.Db.PrepareContext(ctx, query)
 	if err != nil {
 		return
 	}
-	result, err := stmt.ExecContext(ctx, a.Title, a.Content, a.Thumbnail, a.UpdateBy, a.ID)
+	result, err := stmt.ExecContext(ctx, a.Title, a.Content, a.Thumbnail, a.UpdateBy, a.Title, a.ID)
 	if err != nil {
 		return
 	}
@@ -103,18 +105,20 @@ func (m *RepoImpl) Update(ctx context.Context, a *Article) (err error) {
 		err = fmt.Errorf("Weird  Behavior. Total Affected: %d", rowsAfected)
 		return
 	}
+	stmt.Close()
 	return
 }
 func (m *RepoImpl) Store(ctx context.Context, a *Article) (lastId int64, err error) {
-	query := `INSERT INTO article(title,content,thumbnail,create_by,update_by) VALUES ($1,$2,$3,$4,$5) RETURNING id_article`
+	query := `INSERT INTO article(title,content,thumbnail,create_by,update_by,slug) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id_article`
 	stmt, err := m.Db.PrepareContext(ctx, query)
 	if err != nil {
 		return
 	}
-	err = stmt.QueryRowContext(ctx, a.Title, a.Content, a.Thumbnail, a.CreatedBy, a.UpdateBy).Scan(&lastId)
+	err = stmt.QueryRowContext(ctx, a.Title, a.Content, a.Thumbnail, a.CreatedBy, a.UpdateBy, a.Title).Scan(&lastId)
 	if err != nil {
 		return
 	}
+	stmt.Close()
 	return
 }
 func (m *RepoImpl) Delete(ctx context.Context, id int64) (err error) {
@@ -135,5 +139,6 @@ func (m *RepoImpl) Delete(ctx context.Context, id int64) (err error) {
 		err = fmt.Errorf("Weird  Behavior. Total Affected: %d", rowsAfected)
 		return
 	}
+	stmt.Close()
 	return
 }

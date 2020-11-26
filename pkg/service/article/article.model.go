@@ -15,6 +15,7 @@ type Article struct {
 	UpdateBy  string
 	CreatedAt *time.Time
 	UpdateAt  *time.Time
+	Slug      string
 }
 
 func (a Article) convertToDto() Dto {
@@ -28,6 +29,7 @@ func (a Article) convertToDto() Dto {
 		UpdateBy:  a.UpdateBy,
 		CreatedAt: a.CreatedAt,
 		UpdateAt:  a.UpdateAt,
+		Slug:      a.Slug,
 	}
 	return dto
 }

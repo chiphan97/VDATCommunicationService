@@ -12,4 +12,5 @@ type Dto struct {
 	UpdateBy  string     `json:"updateBy"`
 	CreatedAt *time.Time `json:"createdAt"`
 	UpdateAt  *time.Time `json:"updateAt"`
+	Slug      string     `json:"slug"`
 }

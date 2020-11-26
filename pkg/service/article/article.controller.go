@@ -151,7 +151,7 @@ func (h *Handler) GetArticleByTitle(w http.ResponseWriter, r *http.Request) {
 // @Tags article
 // @Accept  json
 // @Produce  json
-// @Param payload object Payload true "insert article"
+// @Param payload body Payload true "insert article"
 // @Success 200 {object} Dto
 // @Router /api/v1/article [post]
 func (h *Handler) StoreArticle(w http.ResponseWriter, r *http.Request) {

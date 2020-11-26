@@ -9,6 +9,8 @@ definitions:
         type: string
       id:
         type: integer
+      slug:
+        type: string
       thumbnail:
         type: string
       title:
@@ -179,6 +181,7 @@ paths:
       - description: insert article
         in: body
         name: payload
+        required: true
         schema:
           $ref: '#/definitions/article.Payload'
       produces:
