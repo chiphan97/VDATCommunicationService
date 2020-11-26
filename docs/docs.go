@@ -92,6 +92,7 @@ var doc = `{
                         "description": "insert article",
                         "name": "payload",
                         "in": "body",
+                        "required": true,
                         "schema": {
                             "$ref": "#/definitions/article.Payload"
                         }
@@ -671,6 +672,9 @@ var doc = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
                 },
                 "thumbnail": {
                     "type": "string"
