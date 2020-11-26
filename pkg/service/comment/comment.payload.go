@@ -8,8 +8,8 @@ type PayLoad struct {
 	IdArticle int64  `json:"idArticle"`
 }
 
-func (p PayLoad) convertToModel() *Comment {
-	c := &Comment{
+func (p PayLoad) convertToModel() Comment {
+	c := Comment{
 		Content:   p.Content,
 		Type:      p.Type,
 		IdArticle: p.IdArticle,

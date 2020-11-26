@@ -8,6 +8,7 @@ import (
 	_ "gitlab.com/vdat/mcsvc/chat/docs"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/article"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/comment"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/dchat"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/groups"
@@ -102,6 +103,7 @@ func main() {
 	groups.RegisterGroupApi(r)
 	userdetail.RegisterUserApi(r)
 	article.NewHandler(r)
+	comment.NewHandler(r)
 
 	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 
