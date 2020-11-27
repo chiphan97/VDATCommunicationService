@@ -125,6 +125,11 @@ func (cmt RepoImpl) InsertRelyComment(comment Comment) (lastId int64, err error)
 		comment.Type,
 		comment.CreatedBy,
 		comment.UpdateBy).Scan(&lastId)
+
+	statement1 := `update comment set num = num+1 where id_cmt = $1 `
+	_ = cmt.Db.QueryRow(statement1,
+		comment.ParentID)
+
 	if err != nil {
 		return
 	}
