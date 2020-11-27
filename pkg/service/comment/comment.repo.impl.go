@@ -149,5 +149,7 @@ func (cmt RepoImpl) UpdateComment(comment Comment, id int64) error {
 func (cmt RepoImpl) DeleteComment(id int64) error {
 	statement := `DELETE FROM Comment WHERE id_cmt=$1`
 	cmt.Db.Exec(statement, id)
+	statement1 := `DELETE FROM Comment WHERE parentId=$1`
+	cmt.Db.Exec(statement1, id)
 	return nil
 }
