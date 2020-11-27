@@ -18,7 +18,16 @@ var doc = `{
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -197,6 +206,215 @@ var doc = `{
                         "type": "integer",
                         "description": "ID of the article to be updated",
                         "name": "idArticle",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ResponseBool"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/comment": {
+            "post": {
+                "description": "Insert new comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Insert comment",
+                "parameters": [
+                    {
+                        "description": "insert comment",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/comment.PayLoad"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/comment.Dto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/comment/parent/{idParent}": {
+            "get": {
+                "description": "Get the comment corresponding to the input parentId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Get comment by parent id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the parent comment to be find",
+                        "name": "idParent",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/comment.Dto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/comment/rely": {
+            "post": {
+                "description": "Insert new comment rely",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Insert comment rely",
+                "parameters": [
+                    {
+                        "description": "insert rely comment",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/comment.PayLoad"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/comment.Dto"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/comment/{idArticle}": {
+            "get": {
+                "description": "Get the comment corresponding to the input articleId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Get comment by Article id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the article to be find",
+                        "name": "idArticle",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/comment.Dto"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/comment/{id}": {
+            "put": {
+                "description": "Update the Comment corresponding to the input id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Update Comment by idCmt",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the comment to be updated",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "update comment",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/comment.PayLoad"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/comment.Dto"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete comment by id comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Delete comment by idCmt",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the comment to be updated",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -716,6 +934,64 @@ var doc = `{
                 }
             }
         },
+        "comment.Dto": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "idArticle": {
+                    "type": "integer"
+                },
+                "num": {
+                    "type": "integer"
+                },
+                "parentId": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updateAt": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "integer"
+                }
+            }
+        },
+        "comment.PayLoad": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "idArticle": {
+                    "type": "integer"
+                },
+                "parentId": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
         "dchat.Data": {
             "type": "object",
             "properties": {
@@ -768,6 +1044,7 @@ var doc = `{
                     "type": "string"
                 },
                 "data": {
+                    "type": "object",
                     "$ref": "#/definitions/dchat.Data"
                 },
                 "type": {
@@ -879,12 +1156,12 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "",
-	Host:        "",
-	BasePath:    "",
-	Schemes:     []string{},
-	Title:       "",
-	Description: "",
+	Version:     "0.1",
+	Host:        "localhost:5000",
+	BasePath:    "/api/v1",
+	Schemes:     []string{"http", "https"},
+	Title:       "Swagger Chat server API",
+	Description: "This is swagger for chat server.\nlocal:\t  http://localhost:5000/.\nstaging:    http://vdat-mcsvc-chat-staging.vdatlab.com/.\nproduction: https://vdat-mcsvc-chat.vdatlab.com/.",
 }
 
 type s struct{}

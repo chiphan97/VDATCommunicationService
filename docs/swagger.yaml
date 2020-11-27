@@ -1,3 +1,4 @@
+basePath: /api/v1
 definitions:
   article.Dto:
     properties:
@@ -37,6 +38,44 @@ definitions:
       updateBy:
         type: string
     type: object
+  comment.Dto:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      createdBy:
+        type: string
+      id:
+        type: integer
+      idArticle:
+        type: integer
+      num:
+        type: integer
+      parentId:
+        type: integer
+      type:
+        type: string
+      updateAt:
+        type: string
+      updateBy:
+        type: string
+      version:
+        type: integer
+    type: object
+  comment.PayLoad:
+    properties:
+      content:
+        type: string
+      idArticle:
+        type: integer
+      parentId:
+        type: integer
+      type:
+        type: string
+      userId:
+        type: string
+    type: object
   dchat.Data:
     properties:
       body:
@@ -74,6 +113,7 @@ definitions:
         type: string
       data:
         $ref: '#/definitions/dchat.Data'
+        type: object
       type:
         example: send_text
         type: string
@@ -136,8 +176,19 @@ definitions:
       result:
         type: boolean
     type: object
+host: localhost:5000
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: "This is swagger for chat server.\nlocal:\t  http://localhost:5000/.\nstaging:    http://vdat-mcsvc-chat-staging.vdatlab.com/.\nproduction: https://vdat-mcsvc-chat.vdatlab.com/."
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Chat server API
+  version: "0.1"
 paths:
   /api/v1/all-article:
     get:
@@ -262,6 +313,143 @@ paths:
       summary: Update article by idArticle
       tags:
       - article
+  /api/v1/comment:
+    post:
+      consumes:
+      - application/json
+      description: Insert new comment
+      parameters:
+      - description: insert comment
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/comment.PayLoad'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comment.Dto'
+      summary: Insert comment
+      tags:
+      - comment
+  /api/v1/comment/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete comment by id comment
+      parameters:
+      - description: ID of the comment to be updated
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.ResponseBool'
+      summary: Delete comment by idCmt
+      tags:
+      - comment
+    put:
+      consumes:
+      - application/json
+      description: Update the Comment corresponding to the input id
+      parameters:
+      - description: ID of the comment to be updated
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: update comment
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/comment.PayLoad'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comment.Dto'
+      summary: Update Comment by idCmt
+      tags:
+      - comment
+  /api/v1/comment/{idArticle}:
+    get:
+      consumes:
+      - application/json
+      description: Get the comment corresponding to the input articleId
+      parameters:
+      - description: ID of the article to be find
+        in: path
+        name: idArticle
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/comment.Dto'
+            type: array
+      summary: Get comment by Article id
+      tags:
+      - comment
+  /api/v1/comment/parent/{idParent}:
+    get:
+      consumes:
+      - application/json
+      description: Get the comment corresponding to the input parentId
+      parameters:
+      - description: ID of the parent comment to be find
+        in: path
+        name: idParent
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/comment.Dto'
+            type: array
+      summary: Get comment by parent id
+      tags:
+      - comment
+  /api/v1/comment/rely:
+    post:
+      consumes:
+      - application/json
+      description: Insert new comment rely
+      parameters:
+      - description: insert rely comment
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/comment.PayLoad'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comment.Dto'
+      summary: Insert comment rely
+      tags:
+      - comment
   /api/v1/groups:
     get:
       consumes:
@@ -565,4 +753,7 @@ paths:
       summary: Chat websocket
       tags:
       - dchat
+schemes:
+- http
+- https
 swagger: "2.0"

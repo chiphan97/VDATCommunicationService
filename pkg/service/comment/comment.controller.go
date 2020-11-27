@@ -22,6 +22,15 @@ func NewHandler(r *mux.Router) {
 
 }
 
+// GetCommentByArticleId godoc
+// @Summary Get comment by Article id
+// @Description Get the comment corresponding to the input articleId
+// @Tags comment
+// @Accept  json
+// @Produce  json
+// @Param idArticle path int true "ID of the article to be find"
+// @Success 200 {array} Dto
+// @Router /api/v1/comment/{idArticle} [get]
 func GetCommentByArticleID(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	params := mux.Vars(r)
@@ -40,6 +49,15 @@ func GetCommentByArticleID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetCommentByParentId godoc
+// @Summary Get comment by parent id
+// @Description Get the comment corresponding to the input parentId
+// @Tags comment
+// @Accept  json
+// @Produce  json
+// @Param idParent path int true "ID of the parent comment to be find"
+// @Success 200 {array} Dto
+// @Router /api/v1/comment/parent/{idParent} [get]
 func GetCommentByParentID(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	params := mux.Vars(r)
@@ -59,6 +77,15 @@ func GetCommentByParentID(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// addComment godoc
+// @Summary Insert comment
+// @Description Insert new comment
+// @Tags comment
+// @Accept  json
+// @Produce  json
+// @Param payload body PayLoad true "insert comment"
+// @Success 200 {object} Dto
+// @Router /api/v1/comment [post]
 func CreateComment(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	user := auth.JWTparseOwner(r.Header.Get("Authorization"))
@@ -80,6 +107,15 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseOk(w, dto)
 }
 
+// addRelyComment godoc
+// @Summary Insert comment rely
+// @Description Insert new comment rely
+// @Tags comment
+// @Accept  json
+// @Produce  json
+// @Param payload body PayLoad true "insert rely comment"
+// @Success 200 {object} Dto
+// @Router /api/v1/comment/rely [post]
 func CreateRely(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	user := auth.JWTparseOwner(r.Header.Get("Authorization"))
@@ -101,6 +137,16 @@ func CreateRely(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseOk(w, dto)
 }
 
+// UpdateComment godoc
+// @Summary Update Comment by idCmt
+// @Description Update the Comment corresponding to the input id
+// @Tags comment
+// @Accept  json
+// @Produce  json
+// @Param id path int true "ID of the comment to be updated"
+// @Param payload body PayLoad true "update comment"
+// @Success 200 {object} Dto
+// @Router /api/v1/comment/{id} [put]
 func UpdateCmt(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	params := mux.Vars(r)
@@ -124,6 +170,15 @@ func UpdateCmt(w http.ResponseWriter, r *http.Request) {
 	utils.ResponseOk(w, dto)
 }
 
+// DeleteComment godoc
+// @Summary Delete comment by idCmt
+// @Description Delete comment by id comment
+// @Tags comment
+// @Accept  json
+// @Produce  json
+// @Param id path int true "ID of the comment to be updated"
+// @Success 200 {object} utils.ResponseBool
+// @Router /api/v1/comment/{id} [delete]
 func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	params := mux.Vars(r)
