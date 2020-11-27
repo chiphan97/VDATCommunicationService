@@ -42,7 +42,7 @@ func (cmt RepoImpl) GetCommentById(id int64) (Comment, error) {
 
 func (cmt RepoImpl) GetCommentByArticleID(id int64) ([]Comment, error) {
 	cmts := make([]Comment, 0)
-	query := `SELECT * FROM Comment WHERE id_article = $1 `
+	query := `SELECT * FROM Comment WHERE id_article = $1 and parentId = -1`
 	rows, err := cmt.Db.Query(query, id)
 	if err != nil {
 		return cmts, err
