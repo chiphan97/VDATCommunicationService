@@ -54,3 +54,14 @@ func deleteComment(idCmt int64) (err error) {
 	err = NewRepoImpl(database.DB).DeleteComment(idCmt)
 	return err
 }
+
+func UpdateComment(payload PayLoad, id int64) (Dto, error) {
+	var comment Comment
+	cmt := payload.convertToModel()
+	err := NewRepoImpl(database.DB).UpdateComment(cmt, id)
+	newCmt, err := NewRepoImpl(database.DB).GetCommentById(id)
+	if err != nil {
+		return comment.convertToDto(), err
+	}
+	return newCmt.convertToDto(), nil
+}

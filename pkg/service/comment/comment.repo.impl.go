@@ -108,9 +108,11 @@ func (cmt RepoImpl) InsertComment(comment Comment) (lastId int64, err error) {
 		comment.Type,
 		comment.CreatedBy,
 		comment.UpdateBy).Scan(&lastId)
+
 	if err != nil {
 		return
 	}
+
 	return
 }
 
@@ -129,8 +131,13 @@ func (cmt RepoImpl) InsertRelyComment(comment Comment) (lastId int64, err error)
 	return
 }
 
-func (cmt RepoImpl) UpdateComment(comment Comment) (Comment, error) {
-	panic("implement me")
+func (cmt RepoImpl) UpdateComment(comment Comment, id int64) error {
+	statement := `Update Comment set content= $1, type = $2 , version = version+1 where id_cmt = $3`
+	_, err := cmt.Db.Exec(statement, comment.Content, comment.Type, id)
+	if err != nil {
+		return err
+	}
+	return nil
 
 }
 

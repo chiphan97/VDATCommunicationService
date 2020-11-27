@@ -6,6 +6,6 @@ type Repo interface {
 	GetCommentByParentID(idParent int64) ([]Comment, error)
 	InsertComment(comment Comment) (int64, error)
 	InsertRelyComment(comment Comment) (int64, error)
-	UpdateComment(comment Comment) (Comment, error)
+	UpdateComment(comment Comment, id int64) error
 	DeleteComment(id int64) error
 }
