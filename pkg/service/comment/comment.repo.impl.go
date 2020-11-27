@@ -1,6 +1,9 @@
 package comment
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 type RepoImpl struct {
 	Db *sql.DB
@@ -137,8 +140,8 @@ func (cmt RepoImpl) InsertRelyComment(comment Comment) (lastId int64, err error)
 }
 
 func (cmt RepoImpl) UpdateComment(comment Comment, id int64) error {
-	statement := `Update Comment set content= $1, type = $2 , version = version+1 where id_cmt = $3`
-	_, err := cmt.Db.Exec(statement, comment.Content, comment.Type, id)
+	statement := `Update Comment set content= $1, type = $2 , version = version+1, updated_at=$3  where id_cmt = $4`
+	_, err := cmt.Db.Exec(statement, comment.Content, comment.Type, time.Now(), id)
 	if err != nil {
 		return err
 	}
