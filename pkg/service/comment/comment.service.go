@@ -8,6 +8,7 @@ func GetCommentByArticle(idArticle int64) (results []Dto, err error) {
 		return nil, err
 	}
 	for _, cmt := range list {
+		cmt.ParentID = -1
 		results = append(results, cmt.convertToDto())
 	}
 	return results, nil
