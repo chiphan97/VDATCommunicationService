@@ -6,19 +6,29 @@ import (
 	"github.com/gorilla/mux"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/auth"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/cors"
+	"gitlab.com/vdat/mcsvc/chat/pkg/service/database"
 	"gitlab.com/vdat/mcsvc/chat/pkg/service/utils"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
+type Handler struct {
+	service Service
+}
+
 func NewHandler(r *mux.Router) {
-	r.HandleFunc("/api/v1/comment/{idArticle}", auth.AuthenMiddleJWT(GetCommentByArticleID)).Methods(http.MethodGet, http.MethodOptions)
-	r.HandleFunc("/api/v1/comment/parent/{idParent}", auth.AuthenMiddleJWT(GetCommentByParentID)).Methods(http.MethodGet, http.MethodOptions)
-	r.HandleFunc("/api/v1/comment", auth.AuthenMiddleJWT(CreateComment)).Methods(http.MethodPost, http.MethodOptions)
-	r.HandleFunc("/api/v1/comment/rely", auth.AuthenMiddleJWT(CreateRely)).Methods(http.MethodPost, http.MethodOptions)
-	r.HandleFunc("/api/v1/comment/{id}", auth.AuthenMiddleJWT(DeleteComment)).Methods(http.MethodDelete, http.MethodOptions)
-	r.HandleFunc("/api/v1/comment/{id}", auth.AuthenMiddleJWT(UpdateCmt)).Methods(http.MethodPut, http.MethodOptions)
+	timeoutContext := time.Duration(2) * time.Second
+	repo := NewRepoImpl(database.DB)
+	service := NewServiceImpl(repo, timeoutContext)
+	handler := &Handler{service: service}
+	r.HandleFunc("/api/v1/comment/{idArticle}", auth.AuthenMiddleJWT(handler.GetCommentByArticleID)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/comment/parent/{idParent}", auth.AuthenMiddleJWT(handler.GetCommentByParentID)).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/comment", auth.AuthenMiddleJWT(handler.CreateComment)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/api/v1/comment/rely", auth.AuthenMiddleJWT(handler.CreateRely)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/api/v1/comment/{id}", auth.AuthenMiddleJWT(handler.DeleteComment)).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/api/v1/comment/{id}", auth.AuthenMiddleJWT(handler.UpdateCmt)).Methods(http.MethodPut, http.MethodOptions)
 
 }
 
@@ -31,11 +41,13 @@ func NewHandler(r *mux.Router) {
 // @Param idArticle path int true "ID of the article to be find"
 // @Success 200 {array} Dto
 // @Router /api/v1/comment/{idArticle} [get]
-func GetCommentByArticleID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetCommentByArticleID(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	params := mux.Vars(r)
+	ctx := r.Context()
 	id, err := strconv.Atoi(params["idArticle"])
-	list, err := GetCommentByArticle(int64(id))
+	list, err := h.service.GetCommentByArticle(ctx, int64(id))
+
 	if err != nil {
 		log.Println(err)
 		utils.ResponseErr(w, http.StatusInternalServerError)
@@ -58,11 +70,13 @@ func GetCommentByArticleID(w http.ResponseWriter, r *http.Request) {
 // @Param idParent path int true "ID of the parent comment to be find"
 // @Success 200 {array} Dto
 // @Router /api/v1/comment/parent/{idParent} [get]
-func GetCommentByParentID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetCommentByParentID(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	params := mux.Vars(r)
+	ctx := r.Context()
+
 	id, err := strconv.Atoi(params["idParent"])
-	list, err := GetCommentByParentId(int64(id))
+	list, err := h.service.GetCommentByParentId(ctx, int64(id))
 	if err != nil {
 		log.Println(err)
 		utils.ResponseErr(w, http.StatusInternalServerError)
@@ -86,19 +100,21 @@ func GetCommentByParentID(w http.ResponseWriter, r *http.Request) {
 // @Param payload body PayLoad true "insert comment"
 // @Success 200 {object} Dto
 // @Router /api/v1/comment [post]
-func CreateComment(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	user := auth.JWTparseOwner(r.Header.Get("Authorization"))
 	fmt.Println(user)
 	var payload PayLoad
 	err := json.NewDecoder(r.Body).Decode(&payload)
+	ctx := r.Context()
+
 	if err != nil {
 		log.Println(err)
 		utils.ResponseErr(w, http.StatusBadRequest)
 		return
 	}
 	payload.UserId = user
-	dto, err := AddComment(payload)
+	dto, err := h.service.AddComment(ctx, payload)
 	if err != nil {
 		log.Println(err)
 		utils.ResponseErr(w, http.StatusInternalServerError)
@@ -116,10 +132,11 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 // @Param payload body PayLoad true "insert rely comment"
 // @Success 200 {object} Dto
 // @Router /api/v1/comment/rely [post]
-func CreateRely(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateRely(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	user := auth.JWTparseOwner(r.Header.Get("Authorization"))
-	fmt.Println(user)
+	ctx := r.Context()
+
 	var payload PayLoad
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
@@ -128,7 +145,7 @@ func CreateRely(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	payload.UserId = user
-	dto, err := AddRelyComment(payload)
+	dto, err := h.service.AddRelyComment(ctx, payload)
 	if err != nil {
 		log.Println(err)
 		utils.ResponseErr(w, http.StatusInternalServerError)
@@ -147,12 +164,13 @@ func CreateRely(w http.ResponseWriter, r *http.Request) {
 // @Param payload body PayLoad true "update comment"
 // @Success 200 {object} Dto
 // @Router /api/v1/comment/{id} [put]
-func UpdateCmt(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdateCmt(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
 	params := mux.Vars(r)
 	user := auth.JWTparseOwner(r.Header.Get("Authorization"))
 	id, _ := strconv.Atoi(params["id"])
-	fmt.Println(user)
+	ctx := r.Context()
+
 	var payload PayLoad
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
@@ -161,7 +179,7 @@ func UpdateCmt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	payload.UserId = user
-	dto, err := UpdateComment(payload, int64(id))
+	dto, err := h.service.UpdateComment(ctx, payload, int64(id))
 	if err != nil {
 		log.Println(err)
 		utils.ResponseErr(w, http.StatusInternalServerError)
@@ -179,11 +197,13 @@ func UpdateCmt(w http.ResponseWriter, r *http.Request) {
 // @Param id path int true "ID of the comment to be updated"
 // @Success 200 {object} utils.ResponseBool
 // @Router /api/v1/comment/{id} [delete]
-func DeleteComment(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 	cors.SetupResponse(&w, r)
+	ctx := r.Context()
+	fmt.Println(ctx)
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
-	err = deleteComment(int64(id))
+	err = h.service.deleteComment(ctx, int64(id))
 	if err != nil {
 		log.Println(err)
 		utils.ResponseErr(w, http.StatusInternalServerError)
